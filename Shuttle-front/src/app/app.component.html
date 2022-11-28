@@ -1,5 +1,9 @@
-Hello from Angular
-<br />
-<button (click)="helloBackend()">Say hi to the backend.</button>
+<nav>
+  <!-- Put navigation bar component here. -->
+</nav>
 
-<router-outlet></router-outlet>
+<router-outlet>
+  <!-- Put main routing component here (dynamically). -->
+
+  <button mat-raised-button color="primary" (click)="helloBackend()">Say hi to the backend.</button>
+</router-outlet>
