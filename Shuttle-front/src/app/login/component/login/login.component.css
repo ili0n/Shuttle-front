@@ -1,0 +1,33 @@
+#loginForm {
+  display:flex;
+}
+
+#loginForm > mat-card {
+  padding: 48px 16px;
+  display: inline-block;
+  margin: auto;
+  border-radius: 16px;
+  width: 30%;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+form h2 {
+  font-size: 3em;
+}
+
+#ddd hr {
+  margin-bottom: 4em;
+}
+
+form button {
+  margin-bottom: 1em;
+  width: 100%;
+}
+
+#submitButton {
+  padding: 2em;
+  font-size: larger;
+}
