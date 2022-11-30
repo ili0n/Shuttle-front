@@ -1,34 +1,46 @@
 #loginForm {
-  display:flex;
+	display: flex;
 }
 
-#loginForm > mat-card {
-  padding: 48px 16px;
-  display: inline-block;
-  margin: auto;
-  border-radius: 16px;
-  width: 30%;
+#loginForm>mat-card {
+	padding: 48px 16px;
+	display: inline-block;
+	margin: auto;
+	border-radius: 16px;
+	width: 30%;
 }
 
 mat-form-field {
-  width: 100%;
+	width: 100%;
 }
 
 form h2 {
-  font-size: 3em;
-  text-transform: uppercase;
+	font-size: 3em;
+	text-transform: uppercase;
 }
 
 #ddd hr {
-  margin-bottom: 4em;
+	margin-bottom: 4em;
 }
 
 form button {
-  margin-bottom: 1em;
-  width: 100%;
+	margin-bottom: 1em;
+	width: 100%;
 }
 
 #submitButton {
-  padding: 2em;
-  font-size: larger;
+	padding: 1.5em;
+	font-size: larger;
+}
+
+#signInWithGoogle {
+	background-color: #317CD8;
+}
+
+#signInWithFacebook {
+	background-color: #3554C0;
+}
+
+.rightAlign {
+	float: right;
 }

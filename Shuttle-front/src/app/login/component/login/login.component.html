@@ -19,6 +19,7 @@
 			</mat-form-field>
 			<br />
 			<button id="submitButton" mat-raised-button type="submit" color="primary" [disabled]="!formGroup.valid">Log in</button>
+			<p><a class="rightAlign" href="#">Forgot password?</a></p>
 			<br />
 
 			<!-- TODO: Route to registration -->
@@ -27,9 +28,9 @@
 			<br />
 
 			<!-- TODO: Add G and F icons and add API call -->
-			<button mat-raised-button type="submit" color="primary">Sign in with Google</button>
+			<button id="signInWithGoogle" mat-raised-button type="submit" color="primary">Sign in with Google</button>
 			<br />
-			<button mat-raised-button type="submit" color="primary">Sign in with Facebook</button>
+			<button id="signInWithFacebook" mat-raised-button type="submit" color="primary">Sign in with Facebook</button>
 
 		</form>
 	</mat-card>
