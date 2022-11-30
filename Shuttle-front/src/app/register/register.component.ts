@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder } from "@angular/forms";
+import {FormBuilder, Validators } from "@angular/forms";
+import {CustomValidators} from "./confirm.validator"
 
 @Component({
   selector: 'app-register',
@@ -9,9 +10,16 @@ import {FormBuilder } from "@angular/forms";
 export class RegisterComponent implements OnInit {
 
   registerForm = this.formBuilder.group({
-    name: "",
-    surname: "",
-  })
+    email: ["", [Validators.required, Validators.email]],
+    password: ["", [Validators.required]],
+    confirmPassword: ["", [Validators.required]],
+    location: ["", [Validators.required]],
+    phone: ["", [Validators.required, Validators.pattern("^[\+]?[0-9]+$")]],
+    name: ["", [Validators.required]],
+    surname: ["", [Validators.required]],
+  },
+    [CustomValidators.MatchValidator('password', 'confirmPassword')]
+  )
 
   constructor(
     private formBuilder: FormBuilder,
@@ -21,7 +29,12 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): void{
-
+    if (this.registerForm.valid) {
+			console.log("valid");
+		}
+    else{
+      console.log("false");
+    }
   }
 
 }
