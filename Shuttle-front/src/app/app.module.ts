@@ -6,14 +6,7 @@ import { AppRoutingModule } from 'src/infrastructure/app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card'
+import { MaterialModule } from 'src/infrastructure/material.module';
 
 import { LoginComponent } from './login/component/login/login.component'
 
@@ -27,16 +20,7 @@ import { LoginComponent } from './login/component/login/login.component'
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-
-    // `Material Components` modules are imported here.
-    MatToolbarModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    FormsModule,
-    MatCardModule,
+	MaterialModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
