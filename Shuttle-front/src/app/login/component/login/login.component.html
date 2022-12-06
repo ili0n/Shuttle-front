@@ -1,0 +1,38 @@
+<div id="loginForm">
+	<!-- https://material.angular.io/components/form-field/examples -->
+	<!-- https://javascript.plainenglish.io/reactive-forms-in-angular-10-how-to-create-a-login-form-using-reactive-forms-c979e2b86135 -->
+	<mat-card>
+		<form [formGroup]="formGroup" (ngSubmit)="onLoginSubmit()">
+			<span id="ddd">
+				<h2>Log In</h2>
+				<hr />
+			</span>
+
+			<mat-form-field appearance="outline">
+				<mat-label>Enter your email</mat-label>
+				<input matInput name="email" type="email" formControlName="email" />
+			</mat-form-field>
+			<br />
+			<mat-form-field appearance="outline">
+				<mat-label>Enter your password</mat-label>
+				<input matInput name="password" type="password" formControlName="password" />
+			</mat-form-field>
+			<br />
+			<button id="submitButton" mat-raised-button type="submit" color="primary" [disabled]="!formGroup.valid">Log in</button>
+			<p><a class="rightAlign" href="#">Forgot password?</a></p>
+			<br />
+
+			<!-- TODO: Route to registration -->
+			<p>Don't have an account? <a href="#">Sign up</a></p>
+
+			<br />
+
+			<!-- TODO: Add G and F icons and add API call -->
+			<button id="signInWithGoogle" mat-raised-button type="submit" color="primary">Sign in with Google</button>
+			<br />
+			<button id="signInWithFacebook" mat-raised-button type="submit" color="primary">Sign in with Facebook</button>
+
+		</form>
+	</mat-card>
+
+</div>
