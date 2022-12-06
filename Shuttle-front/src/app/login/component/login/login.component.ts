@@ -20,11 +20,12 @@ export class LoginComponent {
 			email: ['', [Validators.required, Validators.email]],
 			password: ['', [Validators.required]],
 		});
+	}
 
-
+  ngOnInit() {
 		// HACK: Is there a better way to dynamically change body style from a component?
 		document.body.className = "body-gradient1"; // Defined in src/styles.css
-	}
+  }
 
 	ngOnDestroy() {
 		document.body.className = "";
