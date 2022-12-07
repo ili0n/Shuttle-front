@@ -1,0 +1,32 @@
+mat-form-field{
+    display: block;
+}
+
+#legend{
+    margin: 0;
+    background-color: #279386;
+    padding: 15px;
+}
+#legend>h2{
+    font-size:xx-large;
+    color: white;
+}
+
+.register-dialog{
+    min-width: 400px;
+    max-width: 500px;
+    margin: auto;
+    background-color: #ECECEC;
+
+}
+
+form{
+    padding: 15px;
+    text-align: center;
+}
+
+button{
+    background-color: #279386 !important;
+    border-radius: 30%;
+    color: white !important;
+}
