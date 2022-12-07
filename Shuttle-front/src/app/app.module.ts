@@ -12,11 +12,16 @@ import {MatInputModule} from '@angular/material/input';
 import { RegisterComponent } from './register/register.component'
 
 import { ReactiveFormsModule } from '@angular/forms';
+import { LoginComponent } from './login/component/login/login.component';
+import { NavbarComponent } from './navbar/navbar.component';
+import { MaterialModule } from 'src/infrastructure/material.module';
 
 @NgModule({
     declarations: [
         AppComponent,
-        RegisterComponent
+        RegisterComponent,
+        LoginComponent,
+        NavbarComponent,
     ],
     imports: [
         BrowserModule,
@@ -24,6 +29,7 @@ import { ReactiveFormsModule } from '@angular/forms';
         AppRoutingModule,
         BrowserAnimationsModule,
 
+        MaterialModule,
         MatToolbarModule,
         MatButtonModule,
         ReactiveFormsModule,
