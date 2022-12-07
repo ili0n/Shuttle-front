@@ -1,0 +1,40 @@
+mat-toolbar {
+    color: white;
+    width: 100%;
+    text-align: left;
+}
+
+
+
+a, a:visited, a:active {
+    color: inherit;
+    text-decoration: none;
+   }
+
+
+
+.button {
+    outline-color: white;
+    border-radius: 60px;
+    width: 120px;
+    height: auto;
+    margin-left: 45px;
+    text-align: center;
+    outline-style: solid;
+    outline-width: 3px;
+    float: right;
+}
+
+.unregistered {
+    background-color: #2A9F91;
+}
+
+#login {
+    background-color: #2A9F91;
+    color: white;
+    margin-left: 80%;
+}
+#register {
+    background-color: white;
+    color: #2A9F91;
+}
