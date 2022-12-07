@@ -1,10 +1,10 @@
-<mat-toolbar>
-    <h1>
-    shuttle
-    </h1>
+<mat-toolbar class="unregistered">
+    <a (click)="homeRoute()">
+            shuttle
 
-        <button routerLink="/login" mat-flat-button class="button" id="login">Log In</button>
-        <button routerLink="/register" mat-flat-button class="button" id="register">Register</button>
+    </a>
+    <button mat-flat-button class="button" id="login" (click)="loginRoute()">Log In</button>
+    <button mat-flat-button class="button" id="register" (click)="loginRoute()">Register</button>
  
 </mat-toolbar>
 
