@@ -13,6 +13,11 @@ body {
   background: linear-gradient(311deg, rgba(14,67,115,1) 0%, rgba(0,254,255,1) 100%);
 }
 
+.body-gradient2 {
+    background: rgb(0,254,255,1);
+    background: linear-gradient(311deg, rgba(0,254,255,1) 0%, rgba(14,67,115,1) 100%);
+}
+
 /* TODO: Remove this */
 nav {
 	background-color: white;
