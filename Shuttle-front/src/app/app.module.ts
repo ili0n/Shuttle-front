@@ -16,6 +16,7 @@ import { LoginComponent } from './login/component/login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { MaterialModule } from 'src/infrastructure/material.module';
 import { ForgotPasswordComponent } from './login/component/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './login/component/reset-password/reset-password.component';
 
 @NgModule({
     declarations: [
@@ -24,6 +25,7 @@ import { ForgotPasswordComponent } from './login/component/forgot-password/forgo
         LoginComponent,
         NavbarComponent,
         ForgotPasswordComponent,
+        ResetPasswordComponent,
     ],
     imports: [
         BrowserModule,
