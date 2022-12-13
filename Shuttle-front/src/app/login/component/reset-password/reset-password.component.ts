@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-reset-password',
@@ -14,11 +14,16 @@ export class ResetPasswordComponent implements OnInit {
         which we fetch the user's email and let him actually
         change the password. Otherwise, show him that the
         link has expired.
+
+        Potential solution: Add key in URL with user e-mail
+        and expiration date. Without the key, router redirects
+        to login. Check app-routing.module.ts.
     */
 
+    private key: string = "";
     formGroup: FormGroup;
 
-    constructor(private readonly formBuilder: FormBuilder, private router: Router) {
+    constructor(private readonly formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute) {
         this.formGroup = formBuilder.group({
             password: ['', [Validators.required]],
             confirmPassword: ['', [Validators.required]],
@@ -33,8 +38,22 @@ export class ResetPasswordComponent implements OnInit {
         return false;
     }
 
+    decodeKey(): string {
+        // TODO: Hardcoding Base64 removes trailing '==' so we add it manually.
+        return window.atob(this.key + "==");
+    }
+
     ngOnInit() {
         document.body.className = "body-gradient1"; // Defined in src/styles.css
+
+        this.route.params.subscribe(params => {
+            if (params['key'] != undefined) {
+                this.key = params['key'];
+                console.log(this.decodeKey());
+            } else {
+                this.router.navigate(["/login"]);
+            }
+        });
     }
 
     ngOnDestroy() {
