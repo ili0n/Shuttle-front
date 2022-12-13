@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { EqualsValidator } from 'src/app/shared/validators/EqualsValidator';
+
 @Component({
-  selector: 'app-reset-password',
-  templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.css']
+    selector: 'app-reset-password',
+    templateUrl: './reset-password.component.html',
+    styleUrls: ['./reset-password.component.css']
 })
 export class ResetPasswordComponent implements OnInit {
     /*
@@ -24,9 +26,11 @@ export class ResetPasswordComponent implements OnInit {
     formGroup: FormGroup;
 
     constructor(private readonly formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute) {
-        this.formGroup = formBuilder.group({
+        this.formGroup = this.formBuilder.group({
             password: ['', [Validators.required]],
             confirmPassword: ['', [Validators.required]],
+        }, {
+            validator: EqualsValidator('password', 'confirmPassword')
         });
     }
 
