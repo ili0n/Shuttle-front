@@ -39,8 +39,7 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     decodeKey(): string {
-        // TODO: Hardcoding Base64 removes trailing '==' so we add it manually.
-        return window.atob(this.key + "==");
+        return window.atob(this.key);
     }
 
     ngOnInit() {
