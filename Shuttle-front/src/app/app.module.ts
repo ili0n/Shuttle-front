@@ -15,6 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './login/component/login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { MaterialModule } from 'src/infrastructure/material.module';
+import { AdminModule } from './admin/admin.module';
 
 @NgModule({
     declarations: [
@@ -33,7 +34,7 @@ import { MaterialModule } from 'src/infrastructure/material.module';
         MatToolbarModule,
         MatButtonModule,
         ReactiveFormsModule,
-        MatInputModule
+        MatInputModule,
     ],
     providers: [],
     bootstrap: [AppComponent]
