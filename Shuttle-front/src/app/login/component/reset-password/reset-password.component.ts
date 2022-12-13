@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.css']
 })
-export class ResetPasswordComponent {
+export class ResetPasswordComponent implements OnInit {
     /*
         This component can only be entered from a link.
         With the link should come some encrypted key from
@@ -45,7 +45,6 @@ export class ResetPasswordComponent {
         if (this.formGroup.valid) {
             let password = this.formGroup.getRawValue()['password'];
             console.log("Update user " + this.getUserEmail() + " with new password " + password);
-
             this.router.navigate(["/login"]);
         }
     }

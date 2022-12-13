@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { SharedService } from 'src/app/shared/shared.service';
 
 @Component({
     selector: 'app-forgot-password',
@@ -9,7 +11,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class ForgotPasswordComponent {
     formGroup: FormGroup;
 
-    constructor(private readonly formBuilder: FormBuilder) {
+    constructor(private readonly formBuilder: FormBuilder, private router: Router, private sharedService: SharedService) {
         this.formGroup = formBuilder.group({
             email: ['', [Validators.required, Validators.email]],
         });
@@ -18,7 +20,11 @@ export class ForgotPasswordComponent {
     sendPasswordResetLink() {
         if (this.formGroup.valid) {
             let email = this.formGroup.getRawValue()['email'];
-            console.log("Send link to " + email);
+
+            this.sharedService.showSnackBar("An e-mail has been sent to " + email + ".", 5000);
+            this.router.navigate(["/login"]);
+
+            // TODO: Send it.
         }
     }
 

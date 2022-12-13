@@ -1,5 +1,4 @@
-import { Attribute, Component, OnInit } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -18,7 +17,7 @@ export class NavbarComponent implements OnInit {
 
   loginRoute() {
     this.router.navigate(["/login"]);
-  
+
   }
   registerRoute() {
     this.router.navigate(["/register"]);
