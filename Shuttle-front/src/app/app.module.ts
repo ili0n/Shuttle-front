@@ -11,6 +11,7 @@ import { RegisterComponent } from './register/register.component'
 import { LoginComponent } from './login/component/login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { MaterialModule } from 'src/infrastructure/material.module';
+import { AdminModule } from './admin/admin.module';
 import { ForgotPasswordComponent } from './login/component/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './login/component/reset-password/reset-password.component';
 import { SharedModule } from './shared/shared.module';
@@ -25,12 +26,13 @@ import { SharedModule } from './shared/shared.module';
         ResetPasswordComponent,
     ],
     imports: [
-        BrowserModule,
         HttpClientModule,
         AppRoutingModule,
+        BrowserModule,
         BrowserAnimationsModule,
-        MaterialModule,
+        AdminModule,
         SharedModule,
+        MaterialModule
     ],
     providers: [],
     bootstrap: [AppComponent]

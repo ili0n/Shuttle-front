@@ -1,0 +1,128 @@
+<div id="create-driver">
+    <mat-card>
+        <form [formGroup]="formGroup" (ngSubmit)="createDriver()">
+            <table>
+                <tr>
+                    <td>
+                        <h2>Driver data</h2>
+                        <hr />
+                    </td>
+                    <td>
+                        <h2>Vehicle data</h2>
+                        <hr />
+                    </td>
+                </tr>
+                <tr>
+                    <!-- Left side -->
+                    <td class="form-content">
+
+                        <mat-card>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Name</mat-label>
+                                <input matInput name="name" type="text" formControlName="name" />
+                            </mat-form-field>
+
+                            <br />
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Surname</mat-label>
+                                <input matInput name="surname" type="text" formControlName="surname" />
+                            </mat-form-field>
+
+                            <br />
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Email</mat-label>
+                                <input matInput name="email" type="email" formControlName="email" />
+                            </mat-form-field>
+
+                            <br />
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Phone (012-345-6789)</mat-label>
+                                <mat-hint></mat-hint>
+                                <input matInput name="phone" type="text" formControlName="phone" />
+                            </mat-form-field>
+
+                            <br />
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Password</mat-label>
+                                <!-- Note the type="text", not type="password" -->
+                                <input matInput name="password" type="text" formControlName="password" />
+                            </mat-form-field>
+
+                            <br />
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Address</mat-label>
+                                <input matInput name="address" type="text" formControlName="address" />
+                            </mat-form-field>
+
+                            <br />
+<!--
+                            <input class="ng-hide" id="input-file-id" multiple type="file" />
+                            <label for="input-file-id" class="md-button md-raised md-primary">Choose Files</label> -->
+
+                            <img class="profile-picture" src="./assets/pfp_default.png" />
+                            <br />
+                            <input mat-raised-button type="file" formControlName="profilePicture" />
+
+                        </mat-card>
+                    </td>
+                    <!-- Right side -->
+                    <td class="form-content">
+
+                        <mat-card>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Model</mat-label>
+                                <input matInput name="vehicleModel" type="text" formControlName="vehicleModel" />
+                            </mat-form-field>
+
+                            <br />
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Type</mat-label>
+                                <mat-select formControlName="vehicleType">
+                                    <mat-option *ngFor="let food of vehicleTypes" name="vehicleType" [value]="food.name">{{food.name}} ({{food.pricePerKm}})</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <br />
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Registration table</mat-label>
+                                <input matInput name="vehicleRegtable" type="text" formControlName="vehicleRegtable" />
+                            </mat-form-field>
+
+                            <br />
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Number of Seats</mat-label>
+                                <mat-select formControlName="vehicleSeats">
+                                    <mat-option *ngFor="let n of seatsPossible" name="vehicleSeats" [value]="n">{{ n }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+
+                            <br />
+
+                            <mat-checkbox formControlName="vehicleBabies">Babies</mat-checkbox>
+                            <mat-checkbox formControlName="vehiclePets">Pets</mat-checkbox>
+
+                            <br />
+                        </mat-card>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button id="btn-create-driver" mat-raised-button type="submit" color="primary"
+                        [disabled]="!formGroup.valid">Create Driver</button>
+                    </td>
+                </tr>
+            </table>
+
+        </form>
+    </mat-card>
+</div>

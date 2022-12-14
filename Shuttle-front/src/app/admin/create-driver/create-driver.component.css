@@ -1,0 +1,58 @@
+.small-space {
+    margin-right: 30px;
+}
+
+#create-driver {
+    display: flex;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+#create-driver>mat-card {
+    padding: 32px 32px;
+    display: inline-block;
+    margin: auto;
+    border-radius: 16px;
+    width: 50%;
+}
+
+td>mat-card {
+    padding: 16px 32px;
+    display: inline-block;
+    margin: auto;
+    border-radius: 16px;
+    background-color: rgb(241, 241, 241);
+    width: 80%;
+}
+
+table, tr, td {
+    border: 0px solid black;
+}
+
+table {
+    width: 100%;
+}
+
+td {
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 16px;
+    vertical-align: top;
+}
+
+.form-content {
+    padding: 48px 8px;
+    height: 100%;
+}
+
+#btn-create-driver {
+    padding: 10px;
+    margin: 10px;
+}
+
+.profile-picture {
+    width: 128px;
+    height: 128px;
+}
