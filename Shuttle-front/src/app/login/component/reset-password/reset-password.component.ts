@@ -35,10 +35,12 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     getUserEmail(): string {
+        // TODO: Fetch from key.
         return "person@example.org";
     }
 
     resetLinkExpired(): boolean {
+        // TODO: Fetch from key.
         return false;
     }
 

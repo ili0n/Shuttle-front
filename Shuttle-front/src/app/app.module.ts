@@ -26,16 +26,13 @@ import { SharedModule } from './shared/shared.module';
         ResetPasswordComponent,
     ],
     imports: [
-        BrowserModule,
         HttpClientModule,
         AppRoutingModule,
+        BrowserModule,
         BrowserAnimationsModule,
-        MaterialModule,
-        MatToolbarModule,
-        MatButtonModule,
-        ReactiveFormsModule,
-        MatInputModule,
+        AdminModule,
         SharedModule,
+        MaterialModule
     ],
     providers: [],
     bootstrap: [AppComponent]
