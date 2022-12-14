@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 interface VehicleType {
     name: string,
@@ -12,8 +12,8 @@ interface VehicleType {
     styleUrls: ['./create-driver.component.css']
 })
 export class CreateDriverComponent implements OnInit, OnDestroy {
-    vehicleTypes: Array<VehicleType> = [
-    ];
+    vehicleTypes: Array<VehicleType> = [];
+    seatsPossible: Array<Number> = [1, 2, 3, 4, 5, 6, 7, 8];
     formGroup: FormGroup;
 
     ngOnInit(): void {
@@ -38,11 +38,12 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
             password: ['', [Validators.required]],
             phone: ['', [Validators.required, Validators.pattern('[0-9]{3}-[0-9]{3}-[0-9]{4}')]],
             address: ['', [Validators.required]],
+            profilePicture: [],
 
             vehicleModel: ['', [Validators.required]],
             vehicleType: ['', [Validators.required]],
             vehicleRegtable: ['', [Validators.required]],
-            vehicleSeats: [4],
+            vehicleSeats: ['', [Validators.required]],
             vehicleBabies: [false],
             vehiclePets: [false],
         });
@@ -50,7 +51,10 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
 
     createDriver(): void {
         if (this.formGroup.valid) {
-            console.log(this.formGroup.value);
+            //let result = this.formGroup.value + this.vehicleSeats;
+            let result = this.formGroup.value;
+            //result['vehicleSeats'] = this.vehicleSeats;
+            console.log(result);
         }
     }
 }

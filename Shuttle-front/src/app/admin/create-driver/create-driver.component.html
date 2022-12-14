@@ -59,6 +59,16 @@
                                 <mat-label>Address</mat-label>
                                 <input matInput name="address" type="text" formControlName="address" />
                             </mat-form-field>
+
+                            <br />
+<!--
+                            <input class="ng-hide" id="input-file-id" multiple type="file" />
+                            <label for="input-file-id" class="md-button md-raised md-primary">Choose Files</label> -->
+
+                            <img class="profile-picture" src="./assets/pfp_default.png" />
+                            <br />
+                            <input mat-raised-button type="file" formControlName="profilePicture" />
+
                         </mat-card>
                     </td>
                     <!-- Right side -->
@@ -75,7 +85,7 @@
                             <mat-form-field appearance="outline">
                                 <mat-label>Type</mat-label>
                                 <mat-select formControlName="vehicleType">
-                                    <mat-option *ngFor="let food of vehicleTypes" [value]="food.name">{{food.name}} ({{food.pricePerKm}})</mat-option>
+                                    <mat-option *ngFor="let food of vehicleTypes" name="vehicleType" [value]="food.name">{{food.name}} ({{food.pricePerKm}})</mat-option>
                                 </mat-select>
                             </mat-form-field>
 
@@ -88,10 +98,13 @@
 
                             <br />
 
-                            <mat-label class="small-space">Seats</mat-label>
-                            <mat-slider min="1" max="8" step="1" value="4" discrete formControlName="vehicleSeats">
-                                <input matSliderThumb>
-                            </mat-slider>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Number of Seats</mat-label>
+                                <mat-select formControlName="vehicleSeats">
+                                    <mat-option *ngFor="let n of seatsPossible" name="vehicleSeats" [value]="n">{{ n }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
 
                             <br />
 
