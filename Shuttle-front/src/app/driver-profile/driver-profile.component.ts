@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Form, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../register/confirm.validator';
 import { HttpEventType } from '@angular/common/http';
-import { DriverProfileUploadService } from '../driver-profile-upload.service';
+import { DriverProfileUploadService } from '../services/driver-profile-upload.service';
 
 @Component({
   selector: 'app-driver-profile',
