@@ -1,0 +1,66 @@
+<form [formGroup]="changeForm" (ngSubmit)="onSubmit()">
+    <div id="leftSide">
+        <h1>Profile info</h1>
+        <img src="../../assets/pfp_default.png" />
+
+        <mat-form-field>
+            <div>
+              <mat-toolbar>
+                <input matInput [value]="selectedFileName ? selectedFileName : 'Select Image'" />
+              </mat-toolbar>
+          
+              <input
+                type="file"
+                id="profileImage"
+                name="profileImage"
+                accept="image/*" multiple 
+                (change)="selectFile($event)"
+              />
+            </div>
+          </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Name: </mat-label>
+            <input matInput type="text" formControlName="name" required/>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Surname: </mat-label>
+            <input matInput type="text" formControlName="surname" required/>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Email: </mat-label>
+            <input matInput type="email" formControlName="email" required/>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Address: </mat-label>
+            <input matInput type="text" formControlName="address" required/>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Phone: </mat-label>
+            <input matInput type="text" formControlName="phone" pattern="^[\+]?[0-9]+$" required/>
+        </mat-form-field>
+    </div>
+    <div id="rightSide">
+        <h1>Change password</h1>
+        <mat-form-field appearance="fill">
+            <mat-label>Old password: </mat-label>
+            <input matInput type="password" formControlName="oldPassword" required/>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>New password: </mat-label>
+            <input matInput type="password" formControlName="newPassword" required/>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Confirm new password: </mat-label>
+            <input matInput type="password" formControlName="confirmPassword" required/>
+        </mat-form-field>  
+        <button mat-raised-button type="submit" color="primary">Sign up</button>
+        <p>Your changes will be sent to an administrator for approval.</p>
+    </div>
+</form>

@@ -15,6 +15,7 @@ import { AdminModule } from './admin/admin.module';
 import { ForgotPasswordComponent } from './login/component/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './login/component/reset-password/reset-password.component';
 import { SharedModule } from './shared/shared.module';
+import { DriverProfileComponent } from './driver-profile/driver-profile.component';
 
 @NgModule({
     declarations: [
@@ -24,6 +25,7 @@ import { SharedModule } from './shared/shared.module';
         NavbarComponent,
         ForgotPasswordComponent,
         ResetPasswordComponent,
+        DriverProfileComponent,
     ],
     imports: [
         HttpClientModule,
