@@ -10,7 +10,7 @@ import { MatCardModule } from '@angular/material/card'
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSelectModule } from '@angular/material/select'
 import { MatCheckboxModule } from '@angular/material/checkbox';
-
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
     imports: [
@@ -24,7 +24,20 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         MatCardModule,
         MatSelectModule,
         MatSliderModule,
-        MatCheckboxModule
+        MatCheckboxModule,
+        	MatToolbarModule,
+      MatButtonModule,
+      MatFormFieldModule,
+      MatInputModule,
+      ReactiveFormsModule,
+      MatIconModule,
+      FormsModule,
+      MatCardModule,
+      MatToolbarModule,
+      MatButtonModule,
+      ReactiveFormsModule,
+      MatInputModule,
+      MatSnackBarModule,
     ],
     exports: [
         MatToolbarModule,
@@ -37,7 +50,20 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         MatCardModule,
         MatSelectModule,
         MatSliderModule,
-        MatCheckboxModule
+        MatCheckboxModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        FormsModule,
+        MatCardModule,
+        MatToolbarModule,
+        MatButtonModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatSnackBarModule,
     ],
 })
 export class MaterialModule { }
