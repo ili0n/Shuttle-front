@@ -1,5 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { Driver, DriverService } from 'src/app/driver/driver.service';
 
 interface VehicleType {
     name: string,
@@ -30,7 +32,7 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
         document.body.className = "";
     }
 
-    constructor(private readonly formBuilder: FormBuilder) {
+    constructor(private readonly formBuilder: FormBuilder, private driverService: DriverService) {
         this.formGroup = this.formBuilder.group({
             name: ['', [Validators.required]],
             surname: ['', [Validators.required]],
@@ -51,10 +53,20 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
 
     createDriver(): void {
         if (this.formGroup.valid) {
-            //let result = this.formGroup.value + this.vehicleSeats;
             let result = this.formGroup.value;
-            //result['vehicleSeats'] = this.vehicleSeats;
-            console.log(result);
+
+            const driver: Driver = {
+                name: result.name,
+                surname: result.surname,
+                profilePicture: result.profilePicture,
+                telephoneNumber: result.phone,
+                address: result.address,
+                email: result.email,
+                password: result.password
+            };
+
+            const response: Observable<Object> = this.driverService.add(driver);
+            response.subscribe(response => console.log(response));
         }
     }
 }
