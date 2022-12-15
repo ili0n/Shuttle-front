@@ -66,6 +66,7 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
                 password: result.password
             };
             let vehicle: Vehicle = {
+                driverId: 77777,
                 vehicleType: result.vehicleType,
                 model: result.vehicleModel,
                 licenseNumber: result.vehicleRegtable,
@@ -78,10 +79,10 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
             resultDriver.subscribe(response => {
                 console.log(response);
                 vehicle.driverId = (response as Driver).id;
-            });
 
-            const resultVehicle: Observable<Object> = this.vehicleService.add(vehicle);
-            resultVehicle.subscribe(response => console.log(response));
+                const resultVehicle: Observable<Object> = this.vehicleService.add(vehicle);
+                resultVehicle.subscribe(response => console.log(response));
+            });
         }
     }
 }
