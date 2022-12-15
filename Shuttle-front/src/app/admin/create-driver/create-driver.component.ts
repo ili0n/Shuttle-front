@@ -65,20 +65,21 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
                 email: result.email,
                 password: result.password
             };
-
-            const vehicle: Vehicle = {
-              vehicleType: result.vehicleType,
-              model: result.vehicleModel,
-              licenseNumber: result.vehicleRegtable,
-              passengerSeats: result.vehicleSeats,
-              babyTransport: result.vehicleBabies,
-              petTransport: result.vehiclePets
+            let vehicle: Vehicle = {
+                vehicleType: result.vehicleType,
+                model: result.vehicleModel,
+                licenseNumber: result.vehicleRegtable,
+                passengerSeats: result.vehicleSeats,
+                babyTransport: result.vehicleBabies,
+                petTransport: result.vehiclePets
             }
 
             const resultDriver: Observable<Object> = this.driverService.add(driver);
-            resultDriver.subscribe(response => console.log(response));
+            resultDriver.subscribe(response => {
+                console.log(response);
+                vehicle.driverId = (response as Driver).id;
+            });
 
-            console.log(vehicle);
             const resultVehicle: Observable<Object> = this.vehicleService.add(vehicle);
             resultVehicle.subscribe(response => console.log(response));
         }
