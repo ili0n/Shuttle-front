@@ -13,15 +13,15 @@ import { RegisterComponent } from './register/register.component'
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './login/component/login/login.component';
-import { NavbarComponent } from './navbar/navbar.component';
+import { UnregisteredNavbarComponent } from './navbar-module/unregistered-navbar/unregistered-navbar.component';
 import { MaterialModule } from 'src/infrastructure/material.module';
+import {NavbarModuleModule} from "./navbar-module/navbar-module.module";
 
 @NgModule({
     declarations: [
         AppComponent,
         RegisterComponent,
-        LoginComponent,
-        NavbarComponent,
+        LoginComponent
     ],
     imports: [
         BrowserModule,
@@ -33,7 +33,8 @@ import { MaterialModule } from 'src/infrastructure/material.module';
         MatToolbarModule,
         MatButtonModule,
         ReactiveFormsModule,
-        MatInputModule
+        MatInputModule,
+        NavbarModuleModule
     ],
     providers: [],
     bootstrap: [AppComponent]
