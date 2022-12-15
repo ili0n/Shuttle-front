@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Driver, DriverService } from 'src/app/driver/driver.service';
+import { Vehicle, VehicleService } from 'src/app/vehicle/vehicle.service';
 
 interface VehicleType {
     name: string,
@@ -32,7 +33,7 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
         document.body.className = "";
     }
 
-    constructor(private readonly formBuilder: FormBuilder, private driverService: DriverService) {
+    constructor(private readonly formBuilder: FormBuilder, private driverService: DriverService, private vehicleService: VehicleService) {
         this.formGroup = this.formBuilder.group({
             name: ['', [Validators.required]],
             surname: ['', [Validators.required]],
@@ -65,8 +66,21 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
                 password: result.password
             };
 
-            const response: Observable<Object> = this.driverService.add(driver);
-            response.subscribe(response => console.log(response));
+            const vehicle: Vehicle = {
+              vehicleType: result.vehicleType,
+              model: result.vehicleModel,
+              licenseNumber: result.vehicleRegtable,
+              passengerSeats: result.vehicleSeats,
+              babyTransport: result.vehicleBabies,
+              petTransport: result.vehiclePets
+            }
+
+            const resultDriver: Observable<Object> = this.driverService.add(driver);
+            resultDriver.subscribe(response => console.log(response));
+
+            console.log(vehicle);
+            const resultVehicle: Observable<Object> = this.vehicleService.add(vehicle);
+            resultVehicle.subscribe(response => console.log(response));
         }
     }
 }
