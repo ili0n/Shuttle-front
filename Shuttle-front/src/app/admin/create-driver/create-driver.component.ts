@@ -1,5 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { Driver, DriverService } from 'src/app/driver/driver.service';
+import { Vehicle, VehicleService } from 'src/app/vehicle/vehicle.service';
 
 interface VehicleType {
     name: string,
@@ -30,7 +33,7 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
         document.body.className = "";
     }
 
-    constructor(private readonly formBuilder: FormBuilder) {
+    constructor(private readonly formBuilder: FormBuilder, private driverService: DriverService, private vehicleService: VehicleService) {
         this.formGroup = this.formBuilder.group({
             name: ['', [Validators.required]],
             surname: ['', [Validators.required]],
@@ -51,10 +54,35 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
 
     createDriver(): void {
         if (this.formGroup.valid) {
-            //let result = this.formGroup.value + this.vehicleSeats;
             let result = this.formGroup.value;
-            //result['vehicleSeats'] = this.vehicleSeats;
-            console.log(result);
+
+            const driver: Driver = {
+                name: result.name,
+                surname: result.surname,
+                profilePicture: result.profilePicture,
+                telephoneNumber: result.phone,
+                address: result.address,
+                email: result.email,
+                password: result.password
+            };
+            let vehicle: Vehicle = {
+                driverId: 77777,
+                vehicleType: result.vehicleType,
+                model: result.vehicleModel,
+                licenseNumber: result.vehicleRegtable,
+                passengerSeats: result.vehicleSeats,
+                babyTransport: result.vehicleBabies,
+                petTransport: result.vehiclePets
+            }
+
+            const resultDriver: Observable<Object> = this.driverService.add(driver);
+            resultDriver.subscribe(response => {
+                console.log(response);
+                vehicle.driverId = (response as Driver).id;
+
+                const resultVehicle: Observable<Object> = this.vehicleService.add(vehicle);
+                resultVehicle.subscribe(response => console.log(response));
+            });
         }
     }
 }
