@@ -73,12 +73,12 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
       
       this.routeControl = L.Routing.control({
         waypoints: [this.departureCoordinates, this.destinationCoordinates],
-        // lineOptions: {
-        //   styles: [{color: 'red', opacity: 1, weight: 5}],
-        //   extendToWaypoints: false,
-        //   missingRouteTolerance: 0,
-        // },
-        // routeWhileDragging: true
+        lineOptions: {
+          styles: [{color: 'blue', opacity: 1, weight: 5}],
+          extendToWaypoints: false,
+          missingRouteTolerance: 0,
+        },
+        routeWhileDragging: false
       }).addTo(this.map);
       this.routeControl.show();     
     }
@@ -86,50 +86,53 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   
   private refresh(): void{
     
-    if(this.currentRoute[0] === "" ||
-      this.currentRoute[1] === "" ||
-      this.map === undefined){
+    if(this.checkInput()){
       return;
     }
 
-    if(this.destinationMarker !== undefined &&
-      this.departureMarker !== undefined){
-      this.map.removeLayer(this.destinationMarker);
-      this.map.removeLayer(this.departureMarker);
+    if(this.checkMarkers()){
+      this.map?.removeLayer(this.destinationMarker!);
+      this.map?.removeLayer(this.departureMarker!);
     }
 
     if(this.routeControl !== undefined){
-      this.map.removeControl(this.routeControl);
+      this.map?.removeControl(this.routeControl);
     }
+
+    
     
     this.mapService.search(this.currentRoute[0]).subscribe({
-      next: (result) => {
-        if(this.map !== undefined){
-          this.departureMarker = L.marker([result[0].lat, result[0].lon], {icon: iconDefault})
-          .addTo(this.map)
-          .bindPopup('Departure')
-          .openPopup();
-          this.departureCoordinates = result[0];
-          this.route();
-        }
-      },
+      next: this.updateFn("Departure", this.departureMarker!, this.departureCoordinates!),
       error: () => {},
     });
 
     this.mapService.search(this.currentRoute[1]).subscribe({
-      next: (result) => {
-        if(this.map !== undefined){
-        // console.log(result);
-          this.destinationMarker = L.marker([result[0].lat, result[0].lon], {icon: iconDefault})
-          .addTo(this.map)
-          .bindPopup('Destination')
-          .openPopup();
-          this.destinationCoordinates = result[0];
-          this.route();
-        }
-      },
+      next: this.updateFn("Destination", this.destinationMarker!, this.destinationCoordinates!),
       error: () => {},
     });      
   }
 
+  private updateFn(popupTitle: String, marker: L.Marker, coordinates: L.LatLng){
+    return (result: any) => {
+      if(this.map !== undefined){
+        marker = L.marker([result[0].lat, result[0].lon], {icon: iconDefault})
+        .addTo(this.map)
+        .bindPopup(popupTitle.toString())
+        .openPopup();
+        coordinates = result[0];
+        this.route();
+      };
+    }
+  }
+
+  private checkInput() {
+    return this.currentRoute[0] === "" || this.currentRoute[1] === "" || this.map === undefined;
+  }
+
+  private checkMarkers(){
+    return this.destinationMarker !== undefined && this.departureMarker !== undefined;
+  }
+
 }
+
+
