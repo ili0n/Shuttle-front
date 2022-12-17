@@ -63,13 +63,16 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   
   private refresh(): void{
     
-    if(this.currentRoute[0] === "" || this.currentRoute[1] === "" || this.map === undefined){
+    if(this.currentRoute[0] === "" ||
+      this.currentRoute[1] === "" ||
+      this.map === undefined ||
+      this.destinationMarker === undefined ||
+      this.departureMarker === undefined){
       return;
     }
-    if(this.destinationMarker !== undefined && this.departureMarker !== undefined){
-      this.map.removeLayer(this.destinationMarker);
-      this.map.removeLayer(this.departureMarker);
-    }
+
+    this.map.removeLayer(this.destinationMarker);
+    this.map.removeLayer(this.departureMarker);
     
     this.mapService.search(this.currentRoute[0]).subscribe({
       next: (result) => {
