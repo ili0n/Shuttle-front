@@ -1,7 +1,6 @@
-import { NgTemplateOutlet } from '@angular/common';
 import { AfterViewInit, Component, Input, OnChanges } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
 import * as L from 'leaflet';
+import 'leaflet-routing-machine';
 import { MapEstimationService } from '../services/map/map-estimation.service';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
@@ -28,12 +27,17 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
 
   @Input()
   currentRoute: [String, String] = ["", ""];
+  
 
   constructor(private mapService: MapEstimationService){}
 
   private map?: L.Map;
   private destinationMarker?: L.Marker;
   private departureMarker?: L.Marker;
+  private routeControl?: L.Routing.Control;
+
+  private destinationCoordinates?: L.LatLng;
+  private departureCoordinates?: L.LatLng;
 
   private initMap(): void{
     this.map = L.map("estimation-map", {
@@ -60,27 +64,52 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   ngOnChanges(): void {
     this.refresh();
   }
+
+  route(): void {
+    if(this.map !== undefined &&
+       this.departureCoordinates !== undefined &&
+        this.destinationCoordinates !== undefined){
+
+      
+      this.routeControl = L.Routing.control({
+        waypoints: [this.departureCoordinates, this.destinationCoordinates],
+        // lineOptions: {
+        //   styles: [{color: 'red', opacity: 1, weight: 5}],
+        //   extendToWaypoints: false,
+        //   missingRouteTolerance: 0,
+        // },
+        // routeWhileDragging: true
+      }).addTo(this.map);
+      this.routeControl.show();     
+    }
+  }
   
   private refresh(): void{
     
     if(this.currentRoute[0] === "" ||
       this.currentRoute[1] === "" ||
-      this.map === undefined ||
-      this.destinationMarker === undefined ||
-      this.departureMarker === undefined){
+      this.map === undefined){
       return;
     }
 
-    this.map.removeLayer(this.destinationMarker);
-    this.map.removeLayer(this.departureMarker);
+    if(this.destinationMarker !== undefined &&
+      this.departureMarker !== undefined){
+      this.map.removeLayer(this.destinationMarker);
+      this.map.removeLayer(this.departureMarker);
+    }
+
+    if(this.routeControl !== undefined){
+      this.map.removeControl(this.routeControl);
+    }
     
     this.mapService.search(this.currentRoute[0]).subscribe({
       next: (result) => {
         if(this.map !== undefined){
-        this.departureMarker = L.marker([result[0].lat, result[0].lon], {icon: iconDefault})
+          this.departureMarker = L.marker([result[0].lat, result[0].lon], {icon: iconDefault})
           .addTo(this.map)
           .bindPopup('Departure')
           .openPopup();
+          this.departureCoordinates = result[0];
         }
       },
       error: () => {},
@@ -90,14 +119,18 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
       next: (result) => {
         if(this.map !== undefined){
         // console.log(result);
-        this.destinationMarker = L.marker([result[0].lat, result[0].lon], {icon: iconDefault})
+          this.destinationMarker = L.marker([result[0].lat, result[0].lon], {icon: iconDefault})
           .addTo(this.map)
           .bindPopup('Destination')
           .openPopup();
+          this.destinationCoordinates = result[0];
+        
         }
       },
       error: () => {},
     });
+
+    this.route();
       
   }
 
