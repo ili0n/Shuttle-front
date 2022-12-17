@@ -16,7 +16,7 @@ import { ForgotPasswordComponent } from './login/component/forgot-password/forgo
 import { ResetPasswordComponent } from './login/component/reset-password/reset-password.component';
 import { SharedModule } from './shared/shared.module';
 import { DriverProfileComponent } from './driver-profile/driver-profile.component';
-import { MapComponent } from './map/map.component';
+import { EstimationMapComponent } from './estimation-map/estimation-map.component';
 
 @NgModule({
     declarations: [
@@ -27,7 +27,7 @@ import { MapComponent } from './map/map.component';
         ForgotPasswordComponent,
         ResetPasswordComponent,
         DriverProfileComponent,
-        MapComponent,
+        EstimationMapComponent,
     ],
     imports: [
         HttpClientModule,

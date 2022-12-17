@@ -2,15 +2,16 @@ import { AfterViewInit, Component } from '@angular/core';
 import * as L from 'leaflet';
 
 @Component({
-  selector: 'app-map',
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css']
+  selector: 'app-estimation-map',
+  templateUrl: './estimation-map.component.html',
+  styleUrls: ['./estimation-map.component.css']
 })
-export class MapComponent implements AfterViewInit {
+export class EstimationMapComponent implements AfterViewInit {
+
   private map?: L.Map;
 
   private initMap(): void{
-    this.map = L.map("unregistered-map", {
+    this.map = L.map("estimation-map", {
       center: [ 45.267136, 19.833549 ],
       zoom: 3
     })
