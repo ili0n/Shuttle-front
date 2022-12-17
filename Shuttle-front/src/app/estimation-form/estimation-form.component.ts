@@ -23,16 +23,15 @@ export class EstimationFormComponent {
   @Output() emitter: EventEmitter<[String, String]> = new EventEmitter<[String, String]>();
 
   emit(): void{
-    console.log(this.routeForm.value);
-    
+  
     let destinationVal = this.routeForm.value.destination;
     let departureVal = this.routeForm.value.departure;
 
     if(destinationVal !== null && destinationVal !== undefined && departureVal !== null && departureVal !== undefined){
       this.emitter.emit(
         [
+          departureVal,
           destinationVal,
-          departureVal
         ]
         );
     }
