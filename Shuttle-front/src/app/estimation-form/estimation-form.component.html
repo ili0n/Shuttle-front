@@ -1,14 +1,14 @@
 <div id="form-container">
     <h1>Estimate ride cost and time</h1>
-    <form>
+    <form [formGroup]="routeForm" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="fill">
             <mat-label>Departure: </mat-label>
-            <input type="text" name="departure" matInput>
+            <input type="text" formControlName="departure" name="departure" matInput>
         </mat-form-field>
         <mat-form-field appearance="fill">
             <mat-label>Destination</mat-label>
-            <input type="text" name="destination" matInput>
+            <input type="text" formControlName="destination" name="destination" matInput>
         </mat-form-field>
-        <button mat-raised-button color="primary">Go</button>
+        <button mat-raised-button color="primary" type="submit">Go</button>
     </form>
 </div>

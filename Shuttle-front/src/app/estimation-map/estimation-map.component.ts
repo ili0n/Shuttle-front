@@ -1,4 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import * as L from 'leaflet';
 
 @Component({
@@ -25,10 +26,13 @@ export class EstimationMapComponent implements AfterViewInit {
     tiles.addTo(this.map);
   }
 
-  constructor(){}
-
   ngAfterViewInit(): void {
     this.initMap();
+  }
+
+
+  search(): void{
+
   }
 
 }
