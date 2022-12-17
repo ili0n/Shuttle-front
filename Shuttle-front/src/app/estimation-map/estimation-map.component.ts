@@ -110,6 +110,7 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
           .bindPopup('Departure')
           .openPopup();
           this.departureCoordinates = result[0];
+          this.route();
         }
       },
       error: () => {},
@@ -124,14 +125,11 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
           .bindPopup('Destination')
           .openPopup();
           this.destinationCoordinates = result[0];
-        
+          this.route();
         }
       },
       error: () => {},
-    });
-
-    this.route();
-      
+    });      
   }
 
 }
