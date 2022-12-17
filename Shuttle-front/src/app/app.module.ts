@@ -17,6 +17,8 @@ import { ResetPasswordComponent } from './login/component/reset-password/reset-p
 import { SharedModule } from './shared/shared.module';
 import { DriverProfileComponent } from './driver-profile/driver-profile.component';
 import { EstimationMapComponent } from './estimation-map/estimation-map.component';
+import { UnregisteredPageComponent } from './unregistered-page/unregistered-page.component';
+import { EstimationFormComponent } from './estimation-form/estimation-form.component';
 
 @NgModule({
     declarations: [
@@ -28,6 +30,8 @@ import { EstimationMapComponent } from './estimation-map/estimation-map.componen
         ResetPasswordComponent,
         DriverProfileComponent,
         EstimationMapComponent,
+        UnregisteredPageComponent,
+        EstimationFormComponent,
     ],
     imports: [
         HttpClientModule,

@@ -1,0 +1,12 @@
+#form-container{
+    float: right;
+    width: 40%;
+    padding: 30px;
+    margin: 10px;
+    text-align: center;
+}
+
+mat-form-field{
+    display: block;
+}
+
