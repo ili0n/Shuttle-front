@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as L from 'leaflet';
 import { Observable } from 'rxjs';
 import { Passenger, PassengerService } from 'src/app/passenger/passenger.service';
 import { environment } from 'src/environments/environment';
@@ -33,15 +34,36 @@ interface RideRequest {
     templateUrl: './driver-home.component.html',
     styleUrls: ['./driver-home.component.css']
 })
-export class DriverHomeComponent implements OnInit, OnDestroy {
+export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     requests: Array<RideRequest> = [];
     decision: string = "1";
     rejectFormGroup: FormGroup;
+    map: any;
+    rideRequest: RideRequest | undefined;
 
-    constructor(private readonly formBuilder: FormBuilder, private httpClient : HttpClient, private passengerService: PassengerService) {
+    constructor(private readonly formBuilder: FormBuilder, private httpClient: HttpClient, private passengerService: PassengerService) {
         this.rejectFormGroup = this.formBuilder.group({
             rejectionReason: ['', [Validators.required]],
         });
+    }
+
+    initMap(): void {
+        this.map = this.map = L.map('map', {
+            center: [45.2396, 19.8227],
+            zoom: 13,
+        });
+
+        const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            minZoom: 3,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        });
+
+        tiles.addTo(this.map);
+    }
+
+    ngAfterViewInit(): void {
+        this.initMap();
     }
 
     ngOnDestroy() {
@@ -78,6 +100,10 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
             responseType: "json",
         });
 
-        obs.subscribe((receivedData: Array<RideRequest>) => this.requests = receivedData);
+        obs.subscribe((receivedData: Array<RideRequest>) => {
+            this.requests = receivedData;
+            this.rideRequest = this.requests[0];
+        });
+
     }
 }

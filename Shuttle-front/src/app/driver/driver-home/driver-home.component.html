@@ -1,61 +1,51 @@
 
 <mat-card>
-    <h1>Pending Requests</h1>
-    <hr/>
+<table>
+    <tr>
+        <td class="half-width"  *ngIf="rideRequest != undefined">
+            <mat-card  class="full-height">
+                <h2>Passengers</h2>
+                <ul>
+                    <li *ngFor="let passenger of rideRequest.passengers">
+                        <img src="./assets/pfp_default.png" width="48px" height="48px" />
+                        {{ passenger.email }}
+                    </li>
+                </ul>
 
-    <mat-card *ngFor="let rideRequest of requests">
-        <table>
-            <tr>
-                <td> <!-- Info column -->
+                <h2>Locations</h2>
+                <ol>
+                    <li *ngFor="let location of getRoutePoints(rideRequest)">
+                        {{ location.address }}
+                    </li>
+                </ol>
 
-                    <h2>Passengers</h2>
-                    <ul>
-                        <li *ngFor="let passenger of rideRequest.passengers">
-                            <img src="./assets/pfp_default.png" width="48px" height="48px" />
-                            {{ passenger.email }}
-                        </li>
-                    </ul>
+                <img src="./assets/ico_baby.png" *ngIf="rideRequest.babyTransport" width="48px" />
+                <img src="./assets/ico_pet.png" *ngIf="rideRequest.babyTransport" width="48px" />
+            </mat-card>
+        </td>
+        <td class="half-width map-frame">
+            <div id="map"></div>
+        </td>
+    </tr>
+    <tr *ngIf="rideRequest != undefined">
+        <mat-radio-group [(ngModel)]="decision">
+            <mat-radio-button value="1" checked >Accept</mat-radio-button>
+            <mat-radio-button value="2">Reject</mat-radio-button>
+        </mat-radio-group>
 
-                    <h2>Locations</h2>
-                    <ol>
-                        <li *ngFor="let location of getRoutePoints(rideRequest)">
-                            {{ location.address }}
-                        </li>
-                    </ol>
-
-                    <img src="./assets/ico_baby.png" *ngIf="rideRequest.babyTransport" width="48px" />
-                    <img src="./assets/ico_pet.png" *ngIf="rideRequest.babyTransport" width="48px" />
-
-                </td>
-                <td> <!-- Map column -->
-
-                </td>
-            </tr>
-            <tr> <!-- Decision button -->
-                <mat-radio-group [(ngModel)]="decision">
-                    <mat-radio-button value="1" checked >Accept</mat-radio-button>
-                    <mat-radio-button value="2">Reject</mat-radio-button>
-                </mat-radio-group>
-
-                <div *ngIf="decision === '1'">
-                    <button mat-raised-button color="primary" (click)="beginRide(rideRequest)">Begin ride</button>
-                </div>
-                <div *ngIf="decision === '2'">
-                    <form [formGroup]="rejectFormGroup" (ngSubmit)="rejectRide(rideRequest)">
-                        <mat-form-field>
-                            <mat-label>Reason</mat-label>
-                            <textarea matInput formControlName="rejectionReason"></textarea>
-                        </mat-form-field>
-                        <br/>
-                        <button type="submit" mat-raised-button color="warn" [disabled]="!rejectFormGroup.valid">Reject ride</button>
-                    </form>
-                </div>
-            </tr>
-        </table>
-
-
-    </mat-card>
-
-
-
+        <div *ngIf="decision === '1'">
+            <button mat-raised-button color="primary" (click)="beginRide(rideRequest)">Begin ride</button>
+        </div>
+        <div *ngIf="decision === '2'">
+            <form [formGroup]="rejectFormGroup" (ngSubmit)="rejectRide(rideRequest)">
+                <mat-form-field>
+                    <mat-label>Reason</mat-label>
+                    <textarea matInput formControlName="rejectionReason"></textarea>
+                </mat-form-field>
+                <br/>
+                <button type="submit" mat-raised-button color="warn" [disabled]="!rejectFormGroup.valid">Reject ride</button>
+            </form>
+        </div>
+    </tr>
+</table>
 </mat-card>
