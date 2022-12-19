@@ -31,6 +31,26 @@
 
                 </td>
             </tr>
+            <tr> <!-- Decision button -->
+                <mat-radio-group [(ngModel)]="decision">
+                    <mat-radio-button value="1" checked >Accept</mat-radio-button>
+                    <mat-radio-button value="2">Reject</mat-radio-button>
+                </mat-radio-group>
+
+                <div *ngIf="decision === '1'">
+                    <button mat-raised-button color="primary" (click)="beginRide(rideRequest)">Begin ride</button>
+                </div>
+                <div *ngIf="decision === '2'">
+                    <form [formGroup]="rejectFormGroup" (ngSubmit)="rejectRide(rideRequest)">
+                        <mat-form-field>
+                            <mat-label>Reason</mat-label>
+                            <textarea matInput formControlName="rejectionReason"></textarea>
+                        </mat-form-field>
+                        <br/>
+                        <button type="submit" mat-raised-button color="warn" [disabled]="!rejectFormGroup.valid">Reject ride</button>
+                    </form>
+                </div>
+            </tr>
         </table>
 
 
