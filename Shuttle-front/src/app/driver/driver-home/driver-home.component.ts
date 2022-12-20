@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-// import * as L from 'leaflet';
+import * as L from 'leaflet';
 import { Observable } from 'rxjs';
 import { Passenger, PassengerService } from 'src/app/passenger/passenger.service';
 import { environment } from 'src/environments/environment';
@@ -48,18 +48,18 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     initMap(): void {
-        // this.map = this.map = L.map('map', {
-        //     center: [45.2396, 19.8227],
-        //     zoom: 13,
-        // });
+        this.map = this.map = L.map('map', {
+            center: [45.2396, 19.8227],
+            zoom: 13,
+        });
 
-        // const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //     maxZoom: 18,
-        //     minZoom: 3,
-        //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        // });
+        const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            minZoom: 3,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        });
 
-        // tiles.addTo(this.map);
+        tiles.addTo(this.map);
     }
 
     ngAfterViewInit(): void {
