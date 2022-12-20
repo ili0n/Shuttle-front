@@ -1,3 +1,4 @@
+import { LocationStrategy } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -36,7 +37,6 @@ interface RideRequest {
     styleUrls: ['./driver-home.component.css']
 })
 export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
-    requests: Array<RideRequest> = [];
     decision: string = "1";
     rejectFormGroup: FormGroup;
     map: any;
@@ -62,13 +62,19 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
         tiles.addTo(this.map);
 
-        L.Routing.control({
-            waypoints: [L.latLng(57.74, 11.94), L.latLng(57.6792, 11.949)],
-          }).addTo(this.map);
+        const waypoints = this.getRoutePoints(this.rideRequest!).map(p => L.latLng(p.latitude, p.longitude));
+        let route = L.Routing.control({
+            waypoints: waypoints,
+            collapsible: true,
+            fitSelectedRoutes: true,
+            plan: L.Routing.plan(waypoints, {draggableWaypoints: false})
+        });
+        route.addTo(this.map);
+        route.hide();
     }
 
     ngAfterViewInit(): void {
-        this.initMap();
+        this.subscribeToRides();
     }
 
     ngOnDestroy() {
@@ -77,7 +83,6 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
     ngOnInit(): void {
         document.body.className = "body-gradient1";
-        this.subscribeToRides();
     }
 
     rejectRide(request: RideRequest) {
@@ -106,9 +111,9 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
         obs.subscribe((receivedData: RideRequest) => {
-            this.requests = [receivedData];
             this.rideRequest = receivedData;
             console.log("Fetched " + this.rideRequest);
+            this.initMap();
         });
 
     }
