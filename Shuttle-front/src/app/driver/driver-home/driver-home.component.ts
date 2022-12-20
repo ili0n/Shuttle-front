@@ -1,10 +1,10 @@
-import { LocationStrategy } from '@angular/common';
+import { JsonPipe, LocationStrategy } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
-import { Observable } from 'rxjs';
+import { interval, Observable, startWith, Subscription } from 'rxjs';
 import { Passenger, PassengerService } from 'src/app/passenger/passenger.service';
 import { environment } from 'src/environments/environment';
 
@@ -40,11 +40,16 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     decision: string = "1";
     rejectFormGroup: FormGroup;
     map: any;
-    rideRequest: RideRequest | undefined;
+    rideRequest: RideRequest | null = null;
+    private pull: Subscription;
 
     constructor(private readonly formBuilder: FormBuilder, private httpClient: HttpClient, private passengerService: PassengerService) {
         this.rejectFormGroup = this.formBuilder.group({
             rejectionReason: ['', [Validators.required]],
+        });
+
+        this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(r => {
+            this.pullNewRideRequest();
         });
     }
 
@@ -61,8 +66,11 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
         tiles.addTo(this.map);
+    }
 
+    fetchRouteToMap(): void {
         const waypoints = this.getRoutePoints(this.rideRequest!).map(p => L.latLng(p.latitude, p.longitude));
+        console.log(waypoints)
         let route = L.Routing.control({
             waypoints: waypoints,
             collapsible: true,
@@ -81,7 +89,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.subscribeToRides();
+        //this.subscribeToRides();
     }
 
     ngOnDestroy() {
@@ -95,6 +103,8 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     rejectRide(request: RideRequest) {
         if (this.rejectFormGroup.valid) {
             console.log("Send rejection REST call");
+            this.rideRequest = null;
+            this.map = null;
         }
     }
 
@@ -108,7 +118,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         return res;
     }
 
-    subscribeToRides() {
+    pullNewRideRequest() {
         // TODO: Get driver ID from session.
         let path: string = 'api/ride/driver/' + 1 + '/ride-requests';
 
@@ -118,9 +128,14 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
         obs.subscribe((receivedData: RideRequest) => {
-            this.rideRequest = receivedData;
-            console.log("Fetched " + this.rideRequest);
-            this.initMap();
+            if (receivedData !== null) {
+                this.rideRequest = receivedData;
+
+                if (this.map == null) {
+                    this.initMap();
+                    this.fetchRouteToMap();
+                }
+            }
         });
 
     }
