@@ -67,7 +67,14 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
             waypoints: waypoints,
             collapsible: true,
             fitSelectedRoutes: true,
-            plan: L.Routing.plan(waypoints, {draggableWaypoints: false})
+            routeWhileDragging: false,
+            plan: L.Routing.plan(waypoints, {draggableWaypoints: false, addWaypoints: false}),
+            lineOptions:
+            {
+                missingRouteTolerance: 999, // TODO: ???
+                extendToWaypoints: true,
+                addWaypoints: false
+            }
         });
         route.addTo(this.map);
         route.hide();
