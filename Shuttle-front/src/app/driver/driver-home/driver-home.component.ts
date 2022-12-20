@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as L from 'leaflet';
+import 'leaflet-routing-machine';
 import { Observable } from 'rxjs';
 import { Passenger, PassengerService } from 'src/app/passenger/passenger.service';
 import { environment } from 'src/environments/environment';
@@ -60,6 +61,10 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
         tiles.addTo(this.map);
+
+        L.Routing.control({
+            waypoints: [L.latLng(57.74, 11.94), L.latLng(57.6792, 11.949)],
+          }).addTo(this.map);
     }
 
     ngAfterViewInit(): void {
