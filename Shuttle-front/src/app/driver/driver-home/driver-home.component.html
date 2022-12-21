@@ -2,7 +2,7 @@
 <mat-card>
 <table *ngIf="rideRequest != null">
     <tr>
-        <td class="half-width"  *ngIf="rideRequest != undefined">
+        <td class="half-width">
             <mat-card  class="full-height">
                 <h2>Passengers</h2>
                 <ul>
@@ -27,7 +27,7 @@
             <div id="map"></div>
         </td>
     </tr>
-    <tr *ngIf="rideRequest != undefined">
+    <tr>
         <mat-radio-group [(ngModel)]="decision">
             <mat-radio-button value="1" checked >Accept</mat-radio-button>
             <mat-radio-button value="2">Reject</mat-radio-button>

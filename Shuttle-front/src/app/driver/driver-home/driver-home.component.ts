@@ -6,6 +6,7 @@ import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { interval, Observable, startWith, Subscription } from 'rxjs';
 import { Passenger, PassengerService } from 'src/app/passenger/passenger.service';
+import { waitForElement } from 'src/app/util/dom-util';
 import { environment } from 'src/environments/environment';
 
 interface RideRequestPassenger {
@@ -36,10 +37,10 @@ interface RideRequest {
     templateUrl: './driver-home.component.html',
     styleUrls: ['./driver-home.component.css']
 })
-export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
+export class DriverHomeComponent implements OnInit, OnDestroy {
     decision: string = "1";
     rejectFormGroup: FormGroup;
-    map: any;
+    private map: any;
     rideRequest: RideRequest | null = null;
     private pull: Subscription;
 
@@ -53,8 +54,8 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-    initMap(): void {
-        this.map = this.map = L.map('map', {
+    initMap(id: string): void {
+        this.map = this.map = L.map(id, {
             center: [45.2396, 19.8227],
             zoom: 13,
         });
@@ -70,7 +71,6 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
     fetchRouteToMap(): void {
         const waypoints = this.getRoutePoints(this.rideRequest!).map(p => L.latLng(p.latitude, p.longitude));
-        console.log(waypoints)
         let route = L.Routing.control({
             waypoints: waypoints,
             collapsible: true,
@@ -86,10 +86,6 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         });
         route.addTo(this.map);
         route.hide();
-    }
-
-    ngAfterViewInit(): void {
-        //this.subscribeToRides();
     }
 
     ngOnDestroy() {
@@ -132,8 +128,13 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.rideRequest = receivedData;
 
                 if (this.map == null) {
-                    this.initMap();
-                    this.fetchRouteToMap();
+                    console.log("Fetch new map data!");
+
+                    const mapId = "map";
+                    waitForElement("#" + mapId).then(e => {
+                        this.initMap(mapId);
+                        this.fetchRouteToMap();
+                    });
                 }
             }
         });
