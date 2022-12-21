@@ -1,4 +1,84 @@
+<mat-card id="root-card">
 
+    <div class="row">
+        <!-- Left side - map -->
+        <div class="column left">
+            <div id="map"></div>
+        </div>
+
+        <!-- Right side - info -->
+        <div class="column right" *ngIf="rideRequest != null">
+
+            <div class="section align-mat-icon">
+                <mat-icon  aria-hidden="false" aria-label="Example home icon">person</mat-icon>
+                <span class="text">Passengers</span>
+            </div>
+            <mat-list>
+                <mat-list-item *ngFor="let passenger of rideRequest.passengers">
+                    <table>
+                        <tr>
+                            <td><img src="./assets/pfp_default.png" width="48px" height="48px" /></td>
+                            <td>
+                                <span matListItemTitle>{{ passenger.email }}</span>
+                                <span matListItemLine>{{ passenger.id }}</span>
+                            </td>
+                        </tr>
+                    </table>
+                </mat-list-item>
+            </mat-list>
+            <mat-divider></mat-divider>
+
+            <div class="section align-mat-icon">
+                <mat-icon  aria-hidden="false" aria-label="Example home icon">location_on</mat-icon>
+                <span class="text">Locations</span>
+            </div>
+            <mat-list>
+                <mat-list-item *ngFor="let location of getRoutePoints(rideRequest)">
+
+                    <span matListItemTitle>{{ location.address }}</span>
+                </mat-list-item>
+            </mat-list>
+            <mat-divider></mat-divider>
+
+            <div class="section align-mat-icon">
+                <mat-icon  aria-hidden="false" aria-label="Example home icon">info</mat-icon>
+                <span class="text">Other</span>
+            </div>
+            <mat-list>
+                <mat-list-item class="align-mat-icon other-info">
+                    <mat-icon>child_care</mat-icon><mat-checkbox class="example-margin" [(ngModel)]="rideRequest.babyTransport" disabled="true"></mat-checkbox>
+                </mat-list-item>
+                <mat-list-item class="align-mat-icon other-info">
+                    <mat-icon>pets</mat-icon><mat-checkbox class="example-margin" [(ngModel)]="rideRequest.petTransport" disabled="true"></mat-checkbox>
+                </mat-list-item>
+            </mat-list>
+            <mat-divider></mat-divider>
+
+            <mat-radio-group [(ngModel)]="decision">
+                <mat-radio-button value="1" checked >Accept</mat-radio-button>
+                <mat-radio-button value="2">Reject</mat-radio-button>
+            </mat-radio-group>
+
+            <div *ngIf="decision === '1'">
+                <button mat-raised-button color="primary" (click)="beginRide(rideRequest)">Begin ride</button>
+            </div>
+            <div *ngIf="decision === '2'">
+                <form [formGroup]="rejectFormGroup" (ngSubmit)="rejectRide(rideRequest)">
+                    <mat-form-field>
+                        <mat-label>Reason</mat-label>
+                        <textarea matInput formControlName="rejectionReason"></textarea>
+                    </mat-form-field>
+                    <br/>
+                    <button type="submit" mat-raised-button color="warn" [disabled]="!rejectFormGroup.valid">Reject ride</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</mat-card>
+
+
+<!--
 <mat-card>
 <table *ngIf="rideRequest != null">
     <tr>
@@ -28,24 +108,7 @@
         </td>
     </tr>
     <tr>
-        <mat-radio-group [(ngModel)]="decision">
-            <mat-radio-button value="1" checked >Accept</mat-radio-button>
-            <mat-radio-button value="2">Reject</mat-radio-button>
-        </mat-radio-group>
 
-        <div *ngIf="decision === '1'">
-            <button mat-raised-button color="primary" (click)="beginRide(rideRequest)">Begin ride</button>
-        </div>
-        <div *ngIf="decision === '2'">
-            <form [formGroup]="rejectFormGroup" (ngSubmit)="rejectRide(rideRequest)">
-                <mat-form-field>
-                    <mat-label>Reason</mat-label>
-                    <textarea matInput formControlName="rejectionReason"></textarea>
-                </mat-form-field>
-                <br/>
-                <button type="submit" mat-raised-button color="warn" [disabled]="!rejectFormGroup.valid">Reject ride</button>
-            </form>
-        </div>
     </tr>
 </table>
-</mat-card>
+</mat-card> -->

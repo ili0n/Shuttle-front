@@ -89,11 +89,11 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        document.body.className = "";
+        //document.body.className = "";
     }
 
     ngOnInit(): void {
-        document.body.className = "body-gradient1";
+        //document.body.className = "body-gradient1";
     }
 
     rejectRide(request: RideRequest) {
@@ -124,7 +124,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
         });
 
         obs.subscribe((receivedData: RideRequest) => {
-            if (receivedData !== null) {
+            if (receivedData !== null && this.rideRequest === null) {
                 this.rideRequest = receivedData;
 
                 if (this.map == null) {
