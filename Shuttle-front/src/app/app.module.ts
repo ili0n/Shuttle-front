@@ -17,6 +17,7 @@ import { ResetPasswordComponent } from './login/component/reset-password/reset-p
 import { SharedModule } from './shared/shared.module';
 import { DriverProfileComponent } from './driver-profile/driver-profile.component';
 import { DriverHomeComponent } from './driver/driver-home/driver-home.component';
+import { RejectRideDialogComponent } from './driver/reject-ride-dialog/reject-ride-dialog.component';
 
 @NgModule({
     declarations: [
@@ -28,6 +29,7 @@ import { DriverHomeComponent } from './driver/driver-home/driver-home.component'
         ResetPasswordComponent,
         DriverProfileComponent,
         DriverHomeComponent,
+        RejectRideDialogComponent,
     ],
     imports: [
         HttpClientModule,

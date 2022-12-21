@@ -2,12 +2,15 @@ import { JsonPipe, LocationStrategy } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { throwToolbarMixedModesError } from '@angular/material/toolbar';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { interval, Observable, startWith, Subscription } from 'rxjs';
 import { Passenger, PassengerService } from 'src/app/passenger/passenger.service';
 import { waitForElement } from 'src/app/util/dom-util';
 import { environment } from 'src/environments/environment';
+import { RejectRideDialogComponent } from '../reject-ride-dialog/reject-ride-dialog.component';
 
 interface RideRequestPassenger {
     id: number,
@@ -39,23 +42,19 @@ interface RideRequest {
 })
 export class DriverHomeComponent implements OnInit, OnDestroy {
     decision: string = "1";
-    rejectFormGroup: FormGroup;
     private map: any;
+    private mapRoute: L.Routing.Control | null = null;
     rideRequest: RideRequest | null = null;
     private pull: Subscription;
 
-    constructor(private readonly formBuilder: FormBuilder, private httpClient: HttpClient, private passengerService: PassengerService) {
-        this.rejectFormGroup = this.formBuilder.group({
-            rejectionReason: ['', [Validators.required]],
-        });
-
+    constructor(private readonly formBuilder: FormBuilder, private httpClient: HttpClient, private passengerService: PassengerService, public dialog: MatDialog) {
         this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(r => {
             this.pullNewRideRequest();
         });
     }
 
     initMap(id: string): void {
-        this.map = this.map = L.map(id, {
+        this.map = L.map(id, {
             center: [45.2396, 19.8227],
             zoom: 13,
         });
@@ -71,12 +70,12 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
 
     fetchRouteToMap(): void {
         const waypoints = this.getRoutePoints(this.rideRequest!).map(p => L.latLng(p.latitude, p.longitude));
-        let route = L.Routing.control({
+        this.mapRoute = L.Routing.control({
             waypoints: waypoints,
             collapsible: true,
             fitSelectedRoutes: true,
             routeWhileDragging: false,
-            plan: L.Routing.plan(waypoints, {draggableWaypoints: false, addWaypoints: false}),
+            plan: L.Routing.plan(waypoints, { draggableWaypoints: false, addWaypoints: false }),
             lineOptions:
             {
                 missingRouteTolerance: 999, // TODO: ???
@@ -84,9 +83,10 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
                 addWaypoints: false
             }
         });
-        route.addTo(this.map);
-        route.hide();
+        this.mapRoute.addTo(this.map);
+        this.mapRoute.hide();
     }
+
 
     ngOnDestroy() {
         document.body.className = "";
@@ -96,16 +96,18 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
         document.body.className = "body-graybg";
     }
 
-    rejectRide(request: RideRequest) {
-        if (this.rejectFormGroup.valid) {
-            console.log("Send rejection REST call");
-            this.rideRequest = null;
-            this.map = null;
+    rejectRide(request: RideRequest, reason: string) {
+        console.log("Reject ride, reason: " + reason);
+        this.rideRequest = null;
+
+        if (this.mapRoute != null) {
+            this.mapRoute.remove();
+            this.mapRoute = null;
         }
     }
 
     beginRide(request: RideRequest) {
-        console.log("Begin this ride.");
+        console.log("Begin ride.");
     }
 
     getRoutePoints(request: RideRequest): Array<RideRequestSingleLocation> {
@@ -124,20 +126,31 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
         });
 
         obs.subscribe((receivedData: RideRequest) => {
-            if (receivedData !== null && this.rideRequest === null) {
+            if (receivedData !== null && this.rideRequest == null) {
                 this.rideRequest = receivedData;
 
-                if (this.map == null) {
+                if (this.map == null || this.mapRoute == null) {
                     console.log("Fetch new map data!");
-
-                    const mapId = "map";
-                    waitForElement("#" + mapId).then(e => {
-                        this.initMap(mapId);
+                    waitForElement("#map").then(e => {
+                        if (this.map == null) {
+                            this.initMap("map");
+                        }
                         this.fetchRouteToMap();
                     });
                 }
             }
         });
+    }
 
+    openRejectionDialog(): void {
+        const dialogRef = this.dialog.open(RejectRideDialogComponent, { data: "" });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result != undefined) {
+                if (this.rideRequest != null) {
+                    this.rejectRide(this.rideRequest, result);
+                }
+            }
+        });
     }
 }
