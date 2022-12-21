@@ -8,6 +8,7 @@ import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { interval, Observable, startWith, Subscription } from 'rxjs';
 import { Passenger, PassengerService } from 'src/app/passenger/passenger.service';
+import { SharedService } from 'src/app/shared/shared.service';
 import { waitForElement } from 'src/app/util/dom-util';
 import { environment } from 'src/environments/environment';
 import { RejectRideDialogComponent } from '../reject-ride-dialog/reject-ride-dialog.component';
@@ -47,7 +48,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
     rideRequest: RideRequest | null = null;
     private pull: Subscription;
 
-    constructor(private readonly formBuilder: FormBuilder, private httpClient: HttpClient, private passengerService: PassengerService, public dialog: MatDialog) {
+    constructor(private readonly formBuilder: FormBuilder, private httpClient: HttpClient, private passengerService: PassengerService, public dialog: MatDialog, private sharedService: SharedService) {
         this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(r => {
             this.pullNewRideRequest();
         });
@@ -104,6 +105,8 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
             this.mapRoute.remove();
             this.mapRoute = null;
         }
+
+        this.sharedService.showSnackBar("Ride request rejected.", 4000);
     }
 
     beginRide(request: RideRequest) {
