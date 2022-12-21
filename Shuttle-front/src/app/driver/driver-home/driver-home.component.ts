@@ -89,11 +89,11 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        //document.body.className = "";
+        document.body.className = "";
     }
 
     ngOnInit(): void {
-        //document.body.className = "body-gradient1";
+        document.body.className = "body-graybg";
     }
 
     rejectRide(request: RideRequest) {

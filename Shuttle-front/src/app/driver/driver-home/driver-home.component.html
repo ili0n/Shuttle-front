@@ -1,5 +1,4 @@
-<mat-card id="root-card">
-
+<div id="root-card">
     <div class="row">
         <!-- Left side - map -->
         <div class="column left">
@@ -60,7 +59,7 @@
             </mat-radio-group>
 
             <div *ngIf="decision === '1'">
-                <button mat-raised-button color="primary" (click)="beginRide(rideRequest)">Begin ride</button>
+                <button mat-raised-button color="primary" (click)="beginRide(rideRequest)"><mat-icon>play_circle_filled</mat-icon> Begin ride</button>
             </div>
             <div *ngIf="decision === '2'">
                 <form [formGroup]="rejectFormGroup" (ngSubmit)="rejectRide(rideRequest)">
@@ -69,13 +68,12 @@
                         <textarea matInput formControlName="rejectionReason"></textarea>
                     </mat-form-field>
                     <br/>
-                    <button type="submit" mat-raised-button color="warn" [disabled]="!rejectFormGroup.valid">Reject ride</button>
+                    <button type="submit" mat-raised-button color="warn" [disabled]="!rejectFormGroup.valid"><mat-icon>stop</mat-icon> Reject ride</button>
                 </form>
             </div>
         </div>
     </div>
-
-</mat-card>
+</div>
 
 
 <!--

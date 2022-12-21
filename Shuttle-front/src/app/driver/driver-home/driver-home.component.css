@@ -9,8 +9,10 @@
 
 .column {
     flex: 50%;
-    border: 1px solid black;
     height: 800px;
+    margin-left: 8px;
+    margin-right: 8px;
+    background-color: white;
 }
 
 .left {
