@@ -8,12 +8,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { RegisterComponent } from './register/register.component'
 
-import { LoginComponent } from './login/component/login/login.component';
+import { LoginComponent } from './auth/login/component/login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { MaterialModule } from 'src/infrastructure/material.module';
 import { AdminModule } from './admin/admin.module';
-import { ForgotPasswordComponent } from './login/component/forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from './login/component/reset-password/reset-password.component';
+import { ForgotPasswordComponent } from './auth/login/component/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './auth/login/component/reset-password/reset-password.component';
 import { SharedModule } from './shared/shared.module';
 import { DriverProfileComponent } from './driver-profile/driver-profile.component';
 import { DriverHomeComponent } from './driver/driver-home/driver-home.component';
