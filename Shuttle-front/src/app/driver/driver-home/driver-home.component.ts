@@ -1,13 +1,11 @@
-import { JsonPipe, LocationStrategy } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { throwToolbarMixedModesError } from '@angular/material/toolbar';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { interval, Observable, startWith, Subscription } from 'rxjs';
-import { Passenger, PassengerService } from 'src/app/passenger/passenger.service';
+import { PassengerService } from 'src/app/passenger/passenger.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { waitForElement } from 'src/app/util/dom-util';
 import { environment } from 'src/environments/environment';
@@ -129,15 +127,17 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
         });
 
         obs.subscribe((receivedData: RideRequest) => {
+            if (this.map == null) {
+                this.initMap("map");
+            }
+
             if (receivedData !== null && this.rideRequest == null) {
                 this.rideRequest = receivedData;
 
                 if (this.map == null || this.mapRoute == null) {
                     console.log("Fetch new map data!");
                     waitForElement("#map").then(e => {
-                        if (this.map == null) {
-                            this.initMap("map");
-                        }
+
                         this.fetchRouteToMap();
                     });
                 }
