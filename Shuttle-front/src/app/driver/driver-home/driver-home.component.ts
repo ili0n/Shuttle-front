@@ -124,7 +124,10 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
 
     pullNewRideRequest() {
         // TODO: Get driver ID from session.
-        let path: string = 'api/ride/driver/' + 1 + '/ride-requests';
+        const driverID = 1;
+        let path: string = 'api/ride/driver/' + driverID + '/active';
+
+        // TODO: Move this observable into the service.
 
         const obs: Observable<RideRequest> = this.httpClient.get<RideRequest>(environment.serverOrigin + path, {
             observe: "body",
