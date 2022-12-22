@@ -1,38 +1,12 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
-import { interval, Observable, startWith, Subscription } from 'rxjs';
-import { RideService } from 'src/app/ride/ride.service';
+import { interval, startWith, Subscription } from 'rxjs';
+import { RideRequest, RideRequestSingleLocation, RideService } from 'src/app/ride/ride.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { waitForElement } from 'src/app/util/dom-util';
-import { environment } from 'src/environments/environment';
 import { RejectRideDialogComponent } from '../reject-ride-dialog/reject-ride-dialog.component';
-
-interface RideRequestPassenger {
-    id: number,
-    email: string,
-}
-
-interface RideRequestSingleLocation {
-    address: string,
-    latitude: number,
-    longitude: number,
-}
-
-interface RideRequestLocation {
-    departure: RideRequestSingleLocation,
-    destination: RideRequestSingleLocation,
-}
-
-interface RideRequest {
-    id: number,
-    passengers: Array<RideRequestPassenger>,
-    locations: Array<RideRequestLocation>,
-    babyTransport: boolean,
-    petTransport: boolean,
-}
 
 @Component({
     selector: 'app-driver-home',
@@ -46,7 +20,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
     rideRequest: RideRequest | null = null;
     private pull: Subscription;
 
-    constructor(private httpClient: HttpClient, public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService) {
+    constructor(public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService) {
         this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(() => {
             this.pullNewRideRequest();
         });
@@ -125,14 +99,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
     pullNewRideRequest() {
         // TODO: Get driver ID from session.
         const driverID = 1;
-        let path: string = 'api/ride/driver/' + driverID + '/active';
-
-        // TODO: Move this observable into the service.
-
-        const obs: Observable<RideRequest> = this.httpClient.get<RideRequest>(environment.serverOrigin + path, {
-            observe: "body",
-            responseType: "json",
-        });
+        const obs = this.rideService.find(driverID);
 
         obs.subscribe((receivedData: RideRequest) => {
             if (this.map == null) {

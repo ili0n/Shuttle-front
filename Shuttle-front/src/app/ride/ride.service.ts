@@ -7,6 +7,30 @@ export interface RejectionDTO {
     reason: string
 }
 
+export interface RideRequestPassenger {
+    id: number,
+    email: string,
+}
+
+export interface RideRequestSingleLocation {
+    address: string,
+    latitude: number,
+    longitude: number,
+}
+
+export interface RideRequestLocation {
+    departure: RideRequestSingleLocation,
+    destination: RideRequestSingleLocation,
+}
+
+export interface RideRequest {
+    id: number,
+    passengers: Array<RideRequestPassenger>,
+    locations: Array<RideRequestLocation>,
+    babyTransport: boolean,
+    petTransport: boolean,
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -21,5 +45,10 @@ export class RideService {
 
         const options: any = { responseType: 'json' };
         return this.httpClient.put(`${this.url}/${rideID}/cancel`, rejectionDTO, options);
+    }
+
+    public find(driverId: number): Observable<any> {
+        const options: any = { responseType: 'json' };
+        return this.httpClient.get<RideRequest>(`${this.url}/driver/${driverId}/active`, options);
     }
 }
