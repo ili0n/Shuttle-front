@@ -1,28 +1,119 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { interval, startWith, Subscription } from 'rxjs';
-import { RideRequest, RideRequestSingleLocation, RideService } from 'src/app/ride/ride.service';
+import { Ride, RideRequestSingleLocation, RideService } from 'src/app/ride/ride.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { waitForElement } from 'src/app/util/dom-util';
 import { RejectRideDialogComponent } from '../reject-ride-dialog/reject-ride-dialog.component';
+
+enum State {
+    JUST_MAP,
+    RIDE_REQUEST,
+    RIDE_IN_PROGRESS,
+}
 
 @Component({
     selector: 'app-driver-home',
     templateUrl: './driver-home.component.html',
     styleUrls: ['./driver-home.component.css']
 })
-export class DriverHomeComponent implements OnInit, OnDestroy {
-    decision: string = "1";
+export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private map: any;
     private mapRoute: L.Routing.Control | null = null;
-    rideRequest: RideRequest | null = null;
+    ride: Ride | null = null;
     private pull: Subscription;
+    private state: State = State.JUST_MAP;
+
 
     constructor(public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService) {
         this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(() => {
             this.pullNewRideRequest();
+        });
+    }
+
+    ngOnDestroy() {
+        document.body.className = "";
+    }
+
+    ngOnInit(): void {
+        document.body.className = "body-graybg";
+    }
+
+    ngAfterViewInit(): void {
+        this.initMap("map");
+    }
+
+    pullNewRideRequest() {
+        // TODO: Get driver ID from session.
+        const driverID = 1;
+        const obs = this.rideService.find(driverID);
+
+        obs.subscribe((receivedData: Ride) => {
+            if (receivedData == null) {
+                return;
+            }
+
+            if (this.state == State.JUST_MAP) {
+                this.state = State.RIDE_REQUEST;
+                this.ride = receivedData;
+                this.fetchRouteToMap();
+            }
+        });
+    }
+
+    hasRideRequest(): boolean {
+        return this.state == State.RIDE_REQUEST;
+    }
+
+    hasActiveRide(): boolean {
+        return this.state == State.RIDE_IN_PROGRESS;
+    }
+
+    beginRide() {
+        const obs = this.rideService.accept(this.ride!.id);
+        obs.subscribe({
+            next: (response) => {
+                this.sharedService.showSnackBar("Ride started.", 4000);
+                console.log(response);
+            },
+            error: (error) => {
+                this.sharedService.showSnackBar("Could not start the ride.", 4000);
+                console.error(error);
+            }
+        })
+    }
+
+    rejectRide(reason: string) {
+        const obs = this.rideService.reject(this.ride!.id, reason);
+        obs.subscribe({
+            next: (response) => {
+                this.state = State.JUST_MAP;
+
+                if (this.mapRoute != null) {
+                    this.mapRoute.remove();
+                }
+
+                this.sharedService.showSnackBar("Ride request rejected.", 4000);
+                console.log(response);
+            }, error: (error) => {
+                this.sharedService.showSnackBar("Could not cancel the ride.", 4000);
+                console.error(error);
+            }
+        });
+
+    }
+
+    openRejectionDialog(): void {
+        const dialogRef = this.dialog.open(RejectRideDialogComponent, { data: "" });
+
+        dialogRef.afterClosed().subscribe(reason => {
+            if (reason != undefined) {
+                if (this.ride != null) {
+                    this.rejectRide(reason);
+                }
+            }
         });
     }
 
@@ -42,7 +133,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
     }
 
     fetchRouteToMap(): void {
-        const waypoints = this.getRoutePoints(this.rideRequest!).map(p => L.latLng(p.latitude, p.longitude));
+        const waypoints = this.getRoutePoints(this.ride!).map(p => L.latLng(p.latitude, p.longitude));
         this.mapRoute = L.Routing.control({
             waypoints: waypoints,
             collapsible: true,
@@ -60,85 +151,9 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
         this.mapRoute.hide();
     }
 
-
-    ngOnDestroy() {
-        document.body.className = "";
-    }
-
-    ngOnInit(): void {
-        document.body.className = "body-graybg";
-    }
-
-    rejectRide(reason: string) {
-        const obs = this.rideService.reject(this.rideRequest!.id, reason);
-        obs.subscribe({
-            next: (response) => {
-            if (this.mapRoute != null) {
-                this.mapRoute.remove();
-                this.mapRoute = null;
-            }
-            this.rideRequest = null;
-            this.sharedService.showSnackBar("Ride request rejected.", 4000);
-        }, error: (error) => {
-            this.sharedService.showSnackBar("Could not cancel the ride.", 4000);
-            console.error(error);
-        }});
-
-    }
-
-    beginRide() {
-        const obs = this.rideService.accept(this.rideRequest!.id);
-        obs.subscribe({
-            next: (response) => {
-                this.sharedService.showSnackBar("Ride started.", 4000);
-                console.log(response);
-            },
-            error: (error) => {
-                this.sharedService.showSnackBar("Could not start the ride.", 4000);
-                console.error(error);
-            }
-        })
-    }
-
-    getRoutePoints(request: RideRequest): Array<RideRequestSingleLocation> {
+    getRoutePoints(request: Ride): Array<RideRequestSingleLocation> {
         let res = request.locations.map(l => l.departure);
         res.push(request.locations[request.locations.length - 1].destination);
         return res;
-    }
-
-    pullNewRideRequest() {
-        // TODO: Get driver ID from session.
-        const driverID = 1;
-        const obs = this.rideService.find(driverID);
-
-        obs.subscribe((receivedData: RideRequest) => {
-            if (this.map == null) {
-                this.initMap("map");
-            }
-
-            if (receivedData !== null && this.rideRequest == null) {
-                this.rideRequest = receivedData;
-
-                if (this.map == null || this.mapRoute == null) {
-                    console.log("Fetch new map data!");
-                    waitForElement("#map").then(() => {
-
-                        this.fetchRouteToMap();
-                    });
-                }
-            }
-        });
-    }
-
-    openRejectionDialog(): void {
-        const dialogRef = this.dialog.open(RejectRideDialogComponent, { data: "" });
-
-        dialogRef.afterClosed().subscribe(reason => {
-            if (reason != undefined) {
-                if (this.rideRequest != null) {
-                    this.rejectRide(reason);
-                }
-            }
-        });
     }
 }
