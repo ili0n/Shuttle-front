@@ -38,6 +38,11 @@ export class RideService {
     constructor(private httpClient: HttpClient) { }
     readonly url: string = environment.serverOrigin + 'api/ride'
 
+    public accept(rideID: number): Observable<any> {
+        const options: any = { responseType: 'json' };
+        return this.httpClient.put(`${this.url}/${rideID}/accept`, options);
+    }
+
     public reject(rideID: number, reason: string): Observable<any> {
         const rejectionDTO: RejectionDTO = {
             reason: reason,

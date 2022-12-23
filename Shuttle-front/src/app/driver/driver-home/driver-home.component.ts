@@ -87,7 +87,17 @@ export class DriverHomeComponent implements OnInit, OnDestroy {
     }
 
     beginRide() {
-        console.log("Begin ride.");
+        const obs = this.rideService.accept(this.rideRequest!.id);
+        obs.subscribe({
+            next: (response) => {
+                this.sharedService.showSnackBar("Ride started.", 4000);
+                console.log(response);
+            },
+            error: (error) => {
+                this.sharedService.showSnackBar("Could not start the ride.", 4000);
+                console.error(error);
+            }
+        })
     }
 
     getRoutePoints(request: RideRequest): Array<RideRequestSingleLocation> {
