@@ -33,7 +33,8 @@ export interface Ride {
     locations: Array<RideRequestLocation>,
     babyTransport: boolean,
     petTransport: boolean,
-    status: RideStatus  
+    status: RideStatus,
+    startTime: string,
 }
 
 @Injectable({

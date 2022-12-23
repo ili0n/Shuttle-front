@@ -24,7 +24,11 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private mapRoute: L.Routing.Control | null = null;
     ride: Ride | null = null;
     private pull: Subscription;
-    private state: State = State.JUST_MAP;
+    State = State;
+    state: State = State.JUST_MAP;
+    timer: NodeJS.Timer | null = null;
+    timerText: string = "";
+
 
 
     constructor(public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService) {
@@ -75,6 +79,16 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         const obs = this.rideService.accept(this.ride!.id);
         obs.subscribe({
             next: (response) => {
+                this.state = State.RIDE_IN_PROGRESS;
+
+                // We need the start time to measure elapsed time, but the time should be
+                // set on the backend. Since the accuracy of elapsed time isn't important
+                // (for now), we can set it here. TODO: Reconsider this.
+                this.ride!.startTime = new Date().toISOString();
+                this.timer = setInterval(() => {
+                    this.timerText = this.getElapsedTime();
+                });
+
                 this.sharedService.showSnackBar("Ride started.", 4000);
                 console.log(response);
             },
@@ -102,7 +116,20 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
                 console.error(error);
             }
         });
+    }
 
+    finishRide() {
+        throw new Error('Method not implemented.');
+    }
+
+    private getElapsedTime(): string {
+        let timeDiffMs: number = Date.now() - new Date(this.ride!.startTime).getTime();
+        let time: string = new Date(timeDiffMs).toISOString().substr(11, 8);
+
+        if (time.substr(0, 2) == "00") {
+            time = time.substr(3, 5);
+        }
+        return time;
     }
 
     openRejectionDialog(): void {

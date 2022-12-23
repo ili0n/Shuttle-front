@@ -67,3 +67,8 @@ h3 {
     margin-top: 12px;
     margin-left: 16px;
 }
+
+
+#elapsed-time {
+    font-size: 1.65em;
+}
