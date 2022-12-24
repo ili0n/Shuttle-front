@@ -1,0 +1,6 @@
+<div id="navigation">
+    <app-admin-navbar *ngIf="role === 'admin'"></app-admin-navbar>
+    <app-passenger-navbar *ngIf="role === 'passenger'"></app-passenger-navbar>
+    <app-driver-navbar *ngIf="role === 'driver'"></app-driver-navbar>
+    <app-unregistered-navbar *ngIf="role === null"></app-unregistered-navbar>
+</div>

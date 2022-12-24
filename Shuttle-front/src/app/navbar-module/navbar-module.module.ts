@@ -8,6 +8,7 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatButtonModule} from "@angular/material/button";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatIconModule} from "@angular/material/icon";
+import { NavbarComponent } from './navbar/navbar.component';
 
 
 
@@ -16,12 +17,14 @@ import {MatIconModule} from "@angular/material/icon";
     AdminNavbarComponent,
     UnregisteredNavbarComponent,
     DriverNavbarComponent,
-    PassengerNavbarComponent
+    PassengerNavbarComponent,
+    NavbarComponent
   ],
   exports: [
     DriverNavbarComponent,
     AdminNavbarComponent,
-    PassengerNavbarComponent
+    PassengerNavbarComponent,
+    NavbarComponent
   ],
   imports: [
     CommonModule,
