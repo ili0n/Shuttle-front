@@ -10,8 +10,10 @@ a, a:visited, a:active {
   text-decoration: none;
 }
 
-.divider {
-  margin-left: 80%;
+#buttons {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end
 }
 
 .button {

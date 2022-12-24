@@ -7,4 +7,9 @@ import { Component } from '@angular/core';
 })
 export class DriverNavbarComponent {
 
+    logout() {
+        localStorage.clear();
+        window.location.reload();
+    }
+
 }

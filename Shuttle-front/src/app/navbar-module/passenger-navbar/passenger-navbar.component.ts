@@ -6,5 +6,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./passenger-navbar.component.css']
 })
 export class PassengerNavbarComponent {
-
+    logout() {
+        localStorage.clear();
+        window.location.reload();
+    }
 }

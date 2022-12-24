@@ -27,6 +27,12 @@ a, a:visited, a:active {
   background-color: #4393CD;
 }
 
+#buttons {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end
+}
+
 #sign-out {
   background-color: #4393CD;
   color: white;
@@ -35,6 +41,4 @@ a, a:visited, a:active {
 mat-icon {
   color: white;
 }
-.divider {
-  margin-left: 80%;
-}
+

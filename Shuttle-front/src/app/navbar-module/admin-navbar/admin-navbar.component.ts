@@ -6,5 +6,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./admin-navbar.component.css']
 })
 export class AdminNavbarComponent {
-
+    logout() {
+        localStorage.clear();
+        window.location.reload();
+    }
 }

@@ -1,27 +1,26 @@
 <mat-toolbar class="admin">
-  <a routerLink="">
-    shuttle
-  </a>
-  <button mat-icon-button class="divider" >
-    <mat-icon>home</mat-icon>
-  </button>
-  <button mat-icon-button >
-    <mat-icon>history</mat-icon>
-  </button>
-  <button mat-icon-button >
-    <mat-icon>directions_car</mat-icon>
-  </button>
-  <button mat-icon-button >
-    <mat-icon>map</mat-icon>
-  </button>
-  <button mat-icon-button >
-    <mat-icon>chat</mat-icon>
-  </button>
-  <button mat-icon-button >
-    <mat-icon>notifications</mat-icon>
-  </button>
-
-
-  <button mat-flat-button class="button" id="sign-out">Sign out</button>
-
+    <a routerLink="">
+        shuttle
+    </a>
+    <div id="buttons">
+        <button mat-icon-button>
+            <mat-icon>home</mat-icon>
+        </button>
+        <button mat-icon-button>
+            <mat-icon>history</mat-icon>
+        </button>
+        <button mat-icon-button>
+            <mat-icon>directions_car</mat-icon>
+        </button>
+        <button mat-icon-button>
+            <mat-icon>map</mat-icon>
+        </button>
+        <button mat-icon-button>
+            <mat-icon>chat</mat-icon>
+        </button>
+        <button mat-icon-button>
+            <mat-icon>notifications</mat-icon>
+        </button>
+        <button mat-flat-button class="button" id="sign-out" (click)="logout()">Sign out</button>
+    </div>
 </mat-toolbar>
