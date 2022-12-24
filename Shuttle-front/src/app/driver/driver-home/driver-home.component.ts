@@ -2,8 +2,8 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
-import { interval, startWith, Subscription } from 'rxjs';
-import { Ride, RideRequestSingleLocation, RideService } from 'src/app/ride/ride.service';
+import { interval, observable, startWith, Subscription } from 'rxjs';
+import { Ride, RideRequestSingleLocation, RideService, RideStatus } from 'src/app/ride/ride.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { waitForElement } from 'src/app/util/dom-util';
 import { RejectRideDialogComponent } from '../reject-ride-dialog/reject-ride-dialog.component';
@@ -63,6 +63,11 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.state = State.RIDE_REQUEST;
                 this.ride = receivedData;
                 this.fetchRouteToMap();
+
+                if (this.ride.status == RideStatus.Accepted) {
+                    this.state = State.RIDE_IN_PROGRESS;
+                    this.startRideTimer();
+                }
             }
         });
     }
@@ -75,6 +80,12 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         return this.state == State.RIDE_IN_PROGRESS;
     }
 
+    startRideTimer() {
+        this.timer = setInterval(() => {
+            this.timerText = this.getElapsedTime();
+        });       
+    }
+
     beginRide() {
         const obs = this.rideService.accept(this.ride!.id);
         obs.subscribe({
@@ -85,9 +96,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
                 // set on the backend. Since the accuracy of elapsed time isn't important
                 // (for now), we can set it here. TODO: Reconsider this.
                 this.ride!.startTime = new Date().toISOString();
-                this.timer = setInterval(() => {
-                    this.timerText = this.getElapsedTime();
-                });
+                this.startRideTimer();
 
                 this.sharedService.showSnackBar("Ride started.", 4000);
                 console.log(response);

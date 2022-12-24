@@ -24,7 +24,7 @@ export interface RideRequestLocation {
 }
 
 export enum RideStatus {
-    Pending, Accepted, Rejected, Canceled, Finished
+    Pending = "Pending", Accepted = "Accepted", Rejected = "Rejected", Canceled = "Canceled", Finished = "Finished"
 }
 
 export interface Ride {
@@ -56,6 +56,13 @@ export class RideService {
 
         const options: any = { responseType: 'json' };
         return this.httpClient.put(`${this.url}/${rideID}/cancel`, rejectionDTO, options);
+    }
+
+    public end(rideID: number): Observable<Ride> {
+        return this.httpClient.put<Ride>(`${this.url}/${rideID}/end`, {
+            observe: "body",
+            responseBody: "json",
+        });
     }
 
     public find(driverId: number): Observable<Ride> {
