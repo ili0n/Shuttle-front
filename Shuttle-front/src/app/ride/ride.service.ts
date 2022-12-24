@@ -23,12 +23,18 @@ export interface RideRequestLocation {
     destination: RideRequestSingleLocation,
 }
 
-export interface RideRequest {
+export enum RideStatus {
+    Pending, Accepted, Rejected, Canceled, Finished
+}
+
+export interface Ride {
     id: number,
     passengers: Array<RideRequestPassenger>,
     locations: Array<RideRequestLocation>,
     babyTransport: boolean,
     petTransport: boolean,
+    status: RideStatus,
+    startTime: string,
 }
 
 @Injectable({
@@ -37,6 +43,11 @@ export interface RideRequest {
 export class RideService {
     constructor(private httpClient: HttpClient) { }
     readonly url: string = environment.serverOrigin + 'api/ride'
+
+    public accept(rideID: number): Observable<any> {
+        const options: any = { responseType: 'json' };
+        return this.httpClient.put(`${this.url}/${rideID}/accept`, options);
+    }
 
     public reject(rideID: number, reason: string): Observable<any> {
         const rejectionDTO: RejectionDTO = {
@@ -47,8 +58,10 @@ export class RideService {
         return this.httpClient.put(`${this.url}/${rideID}/cancel`, rejectionDTO, options);
     }
 
-    public find(driverId: number): Observable<any> {
-        const options: any = { responseType: 'json' };
-        return this.httpClient.get<RideRequest>(`${this.url}/driver/${driverId}/active`, options);
+    public find(driverId: number): Observable<Ride> {
+        return this.httpClient.get<Ride>(`${this.url}/driver/${driverId}/active`, {
+            observe: "body",
+            responseType: "json",
+        });
     }
 }
