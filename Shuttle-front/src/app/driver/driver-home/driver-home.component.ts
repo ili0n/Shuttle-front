@@ -128,7 +128,19 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     finishRide() {
-        throw new Error('Method not implemented.');
+        const obs = this.rideService.end(this.ride!.id);
+        obs.subscribe({
+            next: (response) => {
+                this.state = State.JUST_MAP;
+                this.mapRoute!.remove();
+
+                this.sharedService.showSnackBar("Ride completed.", 4000);
+                console.log(response);
+            }, error: (error) => {
+                this.sharedService.showSnackBar("Could not end the ride.", 4000);
+                console.error(error);               
+            }
+        });
     }
 
     private getElapsedTime(): string {
