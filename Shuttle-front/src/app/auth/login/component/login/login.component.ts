@@ -23,7 +23,8 @@ export class LoginComponent {
                     // @ts-ignore
                     localStorage.setItem('user', JSON.stringify(result['accessToken']));
                     this.authService.setUser();
-                    this.router.navigate(['']);
+                    let homeRoute = this.authService.getRole() + '/home';
+                    this.router.navigate([homeRoute]);
                 },
                 error: (error) => {
                     if (error instanceof HttpErrorResponse) {

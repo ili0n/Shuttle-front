@@ -7,11 +7,17 @@ import { RegisterComponent } from 'src/app/register/register.component';
 import { ResetPasswordComponent } from 'src/app/auth/login/component/reset-password/reset-password.component';
 import { DriverProfileComponent } from 'src/app/driver-profile/driver-profile.component';
 import { DriverHomeComponent } from 'src/app/driver/driver-home/driver-home.component';
+import {LoginGuard} from "../app/auth/guard/login.guard";
 
 const routes: Routes = [
-	{path: "login", component: LoginComponent},
+	{path: "login",
+        component: LoginComponent,
+        canActivate: [LoginGuard],
+        loadChildren: () =>
+            import('../app/auth/auth.module').then((m) => m.AuthModule),
+    },
   {path: "register", component: RegisterComponent},
-  {path: "admin/create-driver", component: CreateDriverComponent},
+  {path: "admin/create-driver", component: CreateDriverComponent,},
   {path: 'forgot-password', component: ForgotPasswordComponent},
   {path: 'reset-password', redirectTo: 'login'},
   {path: 'reset-password/:key', component: ResetPasswordComponent},

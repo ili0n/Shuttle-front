@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LoginGuard } from './login-guard.service';
+import { LoginGuard } from './login.guard';
 
-describe('GuardGuard', () => {
+describe('LoginGuard', () => {
   let guard: LoginGuard;
 
   beforeEach(() => {

@@ -9,7 +9,7 @@
         <button mat-icon-button>
             <mat-icon>history</mat-icon>
         </button>
-        <button mat-icon-button>
+        <button mat-icon-button (click)="createDriver()">
             <mat-icon>directions_car</mat-icon>
         </button>
         <button mat-icon-button>
@@ -20,6 +20,9 @@
         </button>
         <button mat-icon-button>
             <mat-icon>notifications</mat-icon>
+        </button>
+        <button mat-icon-button>
+            <mat-icon>account_circle</mat-icon>
         </button>
         <button mat-flat-button class="button" id="sign-out" (click)="logout()">Sign out</button>
     </div>
