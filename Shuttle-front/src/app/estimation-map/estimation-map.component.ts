@@ -1,16 +1,29 @@
 import { AfterViewInit, Component, Input, OnChanges } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
+import { interval, startWith, Subscriber, Subscription } from 'rxjs';
 import { MapEstimationService } from '../services/map/map-estimation.service';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
 const shadowUrl = 'assets/marker-shadow.png';
+
+const carMarkerUrl = 'assets/car-marker.png';
 const iconDefault = L.icon({
   iconRetinaUrl,
   iconUrl,
   shadowUrl,
   iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
+
+const carMarkerIcon = L.icon({
+  iconUrl: carMarkerUrl,
+  shadowUrl,
+  iconSize: [48, 48],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   tooltipAnchor: [16, -28],
@@ -29,7 +42,13 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   currentRoute: [String, String] = ["", ""];
   
 
-  constructor(private mapService: MapEstimationService){}
+  constructor(private mapService: MapEstimationService){
+    this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(() => {
+      this.refreshActiveDrivers();
+    });
+    this.driverLocationMarkers = [];
+  }
+
 
   private map?: L.Map;
   private destinationMarker?: L.Marker;
@@ -38,6 +57,9 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
 
   private destinationCoordinates?: L.LatLng;
   private departureCoordinates?: L.LatLng;
+
+  private pull: Subscription;
+  private driverLocationMarkers: Array<L.Marker>;
 
   private initMap(): void{
     this.map = L.map("estimation-map", {
@@ -59,10 +81,10 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.refresh();
+    this.refreshRoutes();
   }
   ngOnChanges(): void {
-    this.refresh();
+    this.refreshRoutes();
   }
 
   route(): void {
@@ -82,8 +104,27 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
       this.routeControl.show();     
     }
   }
+
+  private refreshActiveDrivers() {
+    this.mapService.getActiveDriversLocations().subscribe({
+      next: (locations: Array<[number, number]>) => {
+        this.driverLocationMarkers.forEach(driverMarker => {
+          this.map?.removeLayer(driverMarker);
+        });
+
+        if(this.map !== undefined){
+          locations.forEach(location => {
+            let marker = L.marker([location[0], location[1]], {icon: carMarkerIcon})
+            .addTo(this.map!)
+            this.driverLocationMarkers.push(marker);
+          })
+        }
+      },
+      error: () => {},
+    })
+  }
   
-  private refresh(): void{
+  private refreshRoutes(): void{
     
     if(this.checkInput()){
       return;
