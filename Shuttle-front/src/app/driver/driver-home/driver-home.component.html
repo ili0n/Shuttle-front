@@ -54,18 +54,17 @@
             <mat-divider></mat-divider>
 
             <div id="buttons-bottom">
-                <div *ngIf="state == State.RIDE_REQUEST">
+                <div *ngIf="state == State.RIDE_REQUEST"> 
                     <button mat-raised-button color="primary" (click)="beginRide()"><mat-icon>play_circle_filled</mat-icon> Begin ride</button>
                     <div><br/></div>
                     <button type="submit" mat-raised-button color="warn" (click)="openRejectionDialog()"><mat-icon>stop</mat-icon> Reject ride</button>
                 </div>
                 <div *ngIf="state == State.RIDE_IN_PROGRESS">
-                    <button mat-raised-button color="warn" (click)="finishRide()"><mat-icon>stop</mat-icon> Finish</button>
+                    <button mat-raised-button color="warn" (click)="finishRide()"><mat-icon>stop</mat-icon> Finish</button>   
                     <br/>
                     <p id="elapsed-time">
                         Elapsed time: <b>{{ timerText }}</b>
                     </p>
-
                 </div>
             </div>
         </div>
