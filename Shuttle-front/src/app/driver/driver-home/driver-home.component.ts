@@ -83,7 +83,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     startRideTimer() {
         this.timer = setInterval(() => {
             this.timerText = this.getElapsedTime();
-        });       
+        });
     }
 
     beginRide() {
@@ -119,6 +119,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
 
                 this.sharedService.showSnackBar("Ride request rejected.", 4000);
+                this.ride = null;
                 console.log(response);
             }, error: (error) => {
                 this.sharedService.showSnackBar("Could not cancel the ride.", 4000);
@@ -135,10 +136,11 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.mapRoute!.remove();
 
                 this.sharedService.showSnackBar("Ride completed.", 4000);
+                this.ride = null;
                 console.log(response);
             }, error: (error) => {
                 this.sharedService.showSnackBar("Could not end the ride.", 4000);
-                console.error(error);               
+                console.error(error);
             }
         });
     }
