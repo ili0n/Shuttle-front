@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from "@angular/router";
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
     selector: 'app-driver-navbar',
@@ -8,12 +9,11 @@ import {Router} from "@angular/router";
 })
 export class DriverNavbarComponent {
 
-    constructor(private router: Router) {
+    constructor(private router: Router, private authService: AuthService) {
     }
 
     logout() {
-        localStorage.clear();
-        window.location.reload();
+        this.authService.logout();
     }
 
     home() {
@@ -21,7 +21,7 @@ export class DriverNavbarComponent {
     }
 
     info() {
-        this.router.navigate(["driver-info"]);
+        this.router.navigate(["driver/info"]);
     }
 
 }

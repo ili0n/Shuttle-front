@@ -27,11 +27,10 @@ export class AuthService {
         });
     }
 
-    // logout(): Observable<string> {
-    //     return this.http.get(environment.serverOrigin + 'logOut', {
-    //         responseType: 'text',
-    //     });
-    // }
+    logout() {
+        localStorage.clear();
+        window.location.reload();
+    }
 
     getRole(): any {
         if (this.isLoggedIn()) {
@@ -40,6 +39,16 @@ export class AuthService {
             return helper.decodeToken(accessToken).role[0].name;
         }
         return null;
+    }
+
+    getRoles(): string[] {
+        if (this.isLoggedIn()) {
+            const accessToken: any = localStorage.getItem('user');
+            const helper = new JwtHelperService();
+            const roles: any[] = helper.decodeToken(accessToken).role;
+            return roles.map(r => r.name);
+        }
+        return [];
     }
 
     isLoggedIn(): boolean {
