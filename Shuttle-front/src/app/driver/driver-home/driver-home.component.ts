@@ -100,6 +100,9 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
                 this.sharedService.showSnackBar("Ride started.", 4000);
                 console.log(response);
+
+                // Change activity to active
+                // Disable the activity changer.
             },
             error: (error) => {
                 this.sharedService.showSnackBar("Could not start the ride.", 4000);
@@ -112,14 +115,9 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         const obs = this.rideService.reject(this.ride!.id, reason);
         obs.subscribe({
             next: (response) => {
-                this.state = State.JUST_MAP;
-
-                if (this.mapRoute != null) {
-                    this.mapRoute.remove();
-                }
+                this.removeRideFromContext();
 
                 this.sharedService.showSnackBar("Ride request rejected.", 4000);
-                this.ride = null;
                 console.log(response);
             }, error: (error) => {
                 this.sharedService.showSnackBar("Could not cancel the ride.", 4000);
@@ -132,17 +130,23 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         const obs = this.rideService.end(this.ride!.id);
         obs.subscribe({
             next: (response) => {
-                this.state = State.JUST_MAP;
-                this.mapRoute!.remove();
+                this.removeRideFromContext();
 
                 this.sharedService.showSnackBar("Ride completed.", 4000);
-                this.ride = null;
                 console.log(response);
             }, error: (error) => {
                 this.sharedService.showSnackBar("Could not end the ride.", 4000);
                 console.error(error);
             }
         });
+    }
+
+    private removeRideFromContext() {
+        this.state = State.JUST_MAP;
+        this.mapRoute!.remove();
+        this.ride = null;
+
+        // Enable the activity changer.
     }
 
     private getElapsedTime(): string {
