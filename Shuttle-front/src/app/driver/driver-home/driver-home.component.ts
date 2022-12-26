@@ -150,13 +150,16 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     private getElapsedTime(): string {
-        let timeDiffMs: number = Date.now() - new Date(this.ride!.startTime).getTime();
-        let time: string = new Date(timeDiffMs).toISOString().substr(11, 8);
+        if (this.ride) {
+            let timeDiffMs: number = Date.now() - new Date(this.ride!.startTime).getTime();
+            let time: string = new Date(timeDiffMs).toISOString().substr(11, 8);
 
-        if (time.substr(0, 2) == "00") {
-            time = time.substr(3, 5);
+            if (time.substr(0, 2) == "00") {
+                time = time.substr(3, 5);
+            }
+            return time;
         }
-        return time;
+        return "00:00";
     }
 
     openRejectionDialog(): void {
