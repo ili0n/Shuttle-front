@@ -4,6 +4,8 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {JwtHelperService} from '@auth0/angular-jwt';
+import { UserService } from '../user/user.service';
+import { SharedService } from '../shared/shared.service';
 
 @Injectable({
     providedIn: 'root',
@@ -17,7 +19,7 @@ export class AuthService {
     user$ = new BehaviorSubject(null);
     userState$ = this.user$.asObservable();
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient, private userService: UserService, private sharedService: SharedService) {
         this.user$.next(this.getRole());
     }
 
@@ -28,8 +30,16 @@ export class AuthService {
     }
 
     logout() {
-        localStorage.clear();
-        window.location.reload();
+        this.userService.setInactive(this.getUserId()).subscribe({
+            next: (result) => {
+                localStorage.clear();
+                window.location.reload();
+            },
+            error: (error) => {
+                console.error("Could not log out: " + error);
+                this.sharedService.showSnackBar("Could not sign out.", 3000);
+            }
+        })
     }
 
     getRole(): any {
