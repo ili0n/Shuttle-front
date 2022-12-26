@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { observable, Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +11,9 @@ export class VehicleTypeService {
   constructor(private http: HttpClient) { }
 
   getAllVehicleTypes(): Observable<Array<String>>{
-    return new Observable((observer) =>{
-      let types = ["Standard", "Fancy", "Low quality"];
-      observer.next(types);
-    })
-    // return this.http.get<Array<String>>("localhost:4200/api/vehicleTypes");
+    return this.http.get<Array<String>>(environment.serverOrigin + "api/vehicle/vehicleTypes", {
+      observe: "body",
+      responseType: "json",
+    });
   }
 }
