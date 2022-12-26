@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import {Router} from "@angular/router";
 import { AuthService } from 'src/app/auth/auth.service';
 
@@ -8,10 +9,13 @@ import { AuthService } from 'src/app/auth/auth.service';
     styleUrls: ['./driver-navbar.component.css']
 })
 export class DriverNavbarComponent {
+    formGroupIsActive: FormGroup;
 
-    constructor(private router: Router, private authService: AuthService) {
+    constructor(private readonly formBuilder: FormBuilder, private authService: AuthService, private router: Router) {
+        this.formGroupIsActive = formBuilder.group({
+            isActive: [false],
+        });
     }
-
     logout() {
         this.authService.logout();
     }

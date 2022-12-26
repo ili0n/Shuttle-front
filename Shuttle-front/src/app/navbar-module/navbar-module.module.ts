@@ -9,6 +9,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatIconModule} from "@angular/material/icon";
 import { NavbarComponent } from './navbar/navbar.component';
+import { MaterialModule } from 'src/infrastructure/material.module';
 
 
 
@@ -31,7 +32,8 @@ import { NavbarComponent } from './navbar/navbar.component';
     MatToolbarModule,
     MatButtonModule,
     MatSlideToggleModule,
-    MatIconModule
+    MatIconModule,
+    MaterialModule
   ]
 })
 export class NavbarModuleModule { }
