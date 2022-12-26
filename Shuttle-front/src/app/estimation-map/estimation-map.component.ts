@@ -107,21 +107,21 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
 
   private refreshActiveDrivers() {
     this.mapService.getActiveDriversLocations().subscribe({
-      next: (locations: Array<[number, number]>) => {
+      next: (locations) => {
         this.driverLocationMarkers.forEach(driverMarker => {
           this.map?.removeLayer(driverMarker);
         });
 
         if(this.map !== undefined){
           locations.forEach(location => {
-            let marker = L.marker([location[0], location[1]], {icon: carMarkerIcon})
+            let marker = L.marker([location.latitude, location.longitude], {icon: carMarkerIcon})
             .addTo(this.map!)
             this.driverLocationMarkers.push(marker);
           })
         }
       },
-      error: () => {},
-    })
+      error: () => {}
+    });
   }
   
   private refreshRoutes(): void{
