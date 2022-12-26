@@ -23,4 +23,11 @@ export class UserService {
             responseType: "json",
         });
     }
+
+    public getActive(id: number): Observable<boolean> {
+        return this.httpClient.get<boolean>(`${this.url}/${id}/active`, {
+            observe: "body",
+            responseType: "json",
+        });
+    }
 }
