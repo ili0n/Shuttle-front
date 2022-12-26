@@ -23,7 +23,7 @@
         </button>
 
         <form class="isActiveForm" [formGroup]="formGroupIsActive">
-            <mat-slide-toggle formControlName="enableWifi"><span>Active</span></mat-slide-toggle>
+            <mat-slide-toggle formControlName="isActive" (change)="onToggleIsActive()"><span>Active</span></mat-slide-toggle>
         </form>
 
         <button mat-flat-button class="button" id="sign-out" (click)="logout()">Sign out</button>

@@ -41,6 +41,14 @@ export class AuthService {
         return null;
     }
 
+    getUserId(): number {
+        if (this.isLoggedIn()) {
+            console.log("getUserId(): " + new JwtHelperService().decodeToken(localStorage.getItem('user')!).id);
+            return new JwtHelperService().decodeToken(localStorage.getItem('user')!).id;
+        }
+        return -1;
+    }
+
     getRoles(): string[] {
         if (this.isLoggedIn()) {
             const accessToken: any = localStorage.getItem('user');
