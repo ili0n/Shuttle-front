@@ -4,6 +4,7 @@ import {Router} from "@angular/router";
 import { AuthService } from 'src/app/auth/auth.service';
 import { UserService } from 'src/app/user/user.service';
 import { __values } from 'tslib';
+import { NavbarService } from '../navbar.service';
 
 @Component({
     selector: 'app-driver-navbar',
@@ -13,23 +14,51 @@ import { __values } from 'tslib';
 export class DriverNavbarComponent implements OnInit {
     formGroupIsActive: FormGroup;
 
-    constructor(private readonly formBuilder: FormBuilder, private authService: AuthService, private router: Router, private userService: UserService) {
+    constructor(private readonly formBuilder: FormBuilder, private authService: AuthService, private router: Router, private userService: UserService, private navbarService: NavbarService) {
         this.formGroupIsActive = formBuilder.group({
             isActive: [true],
         });
     }
 
     ngOnInit(): void {
-        // Re-fetch activity from the backend and update the slider.
-        let active: boolean = false;
+        this.fetchIsActive();
+        this.fetchCanChangeActivity();
+        this.fetchRefreshToggle();
+    }
 
+    private fetchIsActive(): void {
         this.userService.getActive(this.authService.getUserId()).subscribe({
             next: (value) => {
-                active = value;
+                console.log("DriverNavbarComponent::getActive() " + value);
+                let active = value;
                 this.formGroupIsActive.setValue({'isActive': active});
             },
             error: (error) => {
                 console.error(error);
+            }
+        });
+    }
+
+    private fetchCanChangeActivity(): void {
+        this.navbarService.getCanToggleActivity().subscribe({
+            next: (canChange) => {
+                if (canChange) {
+                    this.formGroupIsActive.controls['isActive'].enable();
+                    this.fetchIsActive();
+                } else {
+                    this.formGroupIsActive.controls['isActive'].disable();
+                }
+            },
+            error: (error) => {
+                console.error(error);
+            }
+        });
+    }
+
+    private fetchRefreshToggle(): void {
+        this.navbarService.getRefreshToggle().subscribe({
+            next: () => {
+                this.fetchIsActive();
             }
         })
     }
@@ -49,9 +78,8 @@ export class DriverNavbarComponent implements OnInit {
     onToggleIsActive() {
         const id: number = this.authService.getUserId();
         const active: boolean = this.formGroupIsActive.getRawValue()['isActive'];
-        const newState: boolean = !active;
 
-        if (newState) {
+        if (!active) {
             this.userService.setInactive(id).subscribe({
                 next: (value) => {
                     console.log("OK: " + value);
