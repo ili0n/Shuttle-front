@@ -2,13 +2,12 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
-import { interval, observable, startWith, Subscription } from 'rxjs';
+import { interval, startWith, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
 import { Ride, RideRequestSingleLocation, RideService, RideStatus } from 'src/app/ride/ride.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { UserService } from 'src/app/user/user.service';
-import { waitForElement } from 'src/app/util/dom-util';
 import { RejectRideDialogComponent } from '../reject-ride-dialog/reject-ride-dialog.component';
 
 enum State {
@@ -25,11 +24,11 @@ enum State {
 export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private map: any;
     private mapRoute: L.Routing.Control | null = null;
-    ride: Ride | null = null;
     private pull: Subscription;
-    State = State;
     private _state: State = State.JUST_MAP;
-    timer: NodeJS.Timer | null = null;
+    private timer: NodeJS.Timer | null = null;
+    State = State;
+    ride: Ride | null = null;
     timerText: string = "";
 
     constructor(public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService, private navbarService: NavbarService, private userService: UserService, private authService: AuthService) {
@@ -46,18 +45,9 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         document.body.className = "body-graybg";
     }
 
-    /**
-     * Send a flag whether the driver can toggle the 'Active' status
-     * for himself manually. This is determined by `this.state` and
-     * should be called whenever that flag changes.
-     */
-    private sendCanToggleDriverActivity(): void {
-        if (this._state == State.RIDE_IN_PROGRESS) {
-            this.navbarService.setCanToggleActivity(false);
-        } else {
-            this.navbarService.setCanToggleActivity(true);
-        }
-        this.navbarService.sendRefreshToggle();
+    private refreshActivitySlider(): void {
+        const canToggleActivity = this._state != State.RIDE_IN_PROGRESS;
+        this.navbarService.refreshActivitySlider(canToggleActivity);
     }
 
     ngAfterViewInit(): void {
@@ -66,11 +56,11 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
     /**
      * Change the state.
-     * @param newState The new state. It will determine whether to call `sendCanToggleDriverActivity`.
+     * @param newState The new state.
      */
     private set state(newState: State) {
         this._state = newState;
-        this.sendCanToggleDriverActivity();
+        this.refreshActivitySlider();
     }
 
     /**
@@ -81,11 +71,10 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     /**
-     * Fetch a ride from the backend.
+     * Fetch a ride from the backend and draw a route.
      */
     pullNewRideRequest() {
-        // TODO: Get driver ID from session.
-        const driverID = 1;
+        const driverID = this.authService.getUserId();
         const obs = this.rideService.find(driverID);
 
         obs.subscribe((receivedData: Ride) => {
@@ -93,15 +82,17 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
                 return;
             }
 
-            if (this._state == State.JUST_MAP) {
-                this.state = State.RIDE_REQUEST;
-                this.ride = receivedData;
-                this.fetchRouteToMap();
+            this.ride = receivedData;
 
-                if (this.ride.status == RideStatus.Accepted) {
-                    this.state = State.RIDE_IN_PROGRESS;
-                    this.startRideTimer();
-                }
+            if (this.mapRoute == null) {
+                this.fetchRouteToMap();
+            }
+
+            if (this.ride.status == RideStatus.Pending) {
+                this.state = State.RIDE_REQUEST;
+            } else if (this.ride.status == RideStatus.Accepted) {
+                this.state = State.RIDE_IN_PROGRESS;
+                this.startRideTimer();
             }
         });
     }
@@ -124,21 +115,12 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         const obs = this.rideService.accept(this.ride!.id);
         obs.subscribe({
             next: (response) => {
-                this.state = State.RIDE_IN_PROGRESS;
-
-                // We need the start time to measure elapsed time, but the time should be
-                // set on the backend. Since the accuracy of elapsed time isn't important
-                // (for now), we can set it here. TODO: Reconsider this.
-                this.ride!.startTime = new Date().toISOString();
-                this.startRideTimer();
-
-                this.sharedService.showSnackBar("Ride started.", 4000);
-
-                // Change activity to active
-                // Disable the activity changer.
                 this.userService.setActive(this.authService.getUserId()).subscribe({
                     next: (value) => {
-                        this.sendCanToggleDriverActivity();
+                        this.state = State.RIDE_IN_PROGRESS;
+                        this.ride!.startTime = new Date().toISOString();
+                        this.startRideTimer();
+                        this.sharedService.showSnackBar("Ride started.", 4000);
                     }
                 });
             },
@@ -146,7 +128,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.sharedService.showSnackBar("Could not start the ride.", 4000);
                 console.error(error);
             }
-        })
+        });
     }
 
     rejectRide(reason: string) {
