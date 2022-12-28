@@ -2,6 +2,7 @@ import {AfterViewInit, Component} from '@angular/core';
 import {DriverRideHistoryService, Ride} from "./driver-ride-history.service";
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
+import {tileLayer} from "leaflet";
 
 @Component({
     selector: 'app-driver-ride-history',
@@ -66,9 +67,24 @@ export class DriverRideHistoryComponent implements AfterViewInit {
     }
 
     private addRoute(startLat: number, startLng: number, endLat: number, endLng: number): void {
+        this.map.remove();
+        this.initMap();
+        let waypoints = [L.latLng(startLat, startLng), L.latLng(endLat, endLng)]
         L.Routing.control({
-            waypoints: [L.latLng(startLat, startLng), L.latLng(endLat, endLng)],
+            waypoints: waypoints,
+            routeWhileDragging: false,
+            addWaypoints: false,
+            collapsible: true,
+            fitSelectedRoutes: true,
+            plan: L.Routing.plan(waypoints, { draggableWaypoints: false, addWaypoints: false }),
+            lineOptions:
+                {
+                    missingRouteTolerance: 999, // TODO: ???
+                    extendToWaypoints: true,
+                    addWaypoints: false
+                }
         }).addTo(this.map);
+
     }
 }
 

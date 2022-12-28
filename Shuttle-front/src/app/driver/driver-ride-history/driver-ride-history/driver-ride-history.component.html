@@ -1,7 +1,8 @@
 <button mat-flat-button class="button" id="getRides" (click)="getCards()">Get Rides</button>
+
 <div class="container">
-    <div class="row">
-        <div class="col-md-3 mx-auto my-5" *ngFor="let ride of rides; index as i">
+    <div class="cards">
+        <div *ngFor="let ride of rides; index as i">
             <mat-card (click)="drawRoute($event)" id="{{ride.id}}">
                 <mat-card-header>
                     <h4>{{ride.endTime}}</h4>
@@ -15,11 +16,12 @@
             </mat-card>
         </div>
     </div>
-</div>
-
-<div class="map-container">
-    <div class="map-frame">
-        <div id="map"></div>
+    <div class="map-container">
+        <div class="map-frame">
+            <div id="map"></div>
+        </div>
     </div>
 </div>
+
+
 
