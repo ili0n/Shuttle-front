@@ -46,10 +46,10 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   routeInfoEmitter: EventEmitter<RouteBaseInfo> = new EventEmitter<RouteBaseInfo>();
 
   constructor(private mapService: MapEstimationService, private driverService: DriverService){
+    this.driverLocationMarkers = L.featureGroup();
     this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(() => {
       this.refreshActiveDrivers();
     });
-    this.driverLocationMarkers = [];
   }
 
 
@@ -62,7 +62,7 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   private departureCoordinates?: L.LatLng;
 
   private pull: Subscription;
-  private driverLocationMarkers: Array<L.Marker>;
+  private driverLocationMarkers?: L.FeatureGroup;
 
   private initMap(): void{
     this.map = L.map("estimation-map", {
@@ -125,21 +125,27 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   private refreshActiveDrivers() {
     this.driverService.getActiveDriversLocations().subscribe({
       next: (locations) => {
-        this.driverLocationMarkers.forEach(driverMarker => {
-          this.map?.removeLayer(driverMarker);
-        });
+        if(this.driverLocationMarkers !== undefined){
+          this.driverLocationMarkers.remove();
+          this.driverLocationMarkers.clearLayers();
+        }
 
         if(this.map !== undefined){
           locations.forEach(location => {
             let marker = L.marker([location.latitude, location.longitude], {icon: carMarkerIcon})
             .addTo(this.map!)
-            this.driverLocationMarkers.push(marker);
+            this.driverLocationMarkers?.addLayer(marker);
           })
         }
       },
       error: () => {}
     });
   }
+
+  private checkInput() {
+    return this.currentRoute[0] === "" || this.currentRoute[1] === "" || this.map === undefined;
+  }
+
   
   private refreshRoutes(): void{
     
@@ -147,52 +153,33 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
       return;
     }
 
-    this.mapService.search(this.currentRoute[0]).subscribe({
-      next: (result) => {
-        if(this.departureMarker !== undefined){
-          this.map?.removeLayer(this.departureMarker!);
-        }
-        if(this.routeControl !== undefined){
-          this.map?.removeControl(this.routeControl);
-        }
+    this.mapService.search(this.currentRoute[0]).subscribe(departureLocation => {
+      this.mapService.search(this.currentRoute[1]).subscribe(destinationLocation =>{
 
-        if(this.map !== undefined){
-          this.departureMarker = L.marker([result[0].lat, result[0].lon], {icon: iconDefault})
-          .addTo(this.map)
-          .bindPopup('Departure')
-          .openPopup();
-          this.departureCoordinates = result[0];
-          this.route();
-        }
-      },
-      error: () => {},
+        if(this.departureMarker !== undefined)
+          this.map?.removeLayer(this.departureMarker);
+        if(this.destinationMarker !== undefined)
+          this.map?.removeLayer(this.destinationMarker);
+        if(this.routeControl !== undefined)
+          this.map?.removeControl(this.routeControl!);
+
+        this.departureMarker = L.marker([departureLocation[0].lat, departureLocation[0].lon], {icon: iconDefault})
+        .addTo(this.map!)
+        .bindPopup('Departure')
+        .openPopup();
+        this.departureCoordinates = departureLocation[0];
+
+        this.destinationMarker = L.marker([destinationLocation[0].lat, destinationLocation[0].lon], {icon: iconDefault})
+        .addTo(this.map!)
+        .bindPopup('Destination')
+        .openPopup();
+        this.destinationCoordinates = destinationLocation[0];
+        this.route();
+      });
     });
 
-    this.mapService.search(this.currentRoute[1]).subscribe({
-      next: (result) => {
-        if(this.destinationMarker !== undefined){
-          this.map?.removeLayer(this.destinationMarker!);
-        }
-        if(this.routeControl !== undefined){
-          this.map?.removeControl(this.routeControl);
-        }
-
-        if(this.map !== undefined){
-          this.destinationMarker = L.marker([result[0].lat, result[0].lon], {icon: iconDefault})
-          .addTo(this.map)
-          .bindPopup('Destination')
-          .openPopup();
-          this.destinationCoordinates = result[0];
-          this.route();
-        }
-      },
-      error: () => {},
-    });       
   }
 
-  private checkInput() {
-    return this.currentRoute[0] === "" || this.currentRoute[1] === "" || this.map === undefined;
-  }
 
 }
 
