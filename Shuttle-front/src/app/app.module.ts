@@ -23,6 +23,8 @@ import { DriverProfileComponent } from './driver-profile/driver-profile.componen
 import { DriverHomeComponent } from './driver/driver-home/driver-home.component';
 import { RejectRideDialogComponent } from './driver/reject-ride-dialog/reject-ride-dialog.component';
 import {NavbarModuleModule} from "./navbar-module/navbar-module.module";
+import { DriverRideHistoryComponent } from './driver/driver-ride-history/driver-ride-history/driver-ride-history.component';
+import {MatDatepickerModule} from "@angular/material/datepicker";
 
 @NgModule({
     declarations: [
@@ -34,7 +36,8 @@ import {NavbarModuleModule} from "./navbar-module/navbar-module.module";
         DriverProfileComponent,
         DriverHomeComponent,
         RejectRideDialogComponent,
-        LoginComponent
+        LoginComponent,
+        DriverRideHistoryComponent
     ],
     imports: [
         BrowserModule,
@@ -49,7 +52,8 @@ import {NavbarModuleModule} from "./navbar-module/navbar-module.module";
         MatButtonModule,
         ReactiveFormsModule,
         MatInputModule,
-        NavbarModuleModule
+        NavbarModuleModule,
+        MatDatepickerModule
     ],
     providers: [],
     bootstrap: [AppComponent]

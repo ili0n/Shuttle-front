@@ -23,5 +23,8 @@ export class DriverNavbarComponent {
     info() {
         this.router.navigate(["driver/info"]);
     }
+    history(){
+        this.router.navigate(["driver/ride-history"])
+    }
 
 }

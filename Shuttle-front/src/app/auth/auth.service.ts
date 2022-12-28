@@ -59,4 +59,13 @@ export class AuthService {
     setUser(): void {
         this.user$.next(this.getRole());
     }
+
+    getId(): string {
+        if (this.isLoggedIn()) {
+            const accessToken: any = localStorage.getItem('user');
+            const helper = new JwtHelperService();
+            return helper.decodeToken(accessToken).id;
+        }
+        return "";
+    }
 }
