@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MaterialModule } from 'src/infrastructure/material.module';
 
 
 
@@ -10,4 +9,4 @@ import { MaterialModule } from 'src/infrastructure/material.module';
     CommonModule
   ]
 })
-export class AuthModule { }
+export class UserModule { }

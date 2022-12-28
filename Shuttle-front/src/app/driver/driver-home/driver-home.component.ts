@@ -1,11 +1,15 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
-import { interval, observable, startWith, Subscription } from 'rxjs';
+import { interval, startWith, Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
+import { NavbarService } from 'src/app/navbar-module/navbar.service';
 import { Ride, RideRequestSingleLocation, RideService, RideStatus } from 'src/app/ride/ride.service';
 import { SharedService } from 'src/app/shared/shared.service';
-import { waitForElement } from 'src/app/util/dom-util';
+import { UserService } from 'src/app/user/user.service';
+import { environment } from 'src/environments/environment';
 import { RejectRideDialogComponent } from '../reject-ride-dialog/reject-ride-dialog.component';
 
 enum State {
@@ -22,17 +26,44 @@ enum State {
 export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private map: any;
     private mapRoute: L.Routing.Control | null = null;
-    ride: Ride | null = null;
     private pull: Subscription;
+    private _state: State = State.JUST_MAP;
+    private timer: NodeJS.Timer | null = null;
     State = State;
-    state: State = State.JUST_MAP;
-    timer: NodeJS.Timer | null = null;
+    ride: Ride | null = null;
     timerText: string = "";
 
+    SendWorkHoursThing() {
+        /// TODO : REMOVE
+
+        const url: string = "/api/driver/{id}/working-hour";
+        const id: number = this.authService.getUserId();
+        const page: number = 0;
+        const size: number = 12;
+        const from: string = "2022-12-28T17:09:55";
+        const to: string = "2022-12-29T12:00:00";
 
 
-    constructor(public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService) {
-        this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(() => {
+        let params = new HttpParams().set('page', page).set('size', size).set('from', from).set('to', to);
+
+
+        const options: any = { responseType: 'json' };
+        this.httpClient.get(environment.serverOrigin + `api/driver/${id}/working-hour`, {params: params, observe: "body"}).subscribe({
+            next: (value) => {
+                console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                console.log(value);
+            },
+            error: (error) => {
+                console.error("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                console.error(error);
+            }
+        });
+    }
+
+    constructor(
+        private httpClient: HttpClient, // TODO REMOVE THIS.
+        public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService, private navbarService: NavbarService, private userService: UserService, private authService: AuthService) {
+        this.pull = interval(8 * 1000).pipe(startWith(0)).subscribe(() => {
             this.pullNewRideRequest();
         });
     }
@@ -45,13 +76,36 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         document.body.className = "body-graybg";
     }
 
+    private refreshActivitySlider(): void {
+        const canToggleActivity = this._state != State.RIDE_IN_PROGRESS;
+        this.navbarService.refreshActivitySlider(canToggleActivity);
+    }
+
     ngAfterViewInit(): void {
         this.initMap("map");
     }
 
+    /**
+     * Change the state.
+     * @param newState The new state.
+     */
+    private set state(newState: State) {
+        this._state = newState;
+        this.refreshActivitySlider();
+    }
+
+    /**
+     * Get the state.
+     */
+    get state(): State {
+        return this._state
+    }
+
+    /**
+     * Fetch a ride from the backend and draw a route.
+     */
     pullNewRideRequest() {
-        // TODO: Get driver ID from session.
-        const driverID = 1;
+        const driverID = this.authService.getUserId();
         const obs = this.rideService.find(driverID);
 
         obs.subscribe((receivedData: Ride) => {
@@ -59,25 +113,27 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
                 return;
             }
 
-            if (this.state == State.JUST_MAP) {
-                this.state = State.RIDE_REQUEST;
-                this.ride = receivedData;
-                this.fetchRouteToMap();
+            this.ride = receivedData;
 
-                if (this.ride.status == RideStatus.Accepted) {
-                    this.state = State.RIDE_IN_PROGRESS;
-                    this.startRideTimer();
-                }
+            if (this.mapRoute == null) {
+                this.fetchRouteToMap();
+            }
+
+            if (this.ride.status == RideStatus.Pending) {
+                this.state = State.RIDE_REQUEST;
+            } else if (this.ride.status == RideStatus.Accepted) {
+                this.state = State.RIDE_IN_PROGRESS;
+                this.startRideTimer();
             }
         });
     }
 
     hasRideRequest(): boolean {
-        return this.state == State.RIDE_REQUEST;
+        return this._state == State.RIDE_REQUEST;
     }
 
     hasActiveRide(): boolean {
-        return this.state == State.RIDE_IN_PROGRESS;
+        return this._state == State.RIDE_IN_PROGRESS;
     }
 
     startRideTimer() {
@@ -90,37 +146,28 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         const obs = this.rideService.accept(this.ride!.id);
         obs.subscribe({
             next: (response) => {
-                this.state = State.RIDE_IN_PROGRESS;
-
-                // We need the start time to measure elapsed time, but the time should be
-                // set on the backend. Since the accuracy of elapsed time isn't important
-                // (for now), we can set it here. TODO: Reconsider this.
-                this.ride!.startTime = new Date().toISOString();
-                this.startRideTimer();
-
-                this.sharedService.showSnackBar("Ride started.", 4000);
-                console.log(response);
+                this.userService.setActive(this.authService.getUserId()).subscribe({
+                    next: (value) => {
+                        this.state = State.RIDE_IN_PROGRESS;
+                        this.ride!.startTime = new Date().toISOString();
+                        this.startRideTimer();
+                        this.sharedService.showSnackBar("Ride started.", 4000);
+                    }
+                });
             },
             error: (error) => {
                 this.sharedService.showSnackBar("Could not start the ride.", 4000);
                 console.error(error);
             }
-        })
+        });
     }
 
     rejectRide(reason: string) {
         const obs = this.rideService.reject(this.ride!.id, reason);
         obs.subscribe({
             next: (response) => {
-                this.state = State.JUST_MAP;
-
-                if (this.mapRoute != null) {
-                    this.mapRoute.remove();
-                }
-
+                this.removeRideFromContext();
                 this.sharedService.showSnackBar("Ride request rejected.", 4000);
-                this.ride = null;
-                console.log(response);
             }, error: (error) => {
                 this.sharedService.showSnackBar("Could not cancel the ride.", 4000);
                 console.error(error);
@@ -132,12 +179,8 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         const obs = this.rideService.end(this.ride!.id);
         obs.subscribe({
             next: (response) => {
-                this.state = State.JUST_MAP;
-                this.mapRoute!.remove();
-
+                this.removeRideFromContext();
                 this.sharedService.showSnackBar("Ride completed.", 4000);
-                this.ride = null;
-                console.log(response);
             }, error: (error) => {
                 this.sharedService.showSnackBar("Could not end the ride.", 4000);
                 console.error(error);
@@ -145,14 +188,23 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-    private getElapsedTime(): string {
-        let timeDiffMs: number = Date.now() - new Date(this.ride!.startTime).getTime();
-        let time: string = new Date(timeDiffMs).toISOString().substr(11, 8);
+    private removeRideFromContext() {
+        this.state = State.JUST_MAP;
+        this.mapRoute!.remove();
+        this.ride = null;
+    }
 
-        if (time.substr(0, 2) == "00") {
-            time = time.substr(3, 5);
+    private getElapsedTime(): string {
+        if (this.ride) {
+            let timeDiffMs: number = Date.now() - new Date(this.ride!.startTime).getTime();
+            let time: string = new Date(timeDiffMs).toISOString().substr(11, 8);
+
+            if (time.substr(0, 2) == "00") {
+                time = time.substr(3, 5);
+            }
+            return time;
         }
-        return time;
+        return "00:00";
     }
 
     openRejectionDialog(): void {
