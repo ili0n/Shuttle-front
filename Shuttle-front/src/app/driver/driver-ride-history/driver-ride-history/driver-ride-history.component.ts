@@ -19,6 +19,7 @@ export class DriverRideHistoryComponent implements AfterViewInit {
 
 
     ngAfterViewInit(): void {
+
         let DefaultIcon = L.icon({
             iconUrl: 'https://unpkg.com/leaflet@1.6.0/dist/images/marker-icon.png',
         });
@@ -52,7 +53,7 @@ export class DriverRideHistoryComponent implements AfterViewInit {
     }
 
     initMap(): void {
-        this.map = L.map("map", {
+        this.map = L.map("map_route", {
             center: [45.2396, 19.8227],
             zoom: 13,
         });

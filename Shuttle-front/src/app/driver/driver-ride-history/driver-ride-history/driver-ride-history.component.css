@@ -9,7 +9,7 @@ mat-card {
 .container{
     display: flex;
 }
-#map {
+#map_route {
     height: 500px;
 }
 .map-container{
