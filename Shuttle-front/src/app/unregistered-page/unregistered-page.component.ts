@@ -1,4 +1,5 @@
 import { Component, DoCheck, Input, OnInit } from '@angular/core';
+import { RouteBaseInfo } from '../services/map/map-estimation.service';
 
 @Component({
   selector: 'app-unregistered-page',
@@ -11,11 +12,11 @@ export class UnregisteredPageComponent{
   currentRoute: [String, String] = ["", ""];
 
   @Input()
-  routeLength: number = 0;
+  routeInfo?: RouteBaseInfo;
 
   subscribeToListenSubmit($event: [String, String]) { this.currentRoute = $event; }
 
-  subscribeToListenRouteLength($event: number){this.routeLength = $event};
+  subscribeToListenRouteLength($event: RouteBaseInfo){this.routeInfo = $event};
 
   constructor(){}
 

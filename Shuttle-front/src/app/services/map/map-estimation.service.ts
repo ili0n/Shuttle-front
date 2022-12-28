@@ -4,6 +4,11 @@ import { Injectable } from '@angular/core';
 import { delay, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
+export interface RouteBaseInfo{
+  routeLength: number,
+  time: number
+}
+
 export interface Location {
   latitude: number,
   longitude: number,
@@ -11,8 +16,8 @@ export interface Location {
 }
 
 export interface Estiamtion{
-  price: number,
-  time: number
+  estimatedCost: number,
+  estimatedTimeInMinutes: number
 }
 
 export interface Route{
@@ -62,7 +67,6 @@ export class MapEstimationService {
   }
 
   getEstimation(createRideEstimation: CreateRide): Observable<Estiamtion> {
-    var a = this.http.post<Estiamtion>(environment.serverOrigin + "api/unregisteredUser", createRideEstimation);
-    return a;
+    return this.http.post<Estiamtion>(environment.serverOrigin + "api/unregisteredUser", createRideEstimation);
   }
 }

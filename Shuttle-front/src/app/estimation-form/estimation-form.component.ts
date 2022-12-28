@@ -1,9 +1,8 @@
-import { outputAst } from '@angular/compiler';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { CreateRide, Estiamtion, MapEstimationService } from '../services/map/map-estimation.service';
+import { CreateRide, Estiamtion, MapEstimationService, RouteBaseInfo } from '../services/map/map-estimation.service';
 import { VehicleTypeService } from '../services/vehicle-type/vehicle-type.service';
-import * as L from 'leaflet';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-estimation-form',
@@ -20,17 +19,16 @@ export class EstimationFormComponent implements OnInit, OnChanges{
   })
   vehicleTypes: Array<String> = [];
   estimation?: Estiamtion;
-  private createRide?: CreateRide;
 
   @Output()
   submitEmitter: EventEmitter<[String, String]> = new EventEmitter<[String, String]>();
 
   @Input()
-  routeLength: number = 0;
+  routeInfo?: RouteBaseInfo;
 
 
   constructor(private formBuilder: FormBuilder, private vehicleTypeService: VehicleTypeService,
-     private mapEstimationService: MapEstimationService){}
+     private mapEstimationService: MapEstimationService, private cdf: ChangeDetectorRef){}
   
   ngOnInit(): void {
     this.fillSelect();
@@ -46,17 +44,15 @@ export class EstimationFormComponent implements OnInit, OnChanges{
   }
 
   ngOnChanges(): void {
-    if(this.routeLength != 0){
+    if(this.routeInfo){
       let destinationVal = this.routeForm.value.destination!;
       let departureVal = this.routeForm.value.departure!;
       this.mapEstimationService.search(destinationVal).subscribe(destinationLocation =>{
         this.mapEstimationService.search(departureVal).subscribe(departureLocation =>{
-          {
-            this.createRide = this.createRideDTO(destinationLocation[0], departureLocation[0]);
-            this.mapEstimationService.getEstimation(this.createRide).subscribe(result =>{
+            let createRide = this.createRideDTO(destinationLocation[0], departureLocation[0]);
+            this.mapEstimationService.getEstimation(createRide).subscribe(result =>{
               this.estimation = result;
             });
-          }
         })
       })
     }
@@ -81,26 +77,26 @@ export class EstimationFormComponent implements OnInit, OnChanges{
   }
 
   createRideDTO(destinationLocation :any, departureLocation: any): CreateRide{
-    return this.createRide = {
-      "locations": [
-        {
-          "departure": {
-            "address": this.routeForm.value.departure!,
-            "latitude": departureLocation.lat,
-            "longitude": departureLocation.lon
-          },
-          "destination": {
-            "address": this.routeForm.value.destination!,
-            "latitude": destinationLocation.lat,
-            "longitude": destinationLocation.lon
-          }
+    return { 
+          "locations": [
+            {
+              "departure": {
+                "address": this.routeForm.value.departure!,
+                "latitude": departureLocation.lat,
+                "longitude": departureLocation.lon
+              },
+              "destination": {
+                "address": this.routeForm.value.destination!,
+                "latitude": destinationLocation.lat,
+                "longitude": destinationLocation.lon
+              }
+            }
+          ],
+          "vehicleType": this.routeForm.value.selectVehicleType!,
+          "babyTransport": this.routeForm.controls["babyTransport"].value!,
+          "petTransport": this.routeForm.controls["petTransport"].value!,
+          "routeLength": this.routeInfo?.routeLength!
         }
-      ],
-      "vehicleType": this.routeForm.value.selectVehicleType!,
-      "babyTransport": this.routeForm.controls["babyTransport"].value!,
-      "petTransport": this.routeForm.controls["petTransport"].value!,
-      "routeLength": this.routeLength!
-    }
   }
 
 }

@@ -2,7 +2,7 @@ import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output } from
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { interval, startWith, Subscriber, Subscription } from 'rxjs';
-import { MapEstimationService } from '../services/map/map-estimation.service';
+import { MapEstimationService, RouteBaseInfo } from '../services/map/map-estimation.service';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -42,7 +42,7 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   currentRoute: [String, String] = ["", ""];
 
   @Output()
-  routeEmitter: EventEmitter<number> = new EventEmitter<number>();
+  routeInfoEmitter: EventEmitter<RouteBaseInfo> = new EventEmitter<RouteBaseInfo>();
 
   constructor(private mapService: MapEstimationService){
     this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(() => {
@@ -105,8 +105,13 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
         routeWhileDragging: false
       }).on('routesfound', (e) => {
         let routes = e.routes;
-        let routeLength: number = routes[0].summary.totalDistance;
-        this.routeEmitter?.emit(routeLength);
+        let summary = routes[0].summary;
+        let routeLength: number = summary.totalDistance / 1000;
+        let time: number = Math.round(summary.totalTime / 60);
+        this.routeInfoEmitter?.emit({
+          "routeLength": routeLength,
+          "time": time
+        });
       }).addTo(this.map);
       this.routeControl.show();   
 
