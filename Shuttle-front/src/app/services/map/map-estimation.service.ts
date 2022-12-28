@@ -59,13 +59,6 @@ export class MapEstimationService {
     );
   }
 
-  getActiveDriversLocations(): Observable<Array<Location>> {
-    return this.http.get<Array<Location>>(environment.serverOrigin + "api/driver/active", {
-      observe: "body",
-      responseType: "json",
-    });
-  }
-
   getEstimation(createRideEstimation: CreateRide): Observable<Estiamtion> {
     return this.http.post<Estiamtion>(environment.serverOrigin + "api/unregisteredUser", createRideEstimation);
   }

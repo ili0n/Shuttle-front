@@ -2,6 +2,7 @@ import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output } from
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { interval, startWith, Subscriber, Subscription } from 'rxjs';
+import { DriverService } from '../driver/driver.service';
 import { MapEstimationService, RouteBaseInfo } from '../services/map/map-estimation.service';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
@@ -44,7 +45,7 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   @Output()
   routeInfoEmitter: EventEmitter<RouteBaseInfo> = new EventEmitter<RouteBaseInfo>();
 
-  constructor(private mapService: MapEstimationService){
+  constructor(private mapService: MapEstimationService, private driverService: DriverService){
     this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(() => {
       this.refreshActiveDrivers();
     });
@@ -103,24 +104,26 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
           missingRouteTolerance: 0,
         },
         routeWhileDragging: false
-      }).on('routesfound', (e) => {
-        let routes = e.routes;
-        let summary = routes[0].summary;
-        let routeLength: number = summary.totalDistance / 1000;
-        let time: number = Math.round(summary.totalTime / 60);
-        this.routeInfoEmitter?.emit({
-          "routeLength": routeLength,
-          "time": time
-        });
-      }).addTo(this.map);
+      }).on('routesfound', this.emitRouteInfo).addTo(this.map);
       this.routeControl.show();   
 
       this.routeControl
     }
   }
 
+  emitRouteInfo(e: any){
+      let routes = e.routes;
+      let summary = routes[0].summary;
+      let routeLength: number = summary.totalDistance / 1000;
+      let time: number = Math.round(summary.totalTime / 60);
+      this.routeInfoEmitter?.emit({
+        "routeLength": routeLength,
+        "time": time
+      });
+  }
+
   private refreshActiveDrivers() {
-    this.mapService.getActiveDriversLocations().subscribe({
+    this.driverService.getActiveDriversLocations().subscribe({
       next: (locations) => {
         this.driverLocationMarkers.forEach(driverMarker => {
           this.map?.removeLayer(driverMarker);
