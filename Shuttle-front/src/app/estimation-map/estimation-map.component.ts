@@ -38,8 +38,11 @@ L.Marker.prototype.options.icon = iconDefault;
 })
 export class EstimationMapComponent implements AfterViewInit, OnChanges {
 
-  @Input() currentRoute: [String, String] = ["", ""];
-  @Output() routeEmitter: EventEmitter<number> = new EventEmitter<number>();
+  @Input()
+  currentRoute: [String, String] = ["", ""];
+
+  @Output()
+  routeEmitter: EventEmitter<number> = new EventEmitter<number>();
 
   constructor(private mapService: MapEstimationService){
     this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(() => {
@@ -100,14 +103,14 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
           missingRouteTolerance: 0,
         },
         routeWhileDragging: false
-      }).addTo(this.map);
-      this.routeControl.show();   
-
-      this.routeControl.on('routesfound', (e) => {
+      }).on('routesfound', (e) => {
         let routes = e.routes;
         let routeLength: number = routes[0].summary.totalDistance;
         this.routeEmitter?.emit(routeLength);
-      });  
+      }).addTo(this.map);
+      this.routeControl.show();   
+
+      this.routeControl
     }
   }
 

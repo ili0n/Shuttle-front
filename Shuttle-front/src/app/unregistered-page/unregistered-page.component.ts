@@ -1,5 +1,4 @@
 import { Component, DoCheck, Input, OnInit } from '@angular/core';
-import { MapEstimationService } from '../services/map/map-estimation.service';
 
 @Component({
   selector: 'app-unregistered-page',
@@ -9,15 +8,15 @@ import { MapEstimationService } from '../services/map/map-estimation.service';
 export class UnregisteredPageComponent{
 
   @Input()
-  location: [String, String] = ["", ""];
+  currentRoute: [String, String] = ["", ""];
 
   @Input()
-  routeLength1?: number;
+  routeLength: number = 0;
 
-  subscribeToListenSubmit($event: [String, String]) { this.location = $event; }
+  subscribeToListenSubmit($event: [String, String]) { this.currentRoute = $event; }
 
-  subscribeToListenRouteLength($event: number){this.routeLength1 = $event};
+  subscribeToListenRouteLength($event: number){this.routeLength = $event};
 
-  constructor(private mapService: MapEstimationService){}
+  constructor(){}
 
 }

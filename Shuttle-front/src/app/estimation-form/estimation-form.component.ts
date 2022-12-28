@@ -1,5 +1,5 @@
 import { outputAst } from '@angular/compiler';
-import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { CreateRide, Estiamtion, MapEstimationService } from '../services/map/map-estimation.service';
 import { VehicleTypeService } from '../services/vehicle-type/vehicle-type.service';
@@ -10,7 +10,7 @@ import * as L from 'leaflet';
   templateUrl: './estimation-form.component.html',
   styleUrls: ['./estimation-form.component.css'],
 })
-export class EstimationFormComponent implements OnInit{
+export class EstimationFormComponent implements OnInit, OnChanges{
   routeForm = this.formBuilder.group({
     destination: ["", Validators.required],
     departure: ["", Validators.required],
@@ -22,8 +22,11 @@ export class EstimationFormComponent implements OnInit{
   estimation?: Estiamtion;
   private createRide?: CreateRide;
 
-  @Output() submitEmitter: EventEmitter<[String, String]> = new EventEmitter<[String, String]>();
-  @Input() routeLength: number = 0;
+  @Output()
+  submitEmitter: EventEmitter<[String, String]> = new EventEmitter<[String, String]>();
+
+  @Input()
+  routeLength: number = 0;
 
 
   constructor(private formBuilder: FormBuilder, private vehicleTypeService: VehicleTypeService,
@@ -39,11 +42,17 @@ export class EstimationFormComponent implements OnInit{
       let departureVal = this.routeForm.value.departure!;
 
       this.emit(destinationVal, departureVal);
+    }
+  }
 
+  ngOnChanges(): void {
+    if(this.routeLength != 0){
+      let destinationVal = this.routeForm.value.destination!;
+      let departureVal = this.routeForm.value.departure!;
       this.mapEstimationService.search(destinationVal).subscribe(destinationLocation =>{
         this.mapEstimationService.search(departureVal).subscribe(departureLocation =>{
           {
-            this.createRide = this.createRideDTO(destinationLocation, departureLocation);
+            this.createRide = this.createRideDTO(destinationLocation[0], departureLocation[0]);
             this.mapEstimationService.getEstimation(this.createRide).subscribe(result =>{
               this.estimation = result;
             });
@@ -51,6 +60,7 @@ export class EstimationFormComponent implements OnInit{
         })
       })
     }
+    
   }
 
   private fillSelect(){
@@ -76,13 +86,13 @@ export class EstimationFormComponent implements OnInit{
         {
           "departure": {
             "address": this.routeForm.value.departure!,
-            "latitude": departureLocation.latitude,
-            "longitude": departureLocation.longitude
+            "latitude": departureLocation.lat,
+            "longitude": departureLocation.lon
           },
           "destination": {
             "address": this.routeForm.value.destination!,
-            "latitude": destinationLocation.latitude,
-            "longitude": destinationLocation.longitude
+            "latitude": destinationLocation.lat,
+            "longitude": destinationLocation.lon
           }
         }
       ],
