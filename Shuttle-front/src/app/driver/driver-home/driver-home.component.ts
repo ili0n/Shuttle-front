@@ -1,3 +1,4 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as L from 'leaflet';
@@ -8,6 +9,7 @@ import { NavbarService } from 'src/app/navbar-module/navbar.service';
 import { Ride, RideRequestSingleLocation, RideService, RideStatus } from 'src/app/ride/ride.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { UserService } from 'src/app/user/user.service';
+import { environment } from 'src/environments/environment';
 import { RejectRideDialogComponent } from '../reject-ride-dialog/reject-ride-dialog.component';
 
 enum State {
@@ -31,8 +33,37 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     ride: Ride | null = null;
     timerText: string = "";
 
-    constructor(public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService, private navbarService: NavbarService, private userService: UserService, private authService: AuthService) {
-        this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(() => {
+    SendWorkHoursThing() {
+        /// TODO : REMOVE
+
+        const url: string = "/api/driver/{id}/working-hour";
+        const id: number = this.authService.getUserId();
+        const page: number = 0;
+        const size: number = 12;
+        const from: string = "2022-12-28T17:09:55";
+        const to: string = "2022-12-29T12:00:00";
+
+
+        let params = new HttpParams().set('page', page).set('size', size).set('from', from).set('to', to);
+
+
+        const options: any = { responseType: 'json' };
+        this.httpClient.get(environment.serverOrigin + `api/driver/${id}/working-hour`, {params: params, observe: "body"}).subscribe({
+            next: (value) => {
+                console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                console.log(value);
+            },
+            error: (error) => {
+                console.error("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                console.error(error);
+            }
+        });
+    }
+
+    constructor(
+        private httpClient: HttpClient, // TODO REMOVE THIS.
+        public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService, private navbarService: NavbarService, private userService: UserService, private authService: AuthService) {
+        this.pull = interval(8 * 1000).pipe(startWith(0)).subscribe(() => {
             this.pullNewRideRequest();
         });
     }
