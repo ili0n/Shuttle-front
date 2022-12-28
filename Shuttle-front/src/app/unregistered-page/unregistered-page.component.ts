@@ -11,7 +11,12 @@ export class UnregisteredPageComponent{
   @Input()
   location: [String, String] = ["", ""];
 
+  @Input()
+  routeLength1?: number;
+
   subscribeToListenSubmit($event: [String, String]) { this.location = $event; }
+
+  subscribeToListenRouteLength($event: number){this.routeLength1 = $event};
 
   constructor(private mapService: MapEstimationService){}
 

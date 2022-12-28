@@ -1,2 +1,2 @@
-<app-estimation-map [currentRoute]="location"></app-estimation-map>
-<app-estimation-form (emitter)="subscribeToListenSubmit($event)"></app-estimation-form>
+<app-estimation-map (submitEmitter)="subscribeToListenSubmit($event)" [currentRoute]="location"></app-estimation-map>
+<app-estimation-form (routeEmitter)="subscribeToListenRouteLength($event)" [routeLength]="routeLength1"></app-estimation-form>

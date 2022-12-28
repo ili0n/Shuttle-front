@@ -39,3 +39,9 @@ mat-form-field{
 mat-option:nth-child(1){
     display: none;
 }
+
+#estimation{
+    font-size: 32px;
+    padding: 140px 20px;
+    line-height: normal;
+}

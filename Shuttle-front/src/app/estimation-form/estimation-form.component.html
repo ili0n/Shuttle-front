@@ -14,13 +14,13 @@
 
         <div class="flexCenter" id="checkboxesContainer">
             <div class="flexCenter" id="babyContainer">
-                <mat-checkbox color="green" formControlName="babyTransport" id="babyTransportCheckbox">
+                <mat-checkbox color="green" formControlName="babyTransport" [formControl]="routeForm.controls['babyTransport']" id="babyTransportCheckbox">
                 </mat-checkbox>
                 <img class="icon" src="assets/baby.png" />
             </div>        
                 
             <div class="flexCenter">
-                <mat-checkbox color="green" formControlName="petTransport" id="petTransportCheckbox">
+                <mat-checkbox color="green" formControlName="petTransport" [formControl]="routeForm.controls['petTransport']" id="petTransportCheckbox">
                 </mat-checkbox>
                 <img class="icon" src="assets/pet.png" />
             </div>  
@@ -38,8 +38,11 @@
             </mat-select>
         </mat-form-field>
 
-        <button mat-raised-button color="primary" type="submit">Go</button>
+        <button mat-raised-button color="primary" type="submit"> Estimate </button>
     </form>
+    <div *ngIf="estimation">
+        <p id="estimation">The ride will cost you {{estimation.price}}RSD, and it will last {{estimation.time}} minutes</p>
+    </div>
 </div>
 <!-- <a href="https://www.flaticon.com/free-icons/baby" title="baby icons">Baby icons created by Freepik - Flaticon</a> -->
 <!-- <a href="https://www.flaticon.com/free-icons/pet" title="pet icons">Pet icons created by Freepik - Flaticon</a> -->

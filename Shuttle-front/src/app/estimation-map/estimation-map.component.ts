@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnChanges } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { interval, startWith, Subscriber, Subscription } from 'rxjs';
@@ -38,9 +38,8 @@ L.Marker.prototype.options.icon = iconDefault;
 })
 export class EstimationMapComponent implements AfterViewInit, OnChanges {
 
-  @Input()
-  currentRoute: [String, String] = ["", ""];
-  
+  @Input() currentRoute: [String, String] = ["", ""];
+  @Output() routeEmitter: EventEmitter<number> = new EventEmitter<number>();
 
   constructor(private mapService: MapEstimationService){
     this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(() => {
@@ -85,6 +84,7 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   }
   ngOnChanges(): void {
     this.refreshRoutes();
+    
   }
 
   route(): void {
@@ -101,7 +101,13 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
         },
         routeWhileDragging: false
       }).addTo(this.map);
-      this.routeControl.show();     
+      this.routeControl.show();   
+
+      this.routeControl.on('routesfound', (e) => {
+        let routes = e.routes;
+        let routeLength: number = routes[0].summary.totalDistance;
+        this.routeEmitter?.emit(routeLength);
+      });  
     }
   }
 

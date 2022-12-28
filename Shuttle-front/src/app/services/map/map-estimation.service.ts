@@ -10,6 +10,30 @@ export interface Location {
   address: String,
 }
 
+export interface Estiamtion{
+  price: number,
+  time: number
+}
+
+export interface Route{
+  "departure": Location
+  "destination": Location
+}
+
+export interface CreateRide{
+    "locations": Route[]
+    "vehicleType": string
+    "babyTransport": boolean,
+    "petTransport": boolean
+    "routeLength": number
+}
+
+export interface Location {
+  latitude: number,
+  longitude: number,
+  address: String,
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,5 +59,10 @@ export class MapEstimationService {
       observe: "body",
       responseType: "json",
     });
+  }
+
+  getEstimation(createRideEstimation: CreateRide): Observable<Estiamtion> {
+    var a = this.http.post<Estiamtion>(environment.serverOrigin + "api/unregisteredUser", createRideEstimation);
+    return a;
   }
 }
