@@ -54,8 +54,6 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
 
 
   private map?: L.Map;
-  private destinationMarker?: L.Marker;
-  private departureMarker?: L.Marker;
   private routeControl?: L.Routing.Control;
 
   private destinationCoordinates?: L.LatLng;
@@ -104,22 +102,18 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
           missingRouteTolerance: 0,
         },
         routeWhileDragging: false
-      }).on('routesfound', this.emitRouteInfo).addTo(this.map);
+      }).on('routesfound', e => {
+        let routes = e.routes;
+        let summary = routes[0].summary;
+        let routeLength: number = summary.totalDistance / 1000;
+        let time: number = Math.round(summary.totalTime / 60);
+        this.routeInfoEmitter?.emit({
+          "routeLength": routeLength,
+          "time": time
+        });
+      }).addTo(this.map);
       this.routeControl.show();   
-
-      this.routeControl
     }
-  }
-
-  emitRouteInfo(e: any){
-      let routes = e.routes;
-      let summary = routes[0].summary;
-      let routeLength: number = summary.totalDistance / 1000;
-      let time: number = Math.round(summary.totalTime / 60);
-      this.routeInfoEmitter?.emit({
-        "routeLength": routeLength,
-        "time": time
-      });
   }
 
   private refreshActiveDrivers() {
@@ -140,7 +134,7 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
       },
       error: () => {}
     });
-  }
+  } 
 
   private checkInput() {
     return this.currentRoute[0] === "" || this.currentRoute[1] === "" || this.map === undefined;
@@ -156,23 +150,11 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
     this.mapService.search(this.currentRoute[0]).subscribe(departureLocation => {
       this.mapService.search(this.currentRoute[1]).subscribe(destinationLocation =>{
 
-        if(this.departureMarker !== undefined)
-          this.map?.removeLayer(this.departureMarker);
-        if(this.destinationMarker !== undefined)
-          this.map?.removeLayer(this.destinationMarker);
         if(this.routeControl !== undefined)
           this.map?.removeControl(this.routeControl!);
 
-        this.departureMarker = L.marker([departureLocation[0].lat, departureLocation[0].lon], {icon: iconDefault})
-        .addTo(this.map!)
-        .bindPopup('Departure')
-        .openPopup();
         this.departureCoordinates = departureLocation[0];
 
-        this.destinationMarker = L.marker([destinationLocation[0].lat, destinationLocation[0].lon], {icon: iconDefault})
-        .addTo(this.map!)
-        .bindPopup('Destination')
-        .openPopup();
         this.destinationCoordinates = destinationLocation[0];
         this.route();
       });
