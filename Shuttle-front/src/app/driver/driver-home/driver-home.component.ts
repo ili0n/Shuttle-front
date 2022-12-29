@@ -3,7 +3,9 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
-import { interval, startWith, Subscription } from 'rxjs';
+import { interval, map, startWith, Subscription } from 'rxjs';
+import * as Stomp from 'stompjs';
+import * as SockJS from 'sockjs-client';
 import { AuthService } from 'src/app/auth/auth.service';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
 import { Ride, RideRequestSingleLocation, RideService, RideStatus } from 'src/app/ride/ride.service';
@@ -16,6 +18,12 @@ enum State {
     JUST_MAP,
     RIDE_REQUEST,
     RIDE_IN_PROGRESS,
+}
+
+export interface Message {
+    message: string,
+    fromId: string,
+    toId: string,
 }
 
 @Component({
@@ -33,7 +41,65 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     ride: Ride | null = null;
     timerText: string = "";
 
+    //////////////////////////
+
+    private stompClient: Stomp.Client | undefined;
+
+    /**
+     * Connect to a websocket.
+     * @param stompEndpoint Name of the endpoint used by Stomp to connect to a websocket.
+     * Has to be one of the registered endpoints from `WebSocketConfiguration::registerStompEndpoints()`.
+     * Must *not* begin with a `/`.
+     */
+    connectToSocket(stompEndpoint: string) {
+        let ws = new SockJS(environment.serverOrigin + stompEndpoint);
+        this.stompClient = Stomp.over(ws);
+        this.stompClient.debug = () => {};
+        let self = this;
+        this.stompClient.connect({}, () => {
+
+            self.onConnectToWebSocket();
+        });
+    }
+
+    /**
+     * Subscribe to a given topic to listen to the messages in the topic.
+     * @param topicName Name of the topic, *must not* start with a `/`.
+     */
+    subscribeToWebSocketTopic(topicName: string, callback: (msg: Stomp.Message) => any) {
+        if (this.stompClient != undefined) {
+            this.stompClient.subscribe('/' + topicName, callback);
+        } else {
+            console.error("Cannot subscribe to topic" + topicName + ". Not connected to a websocket!");
+        }
+    }
+
+    /**
+     *
+     * @param message Message payload.
+     * @param socketEndpoint Endpoint to send it to. Check Java methods annotated with `@MessageMapping()` for possible endpoints.
+     */
+    sendMessageToSocket(message: string, socketEndpoint: string) {
+        if (this.stompClient != undefined) {
+            this.stompClient.send("/shuttle/" + socketEndpoint, {}, message);
+        } else {
+            console.error("Cannot send message" + message + " to endpoint " + socketEndpoint + ". Not connected to a websocket!");
+        }
+    }
+
+    /**
+     * Callback for when the component gets connected to a websocket.
+     */
+    onConnectToWebSocket() {
+        this.subscribeToWebSocketTopic("ride", (message) => {
+            console.log(message);
+        });
+    }
+
+    //////////////////////////
+
     SendWorkHoursThing() {
+        this.sendMessageToSocket("Hello", "test");
         /// TODO : REMOVE
 
         const url: string = "/api/driver/{id}/working-hour";
@@ -48,20 +114,18 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
         const options: any = { responseType: 'json' };
-        this.httpClient.get(environment.serverOrigin + `api/driver/${id}/working-hour`, {params: params, observe: "body"}).subscribe({
+        this.httpClient.get(environment.serverOrigin + `api/driver/${id}/working-hour`, { params: params, observe: "body" }).subscribe({
             next: (value) => {
-                console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                 console.log(value);
             },
             error: (error) => {
-                console.error("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                 console.error(error);
             }
         });
     }
 
     constructor(
-        private httpClient: HttpClient, // TODO REMOVE THIS.
+        private httpClient: HttpClient,
         public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService, private navbarService: NavbarService, private userService: UserService, private authService: AuthService) {
         this.pull = interval(8 * 1000).pipe(startWith(0)).subscribe(() => {
             this.pullNewRideRequest();
@@ -74,6 +138,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
     ngOnInit(): void {
         document.body.className = "body-graybg";
+        this.connectToSocket('socket');
     }
 
     private refreshActivitySlider(): void {
