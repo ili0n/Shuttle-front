@@ -14,6 +14,11 @@ export interface Driver {
     password: string
 }
 
+export interface Location{
+    latitude: number,
+    longitude: number
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -26,4 +31,11 @@ export class DriverService {
         };
         return this.httpClient.post(environment.serverOrigin + 'api/driver', driver, options);
     }
+
+    public getActiveDriversLocations(): Observable<Array<Location>> {
+        return this.httpClient.get<Array<Location>>(environment.serverOrigin + "api/driver/active", {
+          observe: "body",
+          responseType: "json",
+        });
+      }
 }
