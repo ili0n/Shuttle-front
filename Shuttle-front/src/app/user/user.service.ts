@@ -35,11 +35,4 @@ export class UserService {
             responseType: "json",
         });
     }
-
-    public findByEmail(newEmail: string): Observable<UserIdEmail> {
-        return this.httpClient.get<UserIdEmail>(`${this.url}/email/${newEmail}`, {
-            observe: "body",
-            responseType: "json",
-        });
-    }
 }

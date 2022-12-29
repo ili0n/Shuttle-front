@@ -8,7 +8,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { UserIdEmail, UserService } from 'src/app/user/user.service';
 import { VehicleService, VehicleType } from 'src/app/vehicle/vehicle.service';
-import { Passenger } from '../passenger.service';
+import { Passenger, PassengerService } from '../passenger.service';
 
 @Component({
     selector: 'app-passenger-home',
@@ -28,7 +28,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     distance: number = -1;
     vehicleTypes: Array<VehicleType> = [];
 
-    constructor(private sharedService: SharedService, private userService: UserService, private authService: AuthService, private formBuilder: FormBuilder, private http: HttpClient, private vehicleService: VehicleService) {
+    constructor(private sharedService: SharedService, private passengerService: PassengerService, private authService: AuthService, private formBuilder: FormBuilder, private http: HttpClient, private vehicleService: VehicleService) {
         this.formGroup = this.formBuilder.group({
             departure: ['', []],
             destination: ['', []],
@@ -163,7 +163,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         const newEmail: string = this.formGroup.getRawValue()['passenger_email'];
 
         if (this.otherPassengers.find(p => p.email == newEmail) == undefined && newEmail != this.myEmail) {
-            this.userService.findByEmail(newEmail).subscribe({
+            this.passengerService.findByEmail(newEmail).subscribe({
                 next: (user) => {
                     this.otherPassengers.push(user);
                     //this.otherPassengersEmails.push(user.email);
