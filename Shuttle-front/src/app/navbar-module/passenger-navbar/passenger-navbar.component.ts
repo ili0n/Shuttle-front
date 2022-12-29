@@ -14,4 +14,8 @@ export class PassengerNavbarComponent {
     logout() {
         this.authService.logout();
     }
+
+    home() {
+        this.router.navigate(["passenger/home"]);
+    }
 }
