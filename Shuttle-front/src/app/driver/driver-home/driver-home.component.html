@@ -1,0 +1,73 @@
+<div id="root-card">
+    <button (click)="SendWorkHoursThing()">Send work hours thing</button>
+    <div class="row">
+        <!-- Left side - map -->
+        <div class="column left">
+            <div id="map"></div>
+        </div>
+
+        <!-- Right side - info -->
+        <div class="column right" *ngIf="ride != null">
+
+            <div class="section align-mat-icon">
+                <mat-icon  aria-hidden="false" aria-label="Example home icon">person</mat-icon>
+                <span class="text">Passengers</span>
+            </div>
+            <mat-list>
+                <mat-list-item *ngFor="let passenger of ride.passengers">
+                    <table>
+                        <tr>
+                            <td><img src="./assets/pfp_default.png" width="48px" height="48px" /></td>
+                            <td>
+                                <span matListItemTitle>{{ passenger.email }}</span>
+                                <span matListItemLine>{{ passenger.id }}</span>
+                            </td>
+                        </tr>
+                    </table>
+                </mat-list-item>
+            </mat-list>
+            <mat-divider></mat-divider>
+
+            <div class="section align-mat-icon">
+                <mat-icon  aria-hidden="false" aria-label="Example home icon">location_on</mat-icon>
+                <span class="text">Locations</span>
+            </div>
+            <mat-list>
+                <mat-list-item *ngFor="let location of getRoutePoints(ride)">
+
+                    <span matListItemTitle>{{ location.address }}</span>
+                </mat-list-item>
+            </mat-list>
+            <mat-divider></mat-divider>
+
+            <div class="section align-mat-icon">
+                <mat-icon  aria-hidden="false" aria-label="Example home icon">info</mat-icon>
+                <span class="text">Other</span>
+            </div>
+            <mat-list>
+                <mat-list-item class="align-mat-icon other-info">
+                    <mat-icon>child_care</mat-icon><mat-checkbox class="example-margin" [(ngModel)]="ride.babyTransport" disabled="true"></mat-checkbox>
+                </mat-list-item>
+                <mat-list-item class="align-mat-icon other-info">
+                    <mat-icon>pets</mat-icon><mat-checkbox class="example-margin" [(ngModel)]="ride.petTransport" disabled="true"></mat-checkbox>
+                </mat-list-item>
+            </mat-list>
+            <mat-divider></mat-divider>
+
+            <div id="buttons-bottom">
+                <div *ngIf="state == State.RIDE_REQUEST">
+                    <button mat-raised-button color="primary" (click)="beginRide()"><mat-icon>play_circle_filled</mat-icon> Begin ride</button>
+                    <div><br/></div>
+                    <button type="submit" mat-raised-button color="warn" (click)="openRejectionDialog()"><mat-icon>stop</mat-icon> Reject ride</button>
+                </div>
+                <div *ngIf="state == State.RIDE_IN_PROGRESS">
+                    <button mat-raised-button color="warn" (click)="finishRide()"><mat-icon>stop</mat-icon> Finish</button>
+                    <br/>
+                    <p id="elapsed-time">
+                        Elapsed time: <b>{{ timerText }}</b>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

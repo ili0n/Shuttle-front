@@ -66,7 +66,6 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
                 password: result.password
             };
             let vehicle: Vehicle = {
-                driverId: 77777,
                 vehicleType: result.vehicleType,
                 model: result.vehicleModel,
                 licenseNumber: result.vehicleRegtable,
