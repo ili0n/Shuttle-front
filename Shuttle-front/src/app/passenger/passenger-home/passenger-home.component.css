@@ -39,3 +39,8 @@ html,body { height:100%; }
 .label, .value {
     font-size: large;
 }
+
+.ride-passenger {
+    background-color: whitesmoke;
+    padding: 10px;
+}

@@ -7,12 +7,14 @@
 
             <mat-form-field appearance="outline">
                 <mat-label>Departure</mat-label>
-                <input matInput name="name" type="text" formControlName="departure" />
+                <input matInput name="departure" type="text" formControlName="departure" />
             </mat-form-field>
+
+            <br/>
 
             <mat-form-field appearance="outline">
                 <mat-label>Destination</mat-label>
-                <input matInput name="name" type="text" formControlName="destination" />
+                <input matInput name="destination" type="text" formControlName="destination" />
             </mat-form-field>
 
             <br/>
@@ -22,8 +24,63 @@
             <div *ngIf="foundRoute()">
                 <hr/>
 
-                <span class="label">Distance: </span>
-                <span class="value">{{ metersFormat(distance) }}</span>
+                <div>
+                    <span class="label">Distance: </span>
+                    <span class="value">{{ metersFormat(distance) }}</span>
+                </div>
+                <br/>
+                <mat-form-field appearance="outline">
+                    <mat-label>Type</mat-label>
+                    <mat-select formControlName="vehicleType">
+                        <mat-option *ngFor="let type of vehicleTypes" name="vehicleType" [value]="type.name">{{type.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <br />
+                <div>
+                    <mat-checkbox formControlName="vehicleBabies" class="value">Babies</mat-checkbox>
+                    <mat-checkbox formControlName="vehiclePets" class="value">Pets</mat-checkbox>
+                </div>
+                <br />
+
+                <hr/>
+
+                <div class="ride-passenger">
+                    <img src="">
+                    <mat-label class="value">{{myEmail}}</mat-label>
+                    <mat-label class="label"> (You)</mat-label>
+                </div>
+                <br/>
+
+                <div *ngFor="let other of otherPassengers" class="ride-passenger">
+                    <img src="">
+                    <mat-label class="value">{{other.email}}</mat-label>
+                    <button mat-mini-fab (click)="onRemovePassenger(other.email)"><mat-icon>remove</mat-icon></button>
+                    <br/>
+                </div>
+
+                <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Add another passenger</mat-label>
+                        <input matInput name="passenger_email" type="text" formControlName="passenger_email" />
+                    </mat-form-field>
+
+                    <button mat-mini-fab color="accent" (click)="onAddNewPassenger()">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </div>
+
+
+
+
+
+                <hr/>
+
+                <div>
+                    <span class="label">Price: </span>
+                    <span class="value">{{ priceFormat(calcPrice()) }}</span>
+                </div>
+
+
             </div>
 
         </form></mat-card>

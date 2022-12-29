@@ -4,6 +4,11 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { Observable } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
+import { SharedService } from 'src/app/shared/shared.service';
+import { UserIdEmail, UserService } from 'src/app/user/user.service';
+import { VehicleService, VehicleType } from 'src/app/vehicle/vehicle.service';
+import { Passenger } from '../passenger.service';
 
 @Component({
     selector: 'app-passenger-home',
@@ -16,17 +21,27 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     private destPos: L.LatLng | null = null;
     private route: L.Routing.Control | null = null;
 
+    public otherPassengers: Array<UserIdEmail> = [];
+    public myEmail: string = "";
+    //public otherPassengersEmails: Array<string> = [];
     formGroup: FormGroup;
     distance: number = -1;
+    vehicleTypes: Array<VehicleType> = [];
 
-    constructor(private formBuilder: FormBuilder, private http: HttpClient) {
+    constructor(private sharedService: SharedService, private userService: UserService, private authService: AuthService, private formBuilder: FormBuilder, private http: HttpClient, private vehicleService: VehicleService) {
         this.formGroup = this.formBuilder.group({
             departure: ['', []],
             destination: ['', []],
+            vehicleType: [],
+            vehicleBabies: [false],
+            vehiclePets: [false],
+            passenger_email: ['', [Validators.email]],
         });
     }
 
     ngOnInit(): void {
+        this.vehicleTypes = this.vehicleService.getTypes();
+        this.myEmail = this.authService.getUserEmail();
     }
 
     ngAfterViewInit(): void {
@@ -112,21 +127,63 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
 
             let self = this;
 
-            this.route.on('routesfound', function(e) {
+            this.route.on('routesfound', function (e) {
                 let routes = e.routes;
                 let summary = routes[0].summary;
 
                 self.distance = summary.totalDistance;
                 // Math.round(summary.totalTime % 3600 / 60) + ' minutes'
-             });
+            });
+
+            this.formGroup.controls['vehicleType'].setValue(this.vehicleTypes[0].name);
         }
     }
 
     metersFormat(meters: number): string {
         if (meters >= 1000) {
-            return (meters / 1000).toString() + "km";
+            return (meters / 1000).toFixed(2).toString() + "km";
         } else {
-            return meters.toString() + "m";
+            return meters.toFixed(2).toString() + "m";
         }
+    }
+
+    calcPrice(): number {
+        const kmInt = Math.round(this.distance / 1000);
+        const vehicleType: string = this.formGroup.getRawValue()['vehicleType'];
+        const vehicleTypeCost: number = this.vehicleTypes.filter(t => t.name == vehicleType)[0].pricePerKm;
+        const price = (kmInt * (120 + vehicleTypeCost));
+        return price;
+    }
+
+    priceFormat(price: number): string {
+        return price.toString() + " RSD";
+    }
+
+    onAddNewPassenger(): void {
+        const newEmail: string = this.formGroup.getRawValue()['passenger_email'];
+
+        if (this.otherPassengers.find(p => p.email == newEmail) == undefined && newEmail != this.myEmail) {
+            this.userService.findByEmail(newEmail).subscribe({
+                next: (user) => {
+                    this.otherPassengers.push(user);
+                    //this.otherPassengersEmails.push(user.email);
+                    this.formGroup.controls['passenger_email'].setValue('');
+                },
+                error: (error) => {
+                    this.sharedService.showSnackBar("User not found", 3000);
+                },
+            });
+        } else {
+            // Email already in the list.
+        }
+    }
+
+    onRemovePassenger(email: string) {
+        if (email == this.myEmail) {
+            return;
+        }
+
+        this.otherPassengers = this.otherPassengers.filter(psg => psg.email != email);
+        //this.otherPassengersEmails = this.otherPassengersEmails.filter(em => em != email);
     }
 }

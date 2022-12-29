@@ -22,6 +22,11 @@ export interface Vehicle {
     petTransport: boolean,
 }
 
+export interface VehicleType {
+    name: string,
+    pricePerKm: number,
+};
+
 @Injectable({
     providedIn: 'root'
 })
@@ -33,5 +38,13 @@ export class VehicleService {
             responseType: 'json'
         };
         return this.httpClient.post(environment.serverOrigin + 'api/vehicle', vehicle, options);
+    }
+
+    public getTypes(): VehicleType[] {
+        return [
+            {name: 'Standard', pricePerKm: 5},
+            {name: 'Luxury', pricePerKm: 50},
+            {name: 'Van', pricePerKm: 10},
+        ];
     }
 }
