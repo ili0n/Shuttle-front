@@ -12,5 +12,10 @@
 </head>
 <body class="mat-typography">
   <app-root></app-root>
+  <!-- Stomp client messes something up and we get an error 'global is not defined'. -->
+  <!-- https://github.com/stomp-js/ng2-stompjs/issues/70 -->
+  <script type="application/javascript">
+    var global = window;
+  </script>
 </body>
 </html>
