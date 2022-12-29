@@ -53,7 +53,6 @@ export class AuthService {
 
     getUserId(): number {
         if (this.isLoggedIn()) {
-            console.log("getUserId(): " + new JwtHelperService().decodeToken(localStorage.getItem('user')!).id);
             return new JwtHelperService().decodeToken(localStorage.getItem('user')!).id;
         }
         return -1;

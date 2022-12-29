@@ -7,14 +7,14 @@
         </div>
 
         <!-- Right side - info -->
-        <div class="column right" *ngIf="ride != null">
+        <div class="column right" *ngIf="rides.length > 0">
 
             <div class="section align-mat-icon">
                 <mat-icon  aria-hidden="false" aria-label="Example home icon">person</mat-icon>
                 <span class="text">Passengers</span>
             </div>
             <mat-list>
-                <mat-list-item *ngFor="let passenger of ride.passengers">
+                <mat-list-item *ngFor="let passenger of rides[0].passengers">
                     <table>
                         <tr>
                             <td><img src="./assets/pfp_default.png" width="48px" height="48px" /></td>
@@ -33,7 +33,7 @@
                 <span class="text">Locations</span>
             </div>
             <mat-list>
-                <mat-list-item *ngFor="let location of getRoutePoints(ride)">
+                <mat-list-item *ngFor="let location of getRoutePoints(rides[0])">
 
                     <span matListItemTitle>{{ location.address }}</span>
                 </mat-list-item>
@@ -46,10 +46,10 @@
             </div>
             <mat-list>
                 <mat-list-item class="align-mat-icon other-info">
-                    <mat-icon>child_care</mat-icon><mat-checkbox class="example-margin" [(ngModel)]="ride.babyTransport" disabled="true"></mat-checkbox>
+                    <mat-icon>child_care</mat-icon><mat-checkbox class="example-margin" [(ngModel)]="rides[0].babyTransport" disabled="true"></mat-checkbox>
                 </mat-list-item>
                 <mat-list-item class="align-mat-icon other-info">
-                    <mat-icon>pets</mat-icon><mat-checkbox class="example-margin" [(ngModel)]="ride.petTransport" disabled="true"></mat-checkbox>
+                    <mat-icon>pets</mat-icon><mat-checkbox class="example-margin" [(ngModel)]="rides[0].petTransport" disabled="true"></mat-checkbox>
                 </mat-list-item>
             </mat-list>
             <mat-divider></mat-divider>
