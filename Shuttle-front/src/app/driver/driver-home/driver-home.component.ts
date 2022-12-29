@@ -145,7 +145,6 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     ngOnInit(): void {
         document.body.className = "body-graybg";
         this.connectToSocket('socket');
-
     }
 
     private refreshActivitySlider(): void {
