@@ -46,7 +46,7 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   routeInfoEmitter: EventEmitter<RouteBaseInfo> = new EventEmitter<RouteBaseInfo>();
 
   constructor(private mapService: MapEstimationService, private driverService: DriverService){
-    this.driverLocationMarkers = L.featureGroup();
+    
     this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(() => {
       this.refreshActiveDrivers();
     });
@@ -60,13 +60,16 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   private departureCoordinates?: L.LatLng;
 
   private pull: Subscription;
-  private driverLocationMarkers?: L.FeatureGroup;
+  private driverLocationMarkers?: L.LayerGroup;
 
   private initMap(): void{
     this.map = L.map("estimation-map", {
       center: [ 45.267136, 19.833549 ],
       zoom: 3
     })
+
+    this.driverLocationMarkers = L.layerGroup();
+    this.driverLocationMarkers.addTo(this.map!);
 
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
@@ -120,14 +123,13 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
     this.driverService.getActiveDriversLocations().subscribe({
       next: (locations) => {
         if(this.driverLocationMarkers !== undefined){
-          this.driverLocationMarkers.remove();
           this.driverLocationMarkers.clearLayers();
         }
 
         if(this.map !== undefined){
           locations.forEach(location => {
             let marker = L.marker([location.latitude, location.longitude], {icon: carMarkerIcon})
-            .addTo(this.map!)
+            .addTo(this.driverLocationMarkers!)
             this.driverLocationMarkers?.addLayer(marker);
           })
         }
