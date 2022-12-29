@@ -37,11 +37,8 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private _state: State = State.JUST_MAP;
     private timer: NodeJS.Timer | null = null;
     State = State;
-    //ride: Ride | null = null;
     rides: Array<Ride> = [];
     timerText: string = "";
-
-    //////////////////////////
 
     private stompClient: Stomp.Client | undefined;
 
@@ -81,7 +78,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     /**
-     *
+     * Send message to socket at the provided endpoint.
      * @param message Message payload.
      * @param socketEndpoint Endpoint to send it to. Check Java methods annotated with `@MessageMapping()` for possible endpoints.
      */
@@ -113,10 +110,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         }});
     }
 
-    //////////////////////////
-
     SendWorkHoursThing() {
-        this.sendMessageToSocket("Hello", "test");
         /// TODO : REMOVE
 
         const url: string = "/api/driver/{id}/working-hour";
