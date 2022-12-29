@@ -3,6 +3,29 @@
         <div id="map"></div>
     </div>
     <div class="column right">
-        Form goes here.
+        <mat-card><form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+
+            <mat-form-field appearance="outline">
+                <mat-label>Departure</mat-label>
+                <input matInput name="name" type="text" formControlName="departure" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Destination</mat-label>
+                <input matInput name="name" type="text" formControlName="destination" />
+            </mat-form-field>
+
+            <br/>
+
+            <button mat-raised-button type="submit" color="primary">Go</button>
+
+            <div *ngIf="foundRoute()">
+                <hr/>
+
+                <span class="label">Distance: </span>
+                <span class="value">{{ metersFormat(distance) }}</span>
+            </div>
+
+        </form></mat-card>
     </div>
 </div>
