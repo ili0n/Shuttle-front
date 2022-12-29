@@ -34,11 +34,11 @@ export interface Message {
 export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private map: any;
     private mapRoute: L.Routing.Control | null = null;
-    private pull: Subscription;
     private _state: State = State.JUST_MAP;
     private timer: NodeJS.Timer | null = null;
     State = State;
-    ride: Ride | null = null;
+    //ride: Ride | null = null;
+    rides: Array<Ride> = [];
     timerText: string = "";
 
     //////////////////////////
@@ -57,9 +57,15 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         this.stompClient.debug = () => {};
         let self = this;
         this.stompClient.connect({}, () => {
-
             self.onConnectToWebSocket();
         });
+    }
+
+    /**
+     * Disconnect from the websocket.
+     */
+    disconnectFromSocket() {
+        this.stompClient?.disconnect(() => {});
     }
 
     /**
@@ -91,9 +97,20 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
      * Callback for when the component gets connected to a websocket.
      */
     onConnectToWebSocket() {
-        this.subscribeToWebSocketTopic("ride", (message) => {
-            console.log(message);
+        const driverId: number = this.authService.getUserId();
+
+        // Whenever the backend has a new ride for me, I'll listen to it.
+
+        this.subscribeToWebSocketTopic(`ride/driver/${driverId}`, (message) => {
+            let r: Ride = JSON.parse(message.body);
+            this.onGotRide(r);
         });
+
+        // Ask the backend to fetch the latest ride.
+
+        this.rideService.find(this.authService.getUserId()).subscribe({next: (ride: Ride) => {
+            this.onGotRide(ride);
+        }});
     }
 
     //////////////////////////
@@ -124,12 +141,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-    constructor(
-        private httpClient: HttpClient,
-        public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService, private navbarService: NavbarService, private userService: UserService, private authService: AuthService) {
-        this.pull = interval(8 * 1000).pipe(startWith(0)).subscribe(() => {
-            this.pullNewRideRequest();
-        });
+    constructor(private httpClient: HttpClient, public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService, private navbarService: NavbarService, private userService: UserService, private authService: AuthService) {
     }
 
     ngOnDestroy() {
@@ -139,6 +151,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     ngOnInit(): void {
         document.body.className = "body-graybg";
         this.connectToSocket('socket');
+
     }
 
     private refreshActivitySlider(): void {
@@ -167,30 +180,38 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     /**
-     * Fetch a ride from the backend and draw a route.
+     * Callback that's called each time a new ride is received from the backend.
+     * @param receivedData Ride object that was retrieved from the backend. It can be a pending ride or an active ride.
      */
-    pullNewRideRequest() {
-        const driverID = this.authService.getUserId();
-        const obs = this.rideService.find(driverID);
+    private onGotRide(receivedData: Ride): void {
+        if (receivedData == null) {
+            return;
+        }
 
-        obs.subscribe((receivedData: Ride) => {
-            if (receivedData == null) {
-                return;
-            }
+        // If this ride is already in the list, ignore it.
 
-            this.ride = receivedData;
+        if (this.rides.filter(r => r.id == receivedData.id).length > 0) {
+            return;
+        }
 
-            if (this.mapRoute == null) {
-                this.fetchRouteToMap();
-            }
+        // Otherwise, add it to the list of rides.
 
-            if (this.ride.status == RideStatus.Pending) {
-                this.state = State.RIDE_REQUEST;
-            } else if (this.ride.status == RideStatus.Accepted) {
-                this.state = State.RIDE_IN_PROGRESS;
-                this.startRideTimer();
-            }
-        });
+        this.rides.push(receivedData);
+        let ride: Ride = this.rides[0];
+
+        console.log("Got ride:");
+        console.log(this.rides);
+
+        if (this.mapRoute == null) {
+            this.fetchRouteToMap();
+        }
+
+        if (ride.status == RideStatus.Pending) {
+            this.state = State.RIDE_REQUEST;
+        } else if (ride.status == RideStatus.Accepted) {
+            this.state = State.RIDE_IN_PROGRESS;
+            this.startRideTimer();
+        }
     }
 
     hasRideRequest(): boolean {
@@ -208,13 +229,18 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     beginRide() {
-        const obs = this.rideService.accept(this.ride!.id);
+        let ride: Ride = this.rides[0];
+        if (ride == null) {
+            return;
+        }
+
+        const obs = this.rideService.accept(ride.id);
         obs.subscribe({
             next: (response) => {
                 this.userService.setActive(this.authService.getUserId()).subscribe({
                     next: (value) => {
                         this.state = State.RIDE_IN_PROGRESS;
-                        this.ride!.startTime = new Date().toISOString();
+                        ride.startTime = new Date().toISOString();
                         this.startRideTimer();
                         this.sharedService.showSnackBar("Ride started.", 4000);
                     }
@@ -228,7 +254,12 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     rejectRide(reason: string) {
-        const obs = this.rideService.reject(this.ride!.id, reason);
+        let ride: Ride = this.rides[0];
+        if (ride == null) {
+            return;
+        }
+
+        const obs = this.rideService.reject(ride.id, reason);
         obs.subscribe({
             next: (response) => {
                 this.removeRideFromContext();
@@ -241,7 +272,12 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     finishRide() {
-        const obs = this.rideService.end(this.ride!.id);
+        let ride: Ride = this.rides[0];
+        if (ride == null) {
+            return;
+        }
+
+        const obs = this.rideService.end(ride.id);
         obs.subscribe({
             next: (response) => {
                 this.removeRideFromContext();
@@ -256,12 +292,13 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private removeRideFromContext() {
         this.state = State.JUST_MAP;
         this.mapRoute!.remove();
-        this.ride = null;
+        this.rides = this.rides.slice(1, -1);
     }
 
     private getElapsedTime(): string {
-        if (this.ride) {
-            let timeDiffMs: number = Date.now() - new Date(this.ride!.startTime).getTime();
+        let ride: Ride = this.rides[0];
+        if (ride) {
+            let timeDiffMs: number = Date.now() - new Date(ride.startTime).getTime();
             let time: string = new Date(timeDiffMs).toISOString().substr(11, 8);
 
             if (time.substr(0, 2) == "00") {
@@ -273,11 +310,13 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     openRejectionDialog(): void {
+        let ride: Ride = this.rides[0];
+
         const dialogRef = this.dialog.open(RejectRideDialogComponent, { data: "" });
 
         dialogRef.afterClosed().subscribe(reason => {
             if (reason != undefined) {
-                if (this.ride != null) {
+                if (ride != null) {
                     this.rejectRide(reason);
                 }
             }
@@ -300,7 +339,12 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     fetchRouteToMap(): void {
-        const waypoints = this.getRoutePoints(this.ride!).map(p => L.latLng(p.latitude, p.longitude));
+        let ride: Ride = this.rides[0];
+        if (ride == null) {
+            return;
+        }
+
+        const waypoints = this.getRoutePoints(ride).map(p => L.latLng(p.latitude, p.longitude));
         this.mapRoute = L.Routing.control({
             waypoints: waypoints,
             collapsible: true,
