@@ -10,14 +10,14 @@
             <div formGroupName="route_form">
                 <mat-form-field appearance="outline">
                     <mat-label>Departure</mat-label>
-                    <input matInput formControlName="departure" name="departure" />
+                    <input matInput formControlName="departure" (blur)="updateFindRoute()" name="departure" />
                 </mat-form-field>
 
                 <span class="space"></span>
                 
                 <mat-form-field appearance="outline">
                     <mat-label>Destination</mat-label>
-                    <input matInput formControlName="destination" name="destination" />
+                    <input matInput formControlName="destination" (blur)="updateFindRoute()" name="destination" />
                 </mat-form-field>
 
                 <br/>

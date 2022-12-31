@@ -23,6 +23,9 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     private destPos: L.LatLng | null = null;
     private route: L.Routing.Control | null = null;
 
+    private lastDepartureText: string = "";
+    private lastDestinationText: string = "";
+
     public otherPassengers: Array<UserIdEmail> = [];
     public myEmail: string = "";
     mainForm: FormGroup;
@@ -91,19 +94,40 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
                 next: (result) => {
                     if (result[0]) {
                         this.depPos = L.latLng(result[0].lat, result[0].lon);
+                        this.lastDepartureText = departureText;
                         this.textToLocation(destinationText).subscribe({
                             next: (result) => {
                                 if (result[0]) {
                                     this.destPos = L.latLng(result[0].lat, result[0].lon);
+                                    this.lastDestinationText = destinationText;
                                     this.drawRoute();
                                 }
                             },
-                            error: () => { this.destPos = null; },
+                            error: () => { this.destPos = null; this.lastDepartureText = ""; },
                         });
                     }
                 },
-                error: () => { this.depPos = null; },
+                error: () => { this.depPos = null; this.lastDestinationText = ""; },
             });
+        }
+    }
+    
+    /**
+     * Callback that's fired when the blur event is triggered on either departure
+     * or destination input fields. It checks whether the route is different from
+     * the current one and updates it if so. This is done to minimize API calls to
+     * the map routing module.
+     */
+    updateFindRoute() {
+        if (this.mainForm.get('route_form')?.valid) {
+            const routeFormValues = this.mainForm.get('route_form')?.getRawValue();
+            const departureText: string = routeFormValues['departure'];
+            const destinationText: string = routeFormValues['destination'];
+
+            if (departureText != this.lastDepartureText 
+            || destinationText != this.lastDestinationText) {
+                this.findRoute();
+            }
         }
     }
 
