@@ -257,6 +257,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
             next: (response) => {
                 this.removeRideFromContext();
                 this.sharedService.showSnackBar("Ride request rejected.", 4000);
+                this.mapRoute = null;
             }, error: (error) => {
                 this.sharedService.showSnackBar("Could not cancel the ride.", 4000);
                 console.error(error);
@@ -275,6 +276,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
             next: (response) => {
                 this.removeRideFromContext();
                 this.sharedService.showSnackBar("Ride completed.", 4000);
+                this.mapRoute = null;
             }, error: (error) => {
                 this.sharedService.showSnackBar("Could not end the ride.", 4000);
                 console.error(error);
@@ -337,7 +339,14 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
             return;
         }
 
+        if (this.mapRoute != null) {
+            this.map.removeControl(this.mapRoute);
+        }
+
         const waypoints = this.getRoutePoints(ride).map(p => L.latLng(p.latitude, p.longitude));
+
+        console.log(waypoints);
+
         this.mapRoute = L.Routing.control({
             waypoints: waypoints,
             collapsible: true,
@@ -346,12 +355,11 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
             plan: L.Routing.plan(waypoints, { draggableWaypoints: false, addWaypoints: false }),
             lineOptions:
             {
-                missingRouteTolerance: 999, // TODO: ???
+                missingRouteTolerance: 0,
                 extendToWaypoints: true,
                 addWaypoints: false
             }
-        });
-        this.mapRoute.addTo(this.map);
+        }).addTo(this.map);
         this.mapRoute.hide();
     }
 
