@@ -37,12 +37,29 @@ export interface Ride {
     startTime: string,
 }
 
+export interface RideRequest {
+    locations: Array<RideRequestLocation>,
+    passengers: Array<RideRequestPassenger>,
+    vehicleType: string,
+    babyTransport: boolean,
+    petTransport: boolean,
+    hour: string,
+    minute: string,
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class RideService {
     constructor(private httpClient: HttpClient) { }
     readonly url: string = environment.serverOrigin + 'api/ride'
+
+    public request(payload: RideRequest): Observable<RideRequest> {
+        return this.httpClient.post<RideRequest>(`${this.url}`, payload, {
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
 
     public accept(rideID: number): Observable<any> {
         const options: any = { responseType: 'json' };

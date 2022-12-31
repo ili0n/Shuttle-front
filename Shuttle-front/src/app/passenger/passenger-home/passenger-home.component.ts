@@ -1,10 +1,12 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpStatusCode } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
+import { RideService, RideRequest } from 'src/app/ride/ride.service';
+import { RESTError } from 'src/app/shared/rest-error/rest-error';
 import { SharedService } from 'src/app/shared/shared.service';
 import { UserIdEmail } from 'src/app/user/user.service';
 import { VehicleService, VehicleType } from 'src/app/vehicle/vehicle.service';
@@ -35,6 +37,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         private passengerService: PassengerService, 
         private authService: AuthService, 
         private formBuilder: FormBuilder, 
+        private rideService: RideService,
         private http: HttpClient, 
         private vehicleService: VehicleService) {
         this.mainForm = this.formBuilder.group({
@@ -166,18 +169,18 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
             let passengersAll = [...this.otherPassengers];
             passengersAll.push(mePassenger);
 
-            let result = {
+            let request: RideRequest = {
                 locations: [
                     {
                         departure: {
                             address: formValue.get('route_form.departure')?.value,
-                            latitude: this.depPos?.lat,
-                            longitude: this.depPos?.lng,
+                            latitude: Number(this.depPos?.lat),
+                            longitude: Number(this.depPos?.lng),
                         },
                         destination: {
                             address: formValue.get('route_form.destination')?.value,
-                            latitude: this.destPos?.lat,
-                            longitude: this.destPos?.lng,
+                            latitude: Number(this.destPos?.lat),
+                            longitude: Number(this.destPos?.lng),
                         },
                     }
                 ],
@@ -185,13 +188,24 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
                 vehicleType: formValue.get('route_options_form.vehicle_type')?.value,
                 babyTransport: formValue.get('route_options_form.babies')?.value,
                 petTransport: formValue.get('route_options_form.pets')?.value,
-                future: {
-                    hour: formValue.get('route_options_form.later.at_hour')?.value,
-                    minute: formValue.get('route_options_form.later.at_minute')?.value,
-                }
+                hour: formValue.get('route_options_form.later.at_hour')?.value,
+                minute: formValue.get('route_options_form.later.at_minute')?.value,
+            
             }
 
-            console.log(result);
+            console.log(request);
+
+            this.rideService.request(request).subscribe({
+                next: (val: RideRequest) => {
+                    console.log(val);
+                },
+                error: (err) => {
+                    const error: RESTError = err.error;
+                    if (err.status == HttpStatusCode.BadRequest) {
+                        this.sharedService.showSnackBar(error.message, 3000);
+                    }
+                }
+            })
         }
     }
 
