@@ -221,6 +221,20 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
             this.rideService.request(request).subscribe({
                 next: (val: RideRequest) => {
                     console.log(val);
+
+                    ///////////////////////////////////
+
+                    this.rideService.findByPassenger(this.authService.getUserId()).subscribe({
+                        next: (val) => {
+                            console.log(val);
+                        },
+                        error: (error) => {
+                            console.error(error);
+                        }
+                    });
+
+                    ///////////////////////////////////
+
                 },
                 error: (err) => {
                     if (err.status == HttpStatusCode.BadRequest) {

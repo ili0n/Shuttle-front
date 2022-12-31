@@ -88,4 +88,11 @@ export class RideService {
             responseType: "json",
         });
     }
+
+    public findByPassenger(passengerId: number): Observable<Ride> {
+        return this.httpClient.get<Ride>(`${this.url}/passenger/${passengerId}/active`, {
+            observe: "body",
+            responseType: "json",
+        });    
+    }
 }
