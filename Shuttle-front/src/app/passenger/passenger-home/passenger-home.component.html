@@ -3,44 +3,62 @@
         <div id="map"></div>
     </div>
     <div class="column right">
-        <mat-card><form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+        <form [formGroup]="mainForm" >
 
-            <mat-form-field appearance="outline">
-                <mat-label>Departure</mat-label>
-                <input matInput name="departure" type="text" formControlName="departure" />
-            </mat-form-field>
-            <span class="space"></span>
-            <mat-form-field appearance="outline">
-                <mat-label>Destination</mat-label>
-                <input matInput name="destination" type="text" formControlName="destination" />
-            </mat-form-field>
+            <!-- Route form - select departure and destination. -->
+
+            <div formGroupName="route_form">
+                <mat-form-field appearance="outline">
+                    <mat-label>Departure</mat-label>
+                    <input matInput formControlName="departure" name="departure" />
+                </mat-form-field>
+
+                <span class="space"></span>
+                
+                <mat-form-field appearance="outline">
+                    <mat-label>Destination</mat-label>
+                    <input matInput formControlName="destination" name="destination" />
+                </mat-form-field>
+
+                <br/>
+                
+                <button type="submit" color="primary" mat-raised-button (click)="findRoute()">Search Route</button>
+            </div>
 
             <br/>
 
-            <button mat-raised-button type="submit" color="primary">Go</button>
+            <!-- Other ride options - after selecting the route. -->
 
-            <div *ngIf="foundRoute()">
-                <hr/>
+            <ng-container *ngIf="hasRouteOnMap()">
+            <div formGroupName="route_options_form">
+                <!-- Total distance. -->
 
                 <div>
                     <span class="label">Distance: </span>
-                    <span class="value">{{ metersFormat(distance) }}</span>
+                    <span class="value">{{ getDistanceFormatted(distance) }}</span>
                 </div>
-                <br/>
-                <mat-form-field appearance="outline">
-                    <mat-label>Type</mat-label>
-                    <mat-select formControlName="vehicleType">
-                        <mat-option *ngFor="let type of vehicleTypes" name="vehicleType" [value]="type.name">{{type.name}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <br />
-                <div>
-                    <mat-checkbox formControlName="vehicleBabies" class="value">Babies</mat-checkbox>
-                    <mat-checkbox formControlName="vehiclePets" class="value">Pets</mat-checkbox>
-                </div>
-                <br />
 
                 <hr/>
+
+                <!-- Vehicle type. -->
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Vehicle</mat-label>
+                    <mat-select formControlName="vehicle_type">
+                        <mat-option *ngFor="let type of vehicleTypes" name="vehicle_type" [value]="type.name">{{type.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <!-- Pets and babies -->
+
+                <div>
+                    <mat-checkbox formControlName="babies" class="value">Babies</mat-checkbox>
+                    <mat-checkbox formControlName="pets" class="value">Pets</mat-checkbox>
+                </div>
+
+                <hr/>
+
+                <!-- Passenger list. -->
 
                 <div class="ride-passenger">
                     <img src="">
@@ -57,52 +75,60 @@
                     <br/>
                 </div>
 
+                <br/>
+                
                 <div>
                     <mat-form-field appearance="outline">
                         <mat-label>Add another passenger</mat-label>
                         <input matInput name="passenger_email" type="text" formControlName="passenger_email" />
                     </mat-form-field>
-
+                    <span class="space"></span>
                     <button mat-mini-fab color="accent" (click)="onAddNewPassenger()">
                         <mat-icon>add</mat-icon>
                     </button>
                 </div>
 
-                <hr/>
+                <!-- Price -->
 
                 <div>
                     <span class="label">Price: </span>
-                    <span class="value">{{ priceFormat(calcPrice()) }}</span>
+                    <span class="value">{{ getPriceFormatted() }}</span>
                 </div>
 
                 <hr/>
 
-                <div>
-                    <mat-checkbox formControlName="scheduleLater" class="value">Schedule later</mat-checkbox>
-                    <div *ngIf="scheduledLater()">
-                        <mat-form-field appearance="fill" class="shortInput">
-                            <mat-label>Hour</mat-label>
-                            <mat-select (click)="recalculateAllowedHours()" formControlName="futureHour">
-                                <mat-option *ngFor="let hour of allowedHours" value="{{hour}}">{{hour}}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
+                <!-- Schedule later. -->
 
-                        <span class="space"></span>
+                <mat-checkbox formControlName="is_later" class="value">Schedule later</mat-checkbox>
+                <ng-container *ngIf="isForLater()">
+                <div formGroupName="later">
+                    <mat-form-field appearance="fill" class="shortInput">
+                        <mat-label>Hour</mat-label>
+                        <mat-select (click)="recalculateAllowedHours()" formControlName="at_hour">
+                            <mat-option *ngFor="let hour of allowedHours" value="{{hour}}">{{hour}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
 
-                        <mat-form-field appearance="fill" class="shortInput">
-                            <mat-label>Minute</mat-label>
-                            <mat-select (click)="recalculateAllowedMinutes()" formControlName="futureMinute">
-                                <mat-option *ngFor="let hour of allowedMinutes" value="{{hour}}">{{hour}}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <br/>
-                        <span class="errorMsg">{{timeValidationErrorMsg}}</span>
-                    </div>
+                    <span class="space"></span>
+
+                    <mat-form-field appearance="fill" class="shortInput">
+                        <mat-label>Minute</mat-label>
+                        <mat-select formControlName="at_minute">
+                            <mat-option *ngFor="let hour of allowedMinutes" value="{{hour}}">{{hour}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <br/>
+                    <span class="errorMsg">{{timeValidationErrorMsg}}</span>
                 </div>
-
+                </ng-container>
+                  
+                <!-- Submit button - order route. -->
+             
+                <br/>
+                <button type="submit" color="primary"  mat-raised-button (click)="orderRoute()">Order</button>
 
             </div>
-
-        </form></mat-card>
+            </ng-container>
+        </form>            
     </div>
 </div>
