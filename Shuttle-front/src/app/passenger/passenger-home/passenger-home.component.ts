@@ -190,7 +190,6 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
                 petTransport: formValue.get('route_options_form.pets')?.value,
                 hour: formValue.get('route_options_form.later.at_hour')?.value,
                 minute: formValue.get('route_options_form.later.at_minute')?.value,
-            
             }
 
             console.log(request);
@@ -200,12 +199,12 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
                     console.log(val);
                 },
                 error: (err) => {
-                    const error: RESTError = err.error;
                     if (err.status == HttpStatusCode.BadRequest) {
+                        const error: RESTError = err.error;
                         this.sharedService.showSnackBar(error.message, 3000);
                     }
                 }
-            })
+            });
         }
     }
 
@@ -218,7 +217,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         if (this.otherPassengers.find(p => p.email == newEmail) == undefined && newEmail != this.myEmail) {
             this.passengerService.findByEmail(newEmail).subscribe({
                 next: (user) => {
-                    this.otherPassengers.push(user);
+                    this.otherPassengers.push({id: user.id, email: user.email});
                     this.mainForm.get('route_options_form.passenger_email')?.setValue('');
                 },
                 error: () => {
