@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { Observable } from 'rxjs';
@@ -23,20 +23,75 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
 
     public otherPassengers: Array<UserIdEmail> = [];
     public myEmail: string = "";
-    //public otherPassengersEmails: Array<string> = [];
     formGroup: FormGroup;
     distance: number = -1;
     vehicleTypes: Array<VehicleType> = [];
+    allowedHours: Array<Number> = [];
+    allowedMinutes: Array<Number> = [];
+    timeValidationErrorMsg: string = ""
 
     constructor(private sharedService: SharedService, private passengerService: PassengerService, private authService: AuthService, private formBuilder: FormBuilder, private http: HttpClient, private vehicleService: VehicleService) {
         this.formGroup = this.formBuilder.group({
-            departure: ['', []],
-            destination: ['', []],
+            departure: ['', [Validators.required]],
+            destination: ['', [Validators.required]],
             vehicleType: [],
             vehicleBabies: [false],
             vehiclePets: [false],
-            passenger_email: ['', [Validators.email]],
+            passenger_email: ['', [Validators.email]], // This is used for adding friends to the ride only!
+            scheduleLater: [false],
+            futureHour: [],
+            futureMinute: [],
         });
+    }
+
+    /**
+     * 
+     * @returns Error message or null if validation passes.
+     */
+    futureTimeValidation(): string | null {
+        if (this.scheduledLater()) {
+            const hour: number = Number(this.formGroup.controls['futureHour'].getRawValue());
+            const minute: number = Number(this.formGroup.controls['futureMinute'].getRawValue());
+
+            if (!hour || !minute) {
+                return "Enter hour and minutes.";
+            }
+
+            const tomin: number = (hour * 60) + minute;
+
+            const now: Date = new Date();
+            const nowmin: number = (now.getHours() * 60) + now.getMinutes();
+            const diff: number = tomin - nowmin;
+
+            if (diff < 0) {
+                return "Cannot schedule in the past.";
+            }
+
+            if (diff > 5 * 60) {
+                return "You can schedule only 5 hours ahead.";
+            }
+        }
+        return null;
+    }
+
+    scheduledLater(): boolean {
+        return this.formGroup.controls['scheduleLater'].getRawValue();
+    }
+
+    recalculateAllowedHours(): void {
+        this.allowedHours = [];
+        const now: Date = new Date();
+        const hourMin: number = now.getHours();
+        for (let h = hourMin; h <= 23; h++) {
+            this.allowedHours.push(h);
+        }
+    }
+
+    recalculateAllowedMinutes(): void {
+        this.allowedMinutes = [];
+        for (let m = 0; m <= 59; m++) {
+            this.allowedMinutes.push(m);
+        }
     }
 
     ngOnInit(): void {
@@ -70,6 +125,16 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     onSubmit(): void {
         if (this.formGroup?.valid) {
             console.log(this.formGroup.getRawValue());
+        } else {
+            return;
+        }
+
+        let message = this.futureTimeValidation();
+        if (message == null) {
+            this.timeValidationErrorMsg = "";
+        } else {
+            this.timeValidationErrorMsg = message;
+            return;
         }
 
         const departureText: string = this.formGroup.getRawValue()['departure'];

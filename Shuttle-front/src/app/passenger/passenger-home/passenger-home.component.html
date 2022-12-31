@@ -9,9 +9,7 @@
                 <mat-label>Departure</mat-label>
                 <input matInput name="departure" type="text" formControlName="departure" />
             </mat-form-field>
-
-            <br/>
-
+            <span class="space"></span>
             <mat-form-field appearance="outline">
                 <mat-label>Destination</mat-label>
                 <input matInput name="destination" type="text" formControlName="destination" />
@@ -54,6 +52,7 @@
                 <div *ngFor="let other of otherPassengers" class="ride-passenger">
                     <img src="">
                     <mat-label class="value">{{other.email}}</mat-label>
+                    <span class="space"></span>
                     <button mat-mini-fab (click)="onRemovePassenger(other.email)"><mat-icon>remove</mat-icon></button>
                     <br/>
                 </div>
@@ -69,15 +68,36 @@
                     </button>
                 </div>
 
-
-
-
-
                 <hr/>
 
                 <div>
                     <span class="label">Price: </span>
                     <span class="value">{{ priceFormat(calcPrice()) }}</span>
+                </div>
+
+                <hr/>
+
+                <div>
+                    <mat-checkbox formControlName="scheduleLater" class="value">Schedule later</mat-checkbox>
+                    <div *ngIf="scheduledLater()">
+                        <mat-form-field appearance="fill" class="shortInput">
+                            <mat-label>Hour</mat-label>
+                            <mat-select (click)="recalculateAllowedHours()" formControlName="futureHour">
+                                <mat-option *ngFor="let hour of allowedHours" value="{{hour}}">{{hour}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <span class="space"></span>
+
+                        <mat-form-field appearance="fill" class="shortInput">
+                            <mat-label>Minute</mat-label>
+                            <mat-select (click)="recalculateAllowedMinutes()" formControlName="futureMinute">
+                                <mat-option *ngFor="let hour of allowedMinutes" value="{{hour}}">{{hour}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <br/>
+                        <span class="errorMsg">{{timeValidationErrorMsg}}</span>
+                    </div>
                 </div>
 
 
