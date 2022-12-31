@@ -5,7 +5,7 @@ import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { RideService, RideRequest } from 'src/app/ride/ride.service';
+import { RideService, RideRequest, Ride } from 'src/app/ride/ride.service';
 import { RESTError } from 'src/app/shared/rest-error/rest-error';
 import { SharedService } from 'src/app/shared/shared.service';
 import { UserIdEmail } from 'src/app/user/user.service';
@@ -28,6 +28,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
 
     public otherPassengers: Array<UserIdEmail> = [];
     public myEmail: string = "";
+    currentRide: Ride | null = null;
     mainForm: FormGroup;
     distance: number = -1;
     vehicleTypes: Array<VehicleType> = [];
@@ -223,10 +224,11 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
                     console.log(val);
 
                     ///////////////////////////////////
+                    // TODO: Remove
 
                     this.rideService.findByPassenger(this.authService.getUserId()).subscribe({
                         next: (val) => {
-                            console.log(val);
+                            this.onFetchRide(val);
                         },
                         error: (error) => {
                             console.error(error);
@@ -434,5 +436,22 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
             control.get('later.at_minute')?.setErrors(null);
             return null;
         };
+    }
+
+    /**
+     * Callback that's called each time a new ride is received from the backend.
+     * @param ride Ride object that was retrieved from the backend. It can be a pending ride or an active ride.
+     */
+    private onFetchRide(ride: Ride): void {
+        console.log("Passenger got ride:", ride);
+        this.currentRide = ride;
+    }
+
+    /**
+     * @returns `true` if the passenger can order a new ride (i.e. he doesn't have one pending/active),
+     * `false` otherwise.
+     */
+    canOrderRide(): boolean {
+        return this.currentRide != null;
     }
 }

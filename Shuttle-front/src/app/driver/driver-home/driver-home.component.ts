@@ -190,7 +190,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         // Otherwise, add it to the list of rides.
 
         this.rides.push(receivedData);
-        let ride: Ride = this.rides[0];
+        let ride: Ride = this.rides[this.rides.length - 1];
 
         console.log("Got ride:");
         console.log(this.rides);
@@ -199,11 +199,16 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
             this.fetchRouteToMap();
         }
 
-        if (ride.status == RideStatus.Pending) {
-            this.state = State.RIDE_REQUEST;
-        } else if (ride.status == RideStatus.Accepted) {
-            this.state = State.RIDE_IN_PROGRESS;
-            this.startRideTimer();
+        // If you're already riding, no need to change status. We don't want a pending ride to
+        // override the begin/reject/timer elements of an active ride.
+        
+        if (this.state != State.RIDE_IN_PROGRESS) {
+            if (ride.status == RideStatus.Pending) {
+                this.state = State.RIDE_REQUEST;
+            } else if (ride.status == RideStatus.Accepted) {
+                this.state = State.RIDE_IN_PROGRESS;
+                this.startRideTimer();
+            }
         }
     }
 
