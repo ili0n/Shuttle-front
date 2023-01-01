@@ -105,9 +105,12 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // Ask the backend to fetch the latest ride.
 
-        this.rideService.find(this.authService.getUserId()).subscribe({next: (ride: Ride) => {
-            this.onGotRide(ride);
-        }});
+        this.refreshRides();
+    }
+
+    private refreshRides(): void {
+        const driverId: number = this.authService.getUserId();
+        this.sendMessageToSocket("", `ride/driver/${driverId}`);
     }
 
     SendWorkHoursThing() {
@@ -195,9 +198,9 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log("Got ride:");
         console.log(this.rides);
 
-        if (this.mapRoute == null) {
-            this.fetchRouteToMap();
-        }
+        //if (this.mapRoute == null) {
+        this.fetchRouteToMap();
+        //}
 
         // If you're already riding, no need to change status. We don't want a pending ride to
         // override the begin/reject/timer elements of an active ride.
@@ -216,6 +219,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         let ride: Ride = this.rides[this.rides.length - 1];
 
+        this.fetchRouteToMap();
 
         if (ride.status == RideStatus.Pending) {
             this.state = State.RIDE_REQUEST;
@@ -309,6 +313,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         this.mapRoute!.remove();
         this.rides.shift();
         this.refreshStateAndStartTimerIfNecessary();
+        this.refreshRides();
     }
 
     private getElapsedTime(): string {
