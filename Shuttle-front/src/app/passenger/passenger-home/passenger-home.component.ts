@@ -11,6 +11,9 @@ import { SharedService } from 'src/app/shared/shared.service';
 import { UserIdEmail } from 'src/app/user/user.service';
 import { VehicleService, VehicleType } from 'src/app/vehicle/vehicle.service';
 import { PassengerService } from '../passenger.service';
+import * as Stomp from 'stompjs';
+import * as SockJS from 'sockjs-client';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-passenger-home',
@@ -23,12 +26,14 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     private destPos: L.LatLng | null = null;
     private route: L.Routing.Control | null = null;
     private loadingRoute: boolean = false;
+    private stompClient: Stomp.Client | undefined;
 
     private lastDepartureText: string = "";
     private lastDestinationText: string = "";
 
     public otherPassengers: Array<UserIdEmail> = [];
     public myEmail: string = "";
+    private ride: Ride | null = null;
     currentRide: Ride | null = null;
     mainForm: FormGroup;
     distance: number = -1;
@@ -73,6 +78,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         this.vehicleTypes = this.vehicleService.getTypes();
         this.myEmail = this.authService.getUserEmail();
         this.recalculateAllowedMinutes();
+        this.connectToSocket('socket');
     }
 
     ngAfterViewInit(): void {
@@ -230,14 +236,16 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
                     ///////////////////////////////////
                     // TODO: Remove
 
-                    this.rideService.findByPassenger(this.authService.getUserId()).subscribe({
-                        next: (val) => {
-                            this.onFetchRide(val);
-                        },
-                        error: (error) => {
-                            console.error(error);
-                        }
-                    });
+                    // this.rideService.findByPassenger(this.authService.getUserId()).subscribe({
+                    //     next: (val) => {
+                    //         this.onFetchRide(val);
+                    //     },
+                    //     error: (error) => {
+                    //         console.error(error);
+                    //     }
+                    // });
+
+                    this.refreshRides();
 
                     ///////////////////////////////////
 
@@ -459,11 +467,95 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         return this.currentRide != null;
     }
 
+    /**
+     * 
+     * @returns True if the route is being loaded from the map API. Used for the frontend to display
+     * a progrss spinner.
+     */
     isLoadingRoute(): boolean {
         return this.loadingRoute;
     }
 
+    /**
+     * 
+     * @returns True if the user can click on the Order button.
+     */
     canClickOnOrderButton(): boolean {
         return !this.isLoadingRoute() && this.mainForm.valid;
     }
+    
+    ///////////////////////////////////////////////////////////////////////
+
+    
+    /**
+     * Connect to a websocket.
+     * @param stompEndpoint Name of the endpoint used by Stomp to connect to a websocket.
+     * Has to be one of the registered endpoints from `WebSocketConfiguration::registerStompEndpoints()`.
+     * Must *not* begin with a `/`.
+     */
+    connectToSocket(stompEndpoint: string) {
+        let ws = new SockJS(environment.serverOrigin + stompEndpoint);
+        this.stompClient = Stomp.over(ws);
+        this.stompClient.debug = () => {};
+        let self = this;
+        this.stompClient.connect({}, () => {
+            self.onConnectToWebSocket();
+        });
+    }
+
+    /**
+     * Disconnect from the websocket.
+     */
+    disconnectFromSocket() {
+        this.stompClient?.disconnect(() => {});
+    }
+
+    /**
+     * Subscribe to a given topic to listen to the messages in the topic.
+     * @param topicName Name of the topic, *must not* start with a `/`.
+     */
+    subscribeToWebSocketTopic(topicName: string, callback: (msg: Stomp.Message) => any) {
+        if (this.stompClient != undefined) {
+            this.stompClient.subscribe('/' + topicName, callback);
+        } else {
+            console.error("Cannot subscribe to topic" + topicName + ". Not connected to a websocket!");
+        }
+    }
+
+    /**
+     * Send message to socket at the provided endpoint.
+     * @param message Message payload.
+     * @param socketEndpoint Endpoint to send it to. Check Java methods annotated with `@MessageMapping()` for possible endpoints.
+     */
+    sendMessageToSocket(message: string, socketEndpoint: string) {
+        if (this.stompClient != undefined) {
+            this.stompClient.send("/shuttle/" + socketEndpoint, {}, message);
+        } else {
+            console.error("Cannot send message" + message + " to endpoint " + socketEndpoint + ". Not connected to a websocket!");
+        }
+    }
+
+    /**
+     * Callback for when the component gets connected to a websocket.
+     */
+    onConnectToWebSocket() {
+        const passengerId: number = this.authService.getUserId();
+
+        // Whenever the backend has a new ride for me, I'll listen to it.
+
+        this.subscribeToWebSocketTopic(`ride/passenger/${passengerId}`, (message) => {
+            let r: Ride = JSON.parse(message.body);
+            this.onFetchRide(r);
+        });
+
+        // Ask the backend to fetch the latest ride.
+        this.refreshRides();
+    }
+
+    private refreshRides(): void {
+        const passengerId: number = this.authService.getUserId();
+        console.log("XD", passengerId);
+        this.sendMessageToSocket("", `ride/passenger/${passengerId}`);
+    }
+
 }
