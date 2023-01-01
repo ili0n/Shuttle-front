@@ -5,7 +5,7 @@ import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { RideService, RideRequest, Ride } from 'src/app/ride/ride.service';
+import { RideService, RideRequest, Ride, RideStatus, RideRequestPassenger } from 'src/app/ride/ride.service';
 import { RESTError } from 'src/app/shared/rest-error/rest-error';
 import { SharedService } from 'src/app/shared/shared.service';
 import { UserIdEmail } from 'src/app/user/user.service';
@@ -31,7 +31,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     private lastDepartureText: string = "";
     private lastDestinationText: string = "";
 
-    public otherPassengers: Array<UserIdEmail> = [];
+    public otherPassengers: Array<RideRequestPassenger> = [];
     public myEmail: string = "";
     private ride: Ride | null = null;
     currentRide: Ride | null = null;
@@ -438,15 +438,25 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
      */
     private onFetchRide(ride: Ride): void {
         console.log("Passenger got ride:", ride);
-        this.currentRide = ride;
 
-        if (this.currentRide != null) {
-            const depLoc = this.currentRide.locations[0].departure;
-            const destLoc = this.currentRide.locations[this.currentRide.locations.length - 1].destination;
+        if (ride.status == RideStatus.Rejected) {
+            this.currentRide = null;
+        } else {
+            this.currentRide = ride;
 
-            this.depPos = new L.LatLng(depLoc.latitude, depLoc.longitude);
-            this.destPos = new L.LatLng(destLoc.latitude, destLoc.longitude);
+            if (this.currentRide != null) {
+                const depLoc = this.currentRide.locations[0].departure;
+                const destLoc = this.currentRide.locations[this.currentRide.locations.length - 1].destination;
+    
+                this.depPos = new L.LatLng(depLoc.latitude, depLoc.longitude);
+                this.destPos = new L.LatLng(destLoc.latitude, destLoc.longitude);
+
+                // ride.passengers includes the current user, but he's added manually, so remove him
+                // from this list.
+                this.otherPassengers = ride.passengers.filter(p => p.id != this.authService.getUserId());
+            }
         }
+
         this.drawRoute();
     }
 
