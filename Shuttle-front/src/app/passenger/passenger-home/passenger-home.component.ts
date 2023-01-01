@@ -444,6 +444,8 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
 
         if (ride.status == RideStatus.Rejected) {
             this.currentRide = null;
+        } else if (ride.status == RideStatus.Finished) {
+            this.currentRide = null;
         } else {
             this.currentRide = ride;
 
@@ -554,7 +556,6 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
 
         this.subscribeToWebSocketTopic(`vehicle/locations`, (message) => {
             const locations = JSON.parse(message.body);
-            console.log(locations);
             this.onFetchCarLocations(locations);
         });
 
