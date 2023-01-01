@@ -9,7 +9,7 @@ import { RideService, RideRequest, Ride, RideStatus, RideRequestPassenger } from
 import { RESTError } from 'src/app/shared/rest-error/rest-error';
 import { SharedService } from 'src/app/shared/shared.service';
 import { UserIdEmail } from 'src/app/user/user.service';
-import { VehicleService, VehicleType } from 'src/app/vehicle/vehicle.service';
+import { VehicleLocationDTO, VehicleService, VehicleType } from 'src/app/vehicle/vehicle.service';
 import { PassengerService } from '../passenger.service';
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
@@ -21,11 +21,13 @@ import { environment } from 'src/environments/environment';
     styleUrls: ['./passenger-home.component.css']
 })
 export class PassengerHomeComponent implements OnInit, AfterViewInit {
-    private map: any;
+    private map!: L.Map;
     private depPos: L.LatLng | null = null;
     private destPos: L.LatLng | null = null;
     private route: L.Routing.Control | null = null;
     private loadingRoute: boolean = false;
+    private layer: any = null; // TODO: Which type? It's not compatible.
+
     private stompClient: Stomp.Client | undefined;
 
     private lastDepartureText: string = "";
@@ -148,7 +150,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
             const waypoints = [this.depPos, this.destPos];
 
             if (this.route != null) {
-                this.map.removeControl(this.route);
+                this.map?.removeControl(this.route);
             }
 
             this.route = L.Routing.control({
@@ -337,6 +339,8 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         });
 
         tiles.addTo(this.map);
+
+        this.initMapDriverMarkerLayer();
     }
 
     /**
@@ -577,5 +581,61 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         res.push(r.locations[r.locations.length - 1].destination.address);
 
         return res;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Driver markers
+
+    private initMapDriverMarkerLayer(): void {
+        var iconCarAvailable = L.icon({
+            iconUrl: 'assets/car_available.png',
+            iconSize: [32, 32],
+        });
+
+        var iconCarBusy = L.icon({
+            iconUrl: 'assets/car_busy.png',
+            iconSize: [32, 32],
+        });
+
+
+        var marker1 = L.marker([45.235820, 19.803677], {icon: iconCarAvailable});
+        var marker2 = L.marker([45.260781, 19.832454], {icon: iconCarBusy});
+        this.layer = new L.LayerGroup([marker1, marker2]);
+        this.map.addLayer(this.layer);
+    }
+
+    /**
+     * Callback for whenever the server sends an updated list of car locations.
+     * @param carLocations List of cars with their locations and a "is available" flag.
+     */
+    private onFetchCarLocations(carLocations: Array<VehicleLocationDTO>): void {
+        var iconCarAvailable = L.icon({
+            iconUrl: 'assets/car_available.png',
+            iconSize: [32, 32],
+        });
+
+        var iconCarBusy = L.icon({
+            iconUrl: 'assets/car_busy.png',
+            iconSize: [32, 32],
+        });
+
+        let markers: Array<L.Marker> = [];
+        for (let carLocation of carLocations) {
+            if (carLocation.available) {
+                markers.push(L.marker(
+                    [carLocation.location.latitude, carLocation.location.longitude],
+                    {icon: iconCarAvailable}
+                ));
+            } else {
+                markers.push(L.marker(
+                    [carLocation.location.latitude, carLocation.location.longitude],
+                    {icon: iconCarBusy}
+                ));
+            }
+        }
+
+        this.map.removeLayer(this.layer);
+        this.layer = new L.LayerGroup(markers);
     }
 }
