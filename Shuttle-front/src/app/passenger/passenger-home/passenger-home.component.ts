@@ -230,7 +230,8 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
 
             this.rideService.request(request).subscribe({
                 next: (val: RideRequest) => {
-                    this.refreshRides();
+                    //this.refreshRides(); There's no need to call this, because the back will
+                    // notify all passengers of the ordered ride anyway.
                 },
                 error: (err) => {
                     if (err.status == HttpStatusCode.BadRequest) {
