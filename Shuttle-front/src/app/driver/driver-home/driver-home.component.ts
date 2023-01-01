@@ -201,14 +201,27 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // If you're already riding, no need to change status. We don't want a pending ride to
         // override the begin/reject/timer elements of an active ride.
-        
+
         if (this.state != State.RIDE_IN_PROGRESS) {
-            if (ride.status == RideStatus.Pending) {
-                this.state = State.RIDE_REQUEST;
-            } else if (ride.status == RideStatus.Accepted) {
-                this.state = State.RIDE_IN_PROGRESS;
-                this.startRideTimer();
-            }
+            this.refreshStateAndStartTimerIfNecessary();
+        }
+    }
+
+    private refreshStateAndStartTimerIfNecessary(): void {
+        console.log(this.rides);
+
+        if (this.rides.length == 0) {
+            this.state = State.JUST_MAP;
+            return;
+        }
+        let ride: Ride = this.rides[this.rides.length - 1];
+
+
+        if (ride.status == RideStatus.Pending) {
+            this.state = State.RIDE_REQUEST;
+        } else if (ride.status == RideStatus.Accepted) {
+            this.state = State.RIDE_IN_PROGRESS;
+            this.startRideTimer();
         }
     }
 
@@ -237,6 +250,9 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
             next: (response) => {
                 this.userService.setActive(this.authService.getUserId()).subscribe({
                     next: (value) => {
+                        // Don't call refreshStateAndStartTimerIfNecessary() here!
+                        // It checks the ride state, but we're setting it here.
+
                         this.state = State.RIDE_IN_PROGRESS;
                         ride.startTime = new Date().toISOString();
                         this.startRideTimer();
@@ -290,9 +306,9 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     private removeRideFromContext() {
-        this.state = State.JUST_MAP;
         this.mapRoute!.remove();
-        this.rides = this.rides.slice(1, -1);
+        this.rides.shift();
+        this.refreshStateAndStartTimerIfNecessary();
     }
 
     private getElapsedTime(): string {
