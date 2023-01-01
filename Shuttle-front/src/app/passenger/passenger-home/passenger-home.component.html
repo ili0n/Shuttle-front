@@ -23,6 +23,7 @@
                 <br/>
                 
                 <button type="submit" color="primary" mat-raised-button (click)="findRoute()">Search Route</button>
+                <mat-spinner *ngIf="isLoadingRoute()" [diameter]="35"></mat-spinner>
             </div>
 
             <br/>
@@ -125,7 +126,7 @@
                 <!-- Submit button - order route. -->
              
                 <br/>
-                <button type="submit" color="primary"  mat-raised-button (click)="orderRoute()">Order</button>
+                <button type="submit" [disabled]="!canClickOnOrderButton()" color="primary" mat-raised-button (click)="orderRoute()">Order</button>
 
             </div>
             </ng-container>

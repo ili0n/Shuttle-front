@@ -198,9 +198,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log("Got ride:");
         console.log(this.rides);
 
-        //if (this.mapRoute == null) {
         this.fetchRouteToMap();
-        //}
 
         // If you're already riding, no need to change status. We don't want a pending ride to
         // override the begin/reject/timer elements of an active ride.

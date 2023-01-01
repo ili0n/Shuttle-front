@@ -22,6 +22,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     private depPos: L.LatLng | null = null;
     private destPos: L.LatLng | null = null;
     private route: L.Routing.Control | null = null;
+    private loadingRoute: boolean = false;
 
     private lastDepartureText: string = "";
     private lastDestinationText: string = "";
@@ -91,6 +92,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
             // Convert departureText to LatLong.
             // Convert destinationText to LatLong.
             // Draw route.
+            this.loadingRoute = true;
             this.textToLocation(departureText).subscribe({
                 next: (result) => {
                     if (result[0]) {
@@ -169,6 +171,8 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
             });
 
             this.mainForm.get('route_options_form.vehicle_type')?.setValue(this.vehicleTypes[0].name);
+
+            this.loadingRoute = false;
         }
     }
 
@@ -453,5 +457,13 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
      */
     canOrderRide(): boolean {
         return this.currentRide != null;
+    }
+
+    isLoadingRoute(): boolean {
+        return this.loadingRoute;
+    }
+
+    canClickOnOrderButton(): boolean {
+        return !this.isLoadingRoute() && this.mainForm.valid;
     }
 }
