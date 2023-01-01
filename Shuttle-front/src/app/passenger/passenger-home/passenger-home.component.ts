@@ -26,7 +26,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     private destPos: L.LatLng | null = null;
     private route: L.Routing.Control | null = null;
     private loadingRoute: boolean = false;
-    private layer: any = null; // TODO: Which type? It's not compatible.
+    private layer!: L.LayerGroup;
 
     private stompClient: Stomp.Client | undefined;
 
@@ -339,8 +339,6 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         });
 
         tiles.addTo(this.map);
-
-        this.initMapDriverMarkerLayer();
     }
 
     /**
@@ -554,6 +552,12 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
             this.onFetchRide(r);
         });
 
+        this.subscribeToWebSocketTopic(`vehicle/locations`, (message) => {
+            const locations = JSON.parse(message.body);
+            console.log(locations);
+            this.onFetchCarLocations(locations);
+        });
+
         // Ask the backend to fetch the latest ride.
         this.refreshRides();
     }
@@ -587,23 +591,6 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     //
     // Driver markers
 
-    private initMapDriverMarkerLayer(): void {
-        var iconCarAvailable = L.icon({
-            iconUrl: 'assets/car_available.png',
-            iconSize: [32, 32],
-        });
-
-        var iconCarBusy = L.icon({
-            iconUrl: 'assets/car_busy.png',
-            iconSize: [32, 32],
-        });
-
-
-        var marker1 = L.marker([45.235820, 19.803677], {icon: iconCarAvailable});
-        var marker2 = L.marker([45.260781, 19.832454], {icon: iconCarBusy});
-        this.layer = new L.LayerGroup([marker1, marker2]);
-        this.map.addLayer(this.layer);
-    }
 
     /**
      * Callback for whenever the server sends an updated list of car locations.
@@ -635,7 +622,11 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
             }
         }
 
-        this.map.removeLayer(this.layer);
+        if (this.map.hasLayer(this.layer)) {
+            this.map.removeLayer(this.layer);
+        }
+        
         this.layer = new L.LayerGroup(markers);
+        this.map.addLayer(this.layer);
     }
 }
