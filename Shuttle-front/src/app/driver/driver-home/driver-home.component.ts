@@ -280,6 +280,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
             next: (response) => {
                 this.removeRideFromContext();
                 this.sharedService.showSnackBar("Ride request rejected.", 4000);
+                console.log(response);
                 this.mapRoute = null;
             }, error: (error) => {
                 this.sharedService.showSnackBar("Could not cancel the ride.", 4000);

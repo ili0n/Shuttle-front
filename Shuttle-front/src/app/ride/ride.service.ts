@@ -7,6 +7,11 @@ export interface RejectionDTO {
     reason: string
 }
 
+export interface RejectionTimeDTO {
+    reason: string,
+    timeOfRejection: string,
+}
+
 export interface RideRequestPassenger {
     id: number,
     email: string,
@@ -35,6 +40,8 @@ export interface Ride {
     petTransport: boolean,
     status: RideStatus,
     startTime: string,
+    vehicleType: string,
+    rejection: RejectionTimeDTO,
 }
 
 export interface RideRequest {
@@ -66,13 +73,13 @@ export class RideService {
         return this.httpClient.put(`${this.url}/${rideID}/accept`, options);
     }
 
-    public reject(rideID: number, reason: string): Observable<any> {
+    public reject(rideID: number, reason: string): Observable<Ride> {
         const rejectionDTO: RejectionDTO = {
             reason: reason,
         };
-
-        const options: any = { responseType: 'json' };
-        return this.httpClient.put(`${this.url}/${rideID}/cancel`, rejectionDTO, options);
+        return this.httpClient.put<Ride>(`${this.url}/${rideID}/cancel`, rejectionDTO, {
+            responseType: 'json'
+        });
     }
 
     public end(rideID: number): Observable<Ride> {

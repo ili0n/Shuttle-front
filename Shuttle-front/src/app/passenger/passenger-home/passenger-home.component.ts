@@ -227,28 +227,10 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
                 minute: formValue.get('route_options_form.later.at_minute')?.value,
             }
 
-            console.log(request);
 
             this.rideService.request(request).subscribe({
                 next: (val: RideRequest) => {
-                    console.log(val);
-
-                    ///////////////////////////////////
-                    // TODO: Remove
-
-                    // this.rideService.findByPassenger(this.authService.getUserId()).subscribe({
-                    //     next: (val) => {
-                    //         this.onFetchRide(val);
-                    //     },
-                    //     error: (error) => {
-                    //         console.error(error);
-                    //     }
-                    // });
-
                     this.refreshRides();
-
-                    ///////////////////////////////////
-
                 },
                 error: (err) => {
                     if (err.status == HttpStatusCode.BadRequest) {
@@ -457,6 +439,15 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     private onFetchRide(ride: Ride): void {
         console.log("Passenger got ride:", ride);
         this.currentRide = ride;
+
+        if (this.currentRide != null) {
+            const depLoc = this.currentRide.locations[0].departure;
+            const destLoc = this.currentRide.locations[this.currentRide.locations.length - 1].destination;
+
+            this.depPos = new L.LatLng(depLoc.latitude, depLoc.longitude);
+            this.destPos = new L.LatLng(destLoc.latitude, destLoc.longitude);
+        }
+        this.drawRoute();
     }
 
     /**
@@ -554,8 +545,26 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
 
     private refreshRides(): void {
         const passengerId: number = this.authService.getUserId();
-        console.log("XD", passengerId);
         this.sendMessageToSocket("", `ride/passenger/${passengerId}`);
     }
 
+    /**
+     * 
+     * @returns True if this user has an ordered ride. This determines whether the right column
+     * shows a form or just ride details.
+     */
+    hasOrderedRide(): boolean {
+        return this.currentRide != null;
+    }
+
+    addressesOf(r: Ride): Array<string> {
+        let res: Array<string> = [];
+
+        for (let p of r.locations) {
+            res.push(p.departure.address);
+        }
+        res.push(r.locations[r.locations.length - 1].destination.address);
+
+        return res;
+    }
 }
