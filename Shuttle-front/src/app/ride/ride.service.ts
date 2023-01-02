@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Driver } from '../driver/driver.service';
+import { Passenger } from '../passenger/passenger.service';
 import { UserIdEmail } from '../user/user.service';
 import { Vehicle } from '../vehicle/vehicle.service';
 
@@ -37,7 +38,7 @@ export enum RideStatus {
 
 export interface PanicDTO {
     id: number,
-    user: UserIdEmail, // Todo, use different interface
+    user: Passenger, // Todo, use different interface
     ride: Ride,
     time: string,
     reason: string
@@ -53,8 +54,7 @@ export interface Ride {
     startTime: string,
     vehicleType: string,
     rejection: RejectionTimeDTO,
-    driver: RideRequestPassenger, // TODO: Same fields and field names but it's not a Passenger.
-    vehicle: Vehicle,
+    driver: UserIdEmail,
 }
 
 export interface RideRequest {
