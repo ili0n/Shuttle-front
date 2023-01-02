@@ -14,7 +14,7 @@ import { PassengerService } from '../passenger.service';
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 import { environment } from 'src/environments/environment';
-import { DriverService } from 'src/app/driver/driver.service';
+import { compileDeclarePipeFromMetadata } from '@angular/compiler';
 
 @Component({
     selector: 'app-passenger-home',
@@ -36,7 +36,6 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
 
     public otherPassengers: Array<RideRequestPassenger> = [];
     public myEmail: string = "";
-    private ride: Ride | null = null;
     currentRide: Ride | null = null;
     private currentVehicle: Vehicle | null = null; // Updated regularly unlike `ride`, used to estimate time.
     mainForm: FormGroup;
@@ -53,8 +52,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         private formBuilder: FormBuilder, 
         private rideService: RideService,
         private http: HttpClient, 
-        private vehicleService: VehicleService,
-        private driverService: DriverService) {
+        private vehicleService: VehicleService) {
         this.mainForm = this.formBuilder.group({
             route_form: this.formBuilder.group({
                 departure: ['', [Validators.required]],
@@ -234,7 +232,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
 
 
             this.rideService.request(request).subscribe({
-                next: (val: RideRequest) => {
+                next: () => {
                     //this.refreshRides(); There's no need to call this, because the back will
                     // notify all passengers of the ordered ride anyway.
                 },
@@ -355,17 +353,6 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         );
     }
 
-    /**
-     * Perform inverse geolocation.
-     * @param lat Latitude
-     * @param lon Longitude
-     * @returns ?
-     */
-    private locationToText(lat: number, lon: number): Observable<any> {
-        return this.http.get(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&<params>`
-        );
-    }
 
     /**
      * @param meters Distance in meters
@@ -466,7 +453,21 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
             }
         }
 
-        this.drawRoute();
+        if (this.currentRide != null) {
+            this.drawRoute();
+        } else {
+            this.clearForm();
+        }
+    }
+
+    private clearForm(): void {
+        if (this.route != null) {
+            this.map?.removeControl(this.route);
+            this.route = null;
+        }
+
+        this.mainForm.get('route_form.departure')?.setValue('');
+        this.mainForm.get('route_form.destination')?.setValue('');
     }
 
     /**
@@ -596,7 +597,6 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         if (this.currentVehicle == null || this.currentRide == null) {
             return "";
         }
-        let s: string = "";
 
         const driverY = this.currentVehicle.currentLocation!.latitude;
         const driverX = this.currentVehicle.currentLocation!.longitude;
