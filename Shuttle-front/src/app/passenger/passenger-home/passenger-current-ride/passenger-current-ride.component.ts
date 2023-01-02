@@ -4,10 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DriverService } from 'src/app/driver/driver.service';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
+import { RidePanicDialogComponent } from 'src/app/ride/ride-panic-dialog/ride-panic-dialog.component';
 import { Ride, RideStatus } from 'src/app/ride/ride.service';
 import { UserIdEmail } from 'src/app/user/user.service';
 import { Location, Vehicle, VehicleLocationDTO } from 'src/app/vehicle/vehicle.service';
-import { PassengerPanicDialogComponent } from '../../passenger-panic-dialog/passenger-panic-dialog/passenger-panic-dialog.component';
 
 @Component({
   selector: 'app-passenger-current-ride',
@@ -112,7 +112,7 @@ export class PassengerCurrentRideComponent implements OnInit {
     
 
     protected openPanicDialog(): void {
-        const dialogRef = this.dialog.open(PassengerPanicDialogComponent, { data: "" });
+        const dialogRef = this.dialog.open(RidePanicDialogComponent, { data: "" });
 
         dialogRef.afterClosed().subscribe(reason => {
             if (reason != undefined) {

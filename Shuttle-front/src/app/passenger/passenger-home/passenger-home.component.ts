@@ -1,16 +1,13 @@
 import { HttpStatusCode } from "@angular/common/http";
 import { Component, OnInit, AfterViewInit } from "@angular/core";
-import { FormBuilder, FormGroup, ValidatorFn, Validators } from "@angular/forms";
-import * as L from 'leaflet';
-import 'leaflet-routing-machine';
-import { Observable } from "rxjs";
+import * as L from "leaflet";
 import { NavbarService } from "src/app/navbar-module/navbar.service";
-import { Ride, RideRequest, RideService, RideStatus } from "src/app/ride/ride.service";
+import { Ride, RideService, RideRequest, RideStatus } from "src/app/ride/ride.service";
 import { MapEstimationService } from "src/app/services/map/map-estimation.service";
 import { RESTError } from "src/app/shared/rest-error/rest-error";
 import { SharedService } from "src/app/shared/shared.service";
 import { VehicleLocationDTO } from "src/app/vehicle/vehicle.service";
-import { RecalculateRouteDTO } from "./passenger-order-ride/passenger-order-ride/passenger-order-ride.component";
+import { RecalculateRouteDTO } from "./passenger-order-ride/passenger-order-ride.component";
 
 @Component({
     selector: 'app-passenger-home',

@@ -27,6 +27,9 @@ import { DriverHomeComponent } from './driver/driver-home/driver-home.component'
 import { RejectRideDialogComponent } from './driver/reject-ride-dialog/reject-ride-dialog.component';
 import {NavbarModuleModule} from "./navbar-module/navbar-module.module";
 import { PassengerModule } from './passenger/passenger.module';
+import { DriverModule } from './driver/driver/driver.module';
+import { RideModule } from './ride/ride.module';
+import { RidePanicDialogComponent } from './ride/ride-panic-dialog/ride-panic-dialog.component';
 
 @NgModule({
     declarations: [
@@ -57,6 +60,9 @@ import { PassengerModule } from './passenger/passenger.module';
         ReactiveFormsModule,
         MatInputModule,
         NavbarModuleModule,
+        PassengerModule,
+        DriverModule,
+        RideModule,
     ],
     providers: [],
     bootstrap: [AppComponent]

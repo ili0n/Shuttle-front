@@ -13,6 +13,7 @@ import { SharedService } from 'src/app/shared/shared.service';
 import { UserService } from 'src/app/user/user.service';
 import { environment } from 'src/environments/environment';
 import { RejectRideDialogComponent } from '../reject-ride-dialog/reject-ride-dialog.component';
+import { RidePanicDialogComponent } from 'src/app/ride/ride-panic-dialog/ride-panic-dialog.component';
 
 enum State {
     JUST_MAP,
@@ -399,5 +400,30 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         let res = request.locations.map(l => l.departure);
         res.push(request.locations[request.locations.length - 1].destination);
         return res;
+    }
+
+    protected openPanicDialog(): void {
+        const dialogRef = this.dialog.open(RidePanicDialogComponent, { data: "" });
+
+        dialogRef.afterClosed().subscribe(reason => {
+            if (reason != undefined) {
+                if (this.rides[0] != null) {
+                    this.panicClick(reason);
+                }
+            }
+        });
+    }
+
+    protected panicClick(reason: string) {
+        if (this.rides[0] != null) {
+            this.rideService.panic(this.rides[0].id, reason).subscribe({
+                next: (value) => {
+                    console.log(value);
+                },
+                error: (error) => {
+                    console.error(error);
+                }
+            });
+        }
     }
 }
