@@ -37,6 +37,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private mapRoute: L.Routing.Control | null = null;
     private _state: State = State.JUST_MAP;
     private timer: NodeJS.Timer | null = null;
+    protected isActive = false;
     State = State;
     rides: Array<Ride> = [];
     timerText: string = "";
@@ -124,12 +125,21 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     ngOnInit(): void {
         document.body.className = "body-graybg";
         this.connectToSocket('socket');
+
+        this.navbarService.getActivityChanged().subscribe({
+            next: (active: boolean) => {
+                this.isActive = active;
+                this.refreshRides();
+            }
+        })
     }
 
     private refreshActivitySlider(): void {
         const canToggleActivity = this._state != State.RIDE_IN_PROGRESS;
         this.navbarService.refreshActivitySlider(canToggleActivity);
     }
+
+
 
     ngAfterViewInit(): void {
         this.initMap("map");

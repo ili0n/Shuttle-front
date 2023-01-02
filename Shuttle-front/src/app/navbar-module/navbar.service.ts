@@ -17,6 +17,7 @@ export class NavbarService {
 
 
     private activitySliderSubject: Subject<boolean> = new Subject();
+    private activityChangeSubject: Subject<boolean> = new Subject();
     
     getRide(): Observable<Ride> {
         return this.rideSubject.asObservable();
@@ -36,6 +37,14 @@ export class NavbarService {
 
     public onRefreshActivitySlider(): Observable<boolean> {
         return this.activitySliderSubject.asObservable();
+    }
+
+    public emitActivityChanged(active: boolean): void {
+        this.activityChangeSubject.next(active);
+    }
+
+    public getActivityChanged(): Observable<boolean> {
+        return this.activityChangeSubject.asObservable();
     }
 
     

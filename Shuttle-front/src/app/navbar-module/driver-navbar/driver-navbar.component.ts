@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router } from "@angular/router";
+import { Observable, Subject } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { UserService } from 'src/app/user/user.service';
 import { __values } from 'tslib';
@@ -69,6 +70,7 @@ export class DriverNavbarComponent implements OnInit {
      */
     private onActivityChange(active: boolean) {
         console.log("DriverNavbarComponent::getActive() " + active);
+        this.navbarService.emitActivityChanged(active);
         this.formGroupIsActive.setValue({ 'isActive': active });
     }
 
@@ -94,12 +96,12 @@ export class DriverNavbarComponent implements OnInit {
 
         if (!active) {
             this.userService.setInactive(id).subscribe({
-                next: (value) => console.log("OK: " + value),
+                next: (value) => this.onActivityChange(value),
                 error: (error) => console.error("NO:" + error)
             });
         } else {
             this.userService.setActive(id).subscribe({
-                next: (value) => console.log("OK: " + value),
+                next: (value) => this.onActivityChange(value),
                 error: (error) => console.error("NO:" + error)
             });
         }
