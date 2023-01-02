@@ -10,7 +10,7 @@ import { MapEstimationService } from "src/app/services/map/map-estimation.servic
 import { RESTError } from "src/app/shared/rest-error/rest-error";
 import { SharedService } from "src/app/shared/shared.service";
 import { VehicleLocationDTO } from "src/app/vehicle/vehicle.service";
-import { RecalculateRouteDTO } from "./passenger-order-ride/passenger-order-ride.component";
+import { RecalculateRouteDTO } from "./passenger-order-ride/passenger-order-ride/passenger-order-ride.component";
 
 @Component({
     selector: 'app-passenger-home',

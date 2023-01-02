@@ -7,7 +7,7 @@ import { NavbarService } from 'src/app/navbar-module/navbar.service';
 import { Ride, RideStatus } from 'src/app/ride/ride.service';
 import { UserIdEmail } from 'src/app/user/user.service';
 import { Location, Vehicle, VehicleLocationDTO } from 'src/app/vehicle/vehicle.service';
-import { PassengerPanicDialogComponent } from '../passenger-panic-dialog/passenger-panic-dialog.component';
+import { PassengerPanicDialogComponent } from '../../passenger-panic-dialog/passenger-panic-dialog/passenger-panic-dialog.component';
 
 @Component({
   selector: 'app-passenger-current-ride',
