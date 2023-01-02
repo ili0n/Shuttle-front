@@ -1,11 +1,13 @@
 import { outputAst } from '@angular/compiler';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DriverService } from 'src/app/driver/driver.service';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
 import { Ride, RideStatus } from 'src/app/ride/ride.service';
 import { UserIdEmail } from 'src/app/user/user.service';
 import { Location, Vehicle, VehicleLocationDTO } from 'src/app/vehicle/vehicle.service';
+import { PassengerPanicDialogComponent } from '../../passenger-panic-dialog/passenger-panic-dialog/passenger-panic-dialog.component';
 
 @Component({
   selector: 'app-passenger-current-ride',
@@ -25,7 +27,8 @@ export class PassengerCurrentRideComponent implements OnInit {
 
     constructor(private authService: AuthService,
                 private driverService: DriverService,
-                private navbarService: NavbarService) {
+                private navbarService: NavbarService,
+                private dialog: MatDialog) {
 
     }
 
@@ -66,8 +69,8 @@ export class PassengerCurrentRideComponent implements OnInit {
         return this.ride.status == RideStatus.Accepted;
     }
 
-    protected sendPanic(): void {
-        this.panicEvent.emit("Hardcoded message in sendPanic(). Change!");
+    protected sendPanic(reason: string): void {
+        this.panicEvent.emit(reason);
     }
 
     private subscribeToSocketSubjects(): void {
@@ -104,6 +107,20 @@ export class PassengerCurrentRideComponent implements OnInit {
 
         const timeLeftWhole: number = Math.round(timeleft);
         this.timeUntilDriverArrives = timeLeftWhole.toString() + "s";
+    }
+
+    
+
+    protected openPanicDialog(): void {
+        const dialogRef = this.dialog.open(PassengerPanicDialogComponent, { data: "" });
+
+        dialogRef.afterClosed().subscribe(reason => {
+            if (reason != undefined) {
+                if (this.ride != null) {
+                    this.sendPanic(reason);
+                }
+            }
+        });
     }
 
 }
