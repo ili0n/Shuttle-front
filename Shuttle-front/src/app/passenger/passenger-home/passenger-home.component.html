@@ -195,12 +195,14 @@
 
             <hr/>
 
-            <!-- Estimated time of arrival to starting point -->
+            <!-- Estimated time of arrival of the vehicle to departure point. -->
 
+            <ng-container *ngIf="isPending()">
             <div>
                 <span class="label">Time of arrival: </span>
                 <span class="value">{{ getEstArrivalTime() }}</span>
             </div>
+            </ng-container>
 
             <!-- If it's scheduled for later -->
 

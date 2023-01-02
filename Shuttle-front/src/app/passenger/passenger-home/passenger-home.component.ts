@@ -617,6 +617,13 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         return timeleft.toFixed(0).toString() + "s";
     }
 
+    isPending(): boolean {
+        if (this.currentRide == null) {
+            return false;
+        }
+        return this.currentRide.status == RideStatus.Pending;
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////////
     //
     // Driver markers
