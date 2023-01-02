@@ -113,32 +113,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         const driverId: number = this.authService.getUserId();
         this.sendMessageToSocket("", `ride/driver/${driverId}`);
     }
-
-    SendWorkHoursThing() {
-        /// TODO : REMOVE
-
-        const url: string = "/api/driver/{id}/working-hour";
-        const id: number = this.authService.getUserId();
-        const page: number = 0;
-        const size: number = 12;
-        const from: string = "2022-12-28T17:09:55";
-        const to: string = "2022-12-29T12:00:00";
-
-
-        let params = new HttpParams().set('page', page).set('size', size).set('from', from).set('to', to);
-
-
-        const options: any = { responseType: 'json' };
-        this.httpClient.get(environment.serverOrigin + `api/driver/${id}/working-hour`, { params: params, observe: "body" }).subscribe({
-            next: (value) => {
-                console.log(value);
-            },
-            error: (error) => {
-                console.error(error);
-            }
-        });
-    }
-
+    
     constructor(private httpClient: HttpClient, public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService, private navbarService: NavbarService, private userService: UserService, private authService: AuthService) {
     }
 
