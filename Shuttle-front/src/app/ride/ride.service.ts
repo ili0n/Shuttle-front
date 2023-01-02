@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Driver } from '../driver/driver.service';
+import { UserIdEmail } from '../user/user.service';
 import { Vehicle } from '../vehicle/vehicle.service';
 
 export interface RejectionDTO {
@@ -32,6 +33,14 @@ export interface RideRequestLocation {
 
 export enum RideStatus {
     Pending = "Pending", Accepted = "Accepted", Rejected = "Rejected", Canceled = "Canceled", Finished = "Finished"
+}
+
+export interface PanicDTO {
+    id: number,
+    user: UserIdEmail, // Todo, use different interface
+    ride: Ride,
+    time: string,
+    reason: string
 }
 
 export interface Ride {
@@ -105,5 +114,11 @@ export class RideService {
             observe: "body",
             responseType: "json",
         });    
+    }
+
+    public panic(rideId: number, reason: string): Observable<PanicDTO> {
+        return this.httpClient.put<PanicDTO>(`${this.url}/${rideId}/panic`, reason, {
+            responseType: 'json'
+        });
     }
 }

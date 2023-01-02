@@ -58,7 +58,14 @@
             <span class="label">Time of arrival: </span>
             <span class="value">{{ timeUntilDriverArrives }}</span>
         </div>
-        </ng-container>
+    </ng-container>
 
+    <hr/>
+
+    <!-- Panic button -->
+
+    <ng-container *ngIf="isAccepted()">
+        <button mat-raised-button color="warn" (click)="sendPanic()">Panic!</button>>
+    </ng-container>
 
 </div>

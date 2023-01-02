@@ -184,6 +184,13 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
             return;
         }
 
+        if (receivedData.status == RideStatus.Canceled) {
+            this.removeRideFromContext();
+            this.sharedService.showSnackBar("Ride canceled.", 4000);
+            this.mapRoute = null;
+            return;
+        }
+
         // If this ride is already in the list, ignore it.
 
         if (this.rides.filter(r => r.id == receivedData.id).length > 0) {

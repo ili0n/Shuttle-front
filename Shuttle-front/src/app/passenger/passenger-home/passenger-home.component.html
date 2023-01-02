@@ -15,10 +15,11 @@
             >
         </app-passenger-order-ride>
         <app-passenger-current-ride
+            *ngIf="hasCurrentRide()"
             [ride]="ride!"
             [isRouteFound]="isRouteFound()"
             [routeDistance]="this.routeDistance"
-            *ngIf="hasCurrentRide()"
+            (panicEvent)="panicClick($event)"
             >
         </app-passenger-current-ride>
     </div>

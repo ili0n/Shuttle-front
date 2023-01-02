@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { outputAst } from '@angular/compiler';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DriverService } from 'src/app/driver/driver.service';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
@@ -16,6 +17,7 @@ export class PassengerCurrentRideComponent implements OnInit {
     @Input() routeDistance!: number;
     @Input() isRouteFound!: boolean;
     @Input() otherPassengers!: Array<UserIdEmail>;
+    @Output() private panicEvent = new EventEmitter<string>();
 
     protected timeUntilDriverArrives: string = "";
     protected myEmail!: string;
@@ -58,6 +60,14 @@ export class PassengerCurrentRideComponent implements OnInit {
 
     protected isPending(): boolean {
         return this.ride.status == RideStatus.Pending;
+    }
+
+    protected isAccepted(): boolean {
+        return this.ride.status == RideStatus.Accepted;
+    }
+
+    protected sendPanic(): void {
+        this.panicEvent.emit("Hardcoded message in sendPanic(). Change!");
     }
 
     private subscribeToSocketSubjects(): void {

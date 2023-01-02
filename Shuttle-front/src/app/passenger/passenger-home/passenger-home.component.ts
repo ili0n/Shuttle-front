@@ -256,4 +256,17 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     protected hasCurrentRide(): boolean {
         return this.ride != null;
     }
+
+    protected panicClick(reason: string) {
+        if (this.ride != null) {
+            this.rideService.panic(this.ride.id, reason).subscribe({
+                next: (value) => {
+                    console.log(value);
+                },
+                error: (error) => {
+                    console.error(error);
+                }
+            });
+        }
+    }
 }
