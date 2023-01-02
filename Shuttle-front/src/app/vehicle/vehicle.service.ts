@@ -57,6 +57,6 @@ export class VehicleService {
     public getLocations(): Observable<Array<VehicleLocationDTO>> {
         return this.httpClient.get<Array<VehicleLocationDTO>>(environment.serverOrigin + 'api/vehicle/locations', {
             responseType: 'json'
-        });     
+        });
     }
 }

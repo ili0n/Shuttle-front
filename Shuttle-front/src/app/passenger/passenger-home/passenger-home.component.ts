@@ -9,11 +9,12 @@ import { RideService, RideRequest, Ride, RideStatus, RideRequestPassenger } from
 import { RESTError } from 'src/app/shared/rest-error/rest-error';
 import { SharedService } from 'src/app/shared/shared.service';
 import { UserIdEmail } from 'src/app/user/user.service';
-import { VehicleLocationDTO, VehicleService, VehicleType } from 'src/app/vehicle/vehicle.service';
+import { Vehicle, VehicleLocationDTO, VehicleService, VehicleType } from 'src/app/vehicle/vehicle.service';
 import { PassengerService } from '../passenger.service';
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 import { environment } from 'src/environments/environment';
+import { DriverService } from 'src/app/driver/driver.service';
 
 @Component({
     selector: 'app-passenger-home',
@@ -37,6 +38,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     public myEmail: string = "";
     private ride: Ride | null = null;
     currentRide: Ride | null = null;
+    private currentVehicle: Vehicle | null = null; // Updated regularly unlike `ride`, used to estimate time.
     mainForm: FormGroup;
     distance: number = -1;
     vehicleTypes: Array<VehicleType> = [];
@@ -51,7 +53,8 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         private formBuilder: FormBuilder, 
         private rideService: RideService,
         private http: HttpClient, 
-        private vehicleService: VehicleService) {
+        private vehicleService: VehicleService,
+        private driverService: DriverService) {
         this.mainForm = this.formBuilder.group({
             route_form: this.formBuilder.group({
                 departure: ['', [Validators.required]],
@@ -448,6 +451,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
             this.currentRide = null;
         } else {
             this.currentRide = ride;
+            this.currentVehicle = ride.vehicle;
 
             if (this.currentRide != null) {
                 const depLoc = this.currentRide.locations[0].departure;
@@ -588,6 +592,31 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         return res;
     }
 
+    getEstArrivalTime(): string {
+        if (this.currentVehicle == null || this.currentRide == null) {
+            return "";
+        }
+        let s: string = "";
+
+        const driverY = this.currentVehicle.currentLocation!.latitude;
+        const driverX = this.currentVehicle.currentLocation!.longitude;
+
+        const startY = this.currentRide.locations[0].departure.latitude;
+        const startX = this.currentRide.locations[0].departure.longitude;
+
+        const dx = startX - driverX;
+        const dy = startY - driverY;
+
+        // [m/s] * [deg/m] = [deg/s].
+        const velocity = 60 * 0.00003;
+        // [deg]
+        const dist = Math.sqrt((dx * dx) + (dy * dy));
+        // [s]
+        const timeleft = dist / velocity;
+
+        return timeleft.toFixed(0).toString() + "s";
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////////
     //
     // Driver markers
@@ -610,6 +639,13 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
 
         let markers: Array<L.Marker> = [];
         for (let carLocation of carLocations) {
+            // Update driver's vehicle, if any.
+            if (this.currentVehicle != null) {
+                if (carLocation.id == this.currentVehicle.id) {
+                    this.currentVehicle.currentLocation = carLocation.location;
+                }
+            }
+
             if (carLocation.available) {
                 markers.push(L.marker(
                     [carLocation.location.latitude, carLocation.location.longitude],

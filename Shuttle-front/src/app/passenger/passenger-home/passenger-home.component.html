@@ -195,6 +195,13 @@
 
             <hr/>
 
+            <!-- Estimated time of arrival to starting point -->
+
+            <div>
+                <span class="label">Time of arrival: </span>
+                <span class="value">{{ getEstArrivalTime() }}</span>
+            </div>
+
             <!-- If it's scheduled for later -->
 
             <ng-container *ngIf="isForLater()">

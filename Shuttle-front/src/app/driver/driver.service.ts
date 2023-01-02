@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Vehicle } from '../vehicle/vehicle.service';
 
 export interface Driver {
     id?: number,
@@ -14,7 +15,7 @@ export interface Driver {
     password: string
 }
 
-export interface Location{
+export interface Location {
     latitude: number,
     longitude: number
 }
@@ -23,7 +24,7 @@ export interface Location{
     providedIn: 'root'
 })
 export class DriverService {
-    constructor(private httpClient: HttpClient, ) { }
+    constructor(private httpClient: HttpClient,) { }
 
     public add(driver: Driver): Observable<any> {
         const options: any = {
@@ -34,8 +35,20 @@ export class DriverService {
 
     public getActiveDriversLocations(): Observable<Array<Location>> {
         return this.httpClient.get<Array<Location>>(environment.serverOrigin + "api/driver/active", {
-          observe: "body",
-          responseType: "json",
+            observe: "body",
+            responseType: "json",
         });
-      }
+    }
+
+    /**
+     * 
+     * @param driverId ID of the driver.
+     * @returns An observable sending the vehicle of the driver.
+     */
+    public getVehicle(driverId: number): Observable<Vehicle> {
+        return this.httpClient.get<Vehicle>(environment.serverOrigin + `api/driver/${driverId}/vehicle`, {
+            observe: "body",
+            responseType: "json",
+        });
+    }
 }
