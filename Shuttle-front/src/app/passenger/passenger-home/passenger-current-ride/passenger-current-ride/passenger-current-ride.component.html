@@ -1,0 +1,64 @@
+ <div *ngIf="isRouteFound">
+    <!-- Location list -->
+    <span class="label">Locations</span>
+    <ul>
+        <li class="value" *ngFor="let address of getAddressList()">{{ address }}</li>
+    </ul>
+
+    <!-- Distance -->
+    <div>
+        <span class="label">Distance: </span>
+        <span class="value">{{ getRouteDistanceStr() }}</span>
+    </div>
+
+    <hr/>
+
+    <!-- Vehicle type. -->
+    <div>
+        <span class="label">Vehicle: </span>
+        <span class="value">{{ ride.vehicleType }}</span>
+    </div>
+
+    <hr/>
+
+    <!-- Pets and babies -->
+
+    <div>
+        <mat-checkbox class="value" [checked]="ride.babyTransport"[disabled]="true">Babies</mat-checkbox>
+        <br/>    
+        <mat-checkbox class="value" [checked]="ride.petTransport"[disabled]="true">Pets</mat-checkbox>
+    </div>
+
+    <hr/>
+
+    <!-- Passenger list -->
+
+    <hr/>
+
+    
+    <div class="ride-passenger">
+        <img src="">
+        <mat-label class="value">{{myEmail}}</mat-label>
+        <mat-label class="label"> (You)</mat-label>
+    </div>
+    <br/>
+
+    <div *ngFor="let other of otherPassengers" class="ride-passenger">
+        <img src="">
+        <mat-label class="value">{{other.email}}</mat-label>
+        <br/>
+    </div>
+
+    <!-- Driver arrival time -->
+
+    <hr/>
+    
+    <ng-container *ngIf="isPending()">
+        <div>
+            <span class="label">Time of arrival: </span>
+            <span class="value">{{ timeUntilDriverArrives }}</span>
+        </div>
+        </ng-container>
+
+
+</div>

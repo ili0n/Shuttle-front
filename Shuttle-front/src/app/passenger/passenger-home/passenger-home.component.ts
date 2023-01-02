@@ -35,7 +35,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
 
     /************************************ Ride fields ********************************************/
 
-    private ride: Ride | null = null;
+    protected ride: Ride | null = null;
 
 
     /************************************ General methods ****************************************/
@@ -234,11 +234,26 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     }
 
     private onFetchRide(r: Ride): void {
-        console.log(r);
         if ([RideStatus.Pending, RideStatus.Accepted].includes(r.status)) {
             this.ride = r;
+            this.recalculateRouteFromRideIfNoneFound();
         } else if ([RideStatus.Canceled, RideStatus.Finished, RideStatus.Rejected].includes(r.status)) {
             this.ride = null;
+            this.clearRoute();
         }
+    }
+
+    private recalculateRouteFromRideIfNoneFound() {
+        if (!this.isRouteFound() && this.ride != null) {
+            this.depPos = new L.LatLng(this.ride.locations[0].departure.latitude, this.ride.locations[0].departure.longitude);
+            this.destPos =  new L.LatLng(this.ride.locations.at(-1)!.destination.latitude, this.ride.locations.at(-1)!.destination.longitude);
+            this.onFoundRoute();
+        }
+    }
+
+    /************************************ Current ride screen ************************************/
+
+    protected hasCurrentRide(): boolean {
+        return this.ride != null;
     }
 }

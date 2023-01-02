@@ -14,5 +14,12 @@
             (orderRideEvent)="orderRide($event)"
             >
         </app-passenger-order-ride>
+        <app-passenger-current-ride
+            [ride]="ride!"
+            [isRouteFound]="isRouteFound()"
+            [routeDistance]="this.routeDistance"
+            *ngIf="hasCurrentRide()"
+            >
+        </app-passenger-current-ride>
     </div>
 </div>
