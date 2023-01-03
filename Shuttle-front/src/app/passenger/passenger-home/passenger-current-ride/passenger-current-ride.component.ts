@@ -22,15 +22,17 @@ export class PassengerCurrentRideComponent implements OnInit {
     @Output() private panicEvent = new EventEmitter<string>();
     @Output() private cancelEvent = new EventEmitter<void>();
 
+    protected elapsedTime: string = "";
     protected timeUntilDriverArrives: string = "";
     protected myEmail!: string;
     private vehicleID: number = -1;
+    private timer: NodeJS.Timer | null = null;
 
     constructor(private authService: AuthService,
                 private driverService: DriverService,
                 private navbarService: NavbarService,
                 private dialog: MatDialog) {
-
+        this.startElapsedTimeTimer();
     }
 
     ngOnInit(): void {
@@ -128,5 +130,21 @@ export class PassengerCurrentRideComponent implements OnInit {
 
     protected cancelRide(): void {
         this.cancelEvent.emit();
+    }
+
+    private getElapsedTime(): string {
+        let timeDiffMs: number = Date.now() - new Date(this.ride.startTime).getTime();
+        let time: string = new Date(timeDiffMs).toISOString().substring(11, 19);
+
+        if (time.substring(0, 2) == "00") {
+            time = time.substring(3, 8);
+        }
+        return time;
+    }
+
+    private startElapsedTimeTimer(): void {
+        this.timer = setInterval(() => {
+            this.elapsedTime = this.getElapsedTime();
+        });
     }
 }

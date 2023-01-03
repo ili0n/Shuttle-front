@@ -46,6 +46,14 @@
         <br/>
     </div>
 
+    <!-- Driver -->
+
+    <hr/>
+    <div>
+        <span class="label">Driver: </span>
+        <span class="value">{{ ride.driver.email }}</span>
+    </div>
+
     <!-- Driver arrival time -->
     
     <ng-container *ngIf="isPending() && !isScheduledForFuture()">
@@ -75,6 +83,12 @@
     <!-- Panic button -->
 
     <ng-container *ngIf="isAccepted()">
+        <hr/>
+        <span id="elapsed-time">
+            <span class="label">Elapsed time: </span>
+            <span class="value">{{ elapsedTime }}</span>
+        </span>
+        <hr/>
         <button mat-raised-button color="warn" (click)="openPanicDialog()"><mat-icon>warning</mat-icon> Panic</button>
     </ng-container>
 

@@ -38,12 +38,13 @@
 <ng-container *ngIf="isAccepted()">
     <hr/>
     
-    <p id="elapsed-time">
+    <span id="elapsed-time">
         <span class="label">Elapsed time: </span>
         <span class="value">{{ elapsedTime }}</span>
-    </p>
+    </span>
+    <hr/>
 
-    <button mat-raised-button color="warn" (click)="onFinishClick()"><mat-icon>stop</mat-icon> Finish</button>
+    <button mat-raised-button color="accent" (click)="onFinishClick()"><mat-icon>stop</mat-icon> Finish</button>
     <br/><br/>
     <button mat-raised-button color="warn" (click)="onPanicClick()"><mat-icon>warning</mat-icon> Panic</button>
 </ng-container>
