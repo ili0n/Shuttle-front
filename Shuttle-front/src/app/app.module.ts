@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -31,6 +31,7 @@ import { DriverModule } from './driver/driver/driver.module';
 import { RideModule } from './ride/ride.module';
 import { RidePanicDialogComponent } from './ride/ride-panic-dialog/ride-panic-dialog.component';
 import { DriverHomeCurrentRideComponent } from './driver/driver-home/driver-home-current-ride/driver-home-current-ride.component';
+import { Interceptor } from './auth/interceptor/login.interceptor';
 
 @NgModule({
     declarations: [
@@ -66,7 +67,12 @@ import { DriverHomeCurrentRideComponent } from './driver/driver-home/driver-home
         DriverModule,
         RideModule,
     ],
-    providers: [],
+    providers: [{
+        provide: HTTP_INTERCEPTORS,
+        useClass: Interceptor,
+        multi: true
+        },
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }
