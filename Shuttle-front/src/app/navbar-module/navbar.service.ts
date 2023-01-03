@@ -17,9 +17,25 @@ export class NavbarService {
     private vehicleLocationsSubject: Subject<Array<VehicleLocationDTO>> = new Subject();
     private vehicleLocationSubject: Subject<VehicleLocationDTO> = new Subject();
 
-    private activitySliderSubject: Subject<boolean> = new Subject();
-    private activityChangeSubject: Subject<boolean> = new Subject();
-    
+    private canChangeActiveStateSubject: Subject<boolean> = new Subject();
+    private driverActiveStateSubject: Subject<boolean> = new Subject();
+
+    public setCanDriverChangeActiveState(canChange: boolean): void {
+        this.canChangeActiveStateSubject.next(canChange);
+    }
+
+    public getCanChangeActiveState(): Observable<boolean> {
+        return this.canChangeActiveStateSubject.asObservable();
+    }
+
+    public setDriverActiveState(active: boolean): void {
+        this.driverActiveStateSubject.next(active);
+    }
+
+    public getDriverActiveState(): Observable<boolean> {
+        return this.driverActiveStateSubject.asObservable();
+    }
+
     getRidePassenger(): Observable<Ride> {
         return this.passengerRideSubject.asObservable();
     }
@@ -34,22 +50,6 @@ export class NavbarService {
 
     constructor(private authService: AuthService) { 
         this.connectToSocket('socket');
-    }
-
-    public refreshActivitySlider(canToggle: boolean) {
-        this.activitySliderSubject.next(canToggle);
-    }
-
-    public onRefreshActivitySlider(): Observable<boolean> {
-        return this.activitySliderSubject.asObservable();
-    }
-
-    public emitActivityChanged(active: boolean): void {
-        this.activityChangeSubject.next(active);
-    }
-
-    public getActivityChanged(): Observable<boolean> {
-        return this.activityChangeSubject.asObservable();
     }
 
     public getVehicleLocation(): Observable<VehicleLocationDTO> {

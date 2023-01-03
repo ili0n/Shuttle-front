@@ -188,6 +188,11 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
 
             this.drawRoute(pointA, pointB);
         }
+
+        if (this.ride.status == RideStatus.Accepted) {
+            this.navbarService.setCanDriverChangeActiveState(false);
+            this.navbarService.setDriverActiveState(true);        
+        }
     }
 
     protected hasCurrentRide(): boolean {
@@ -203,6 +208,8 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
             next: (ride: Ride) => {
                 this.sharedService.showSnackBar("Ride started.", 3000);
                 this.onFetchRide(ride);
+                this.navbarService.setCanDriverChangeActiveState(false);
+                this.navbarService.setDriverActiveState(true);
             },
             error: (error) => this.sharedService.showSnackBar("Cannot begin ride.", 3000)
         });
@@ -218,6 +225,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
                 this.sharedService.showSnackBar("Ride finished.", 3000);
                 this.onFetchRide(ride);
                 this.navbarService.driverRequestToFetchRide();
+                this.navbarService.setCanDriverChangeActiveState(true);
             },
             error: (error) => this.sharedService.showSnackBar("Cannot finish ride.", 3000)
         });
@@ -233,6 +241,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
                 this.sharedService.showSnackBar("Ride rejected.", 3000);
                 this.onFetchRide(ride);
                 this.navbarService.driverRequestToFetchRide();
+                this.navbarService.setCanDriverChangeActiveState(true);
             },
             error: (error) => this.sharedService.showSnackBar("Cannot reject ride.", 3000)
         });
@@ -248,6 +257,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
                 this.sharedService.showSnackBar("Ride aborted. The staff has been notified", 3000);
                 this.onFetchRide(panicDTO.ride);
                 this.navbarService.driverRequestToFetchRide();
+                this.navbarService.setCanDriverChangeActiveState(true);
             },
             error: (error) => this.sharedService.showSnackBar("Cannot panic ride.", 3000)
         });

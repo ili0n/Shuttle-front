@@ -22,57 +22,60 @@ export class DriverNavbarComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.userService.getActive(this.authService.getUserId()).subscribe({
-            next: (value) => this.onActivityChange(value),
-            error: (error) => console.error(error)
+        this.navbarService.getCanChangeActiveState().subscribe({
+            next: (canChange: boolean) => this.setActiveStateSliderEnabled(canChange),
         });
 
-        this.navbarService.onRefreshActivitySlider().subscribe({
-            next: (canToggle) => this.setActivitySliderIsEnabled(canToggle),
-            error: (error) => console.error(error)
+        this.navbarService.getDriverActiveState().subscribe({
+            next: (isActive: boolean) => this.setDriverActiveState(isActive),
         });
     }
 
-    /**
-     * @param canToggle Whether the activity slider can be changed.
-     */
-    private setActivitySliderIsEnabled(canToggle: boolean) {
-        if (canToggle) {
+    protected onToggleIsActive(): void {
+        const id: number = this.authService.getUserId();
+        const active: boolean = this.formGroupIsActive.getRawValue()['isActive'];
+
+        if (!active) {
+            this.userService.setInactive(id).subscribe({
+                next: (value) => this.onActiveChanged(value),
+                error: (error) => console.error("NO:" + error)
+            });
+        } else {
+            this.userService.setActive(id).subscribe({
+                next: (value) => this.onActiveChanged(value),
+                error: (error) => console.error("NO:" + error)
+            });
+        }
+    }
+
+    private setDriverActiveState(isActive: boolean): void {
+        this.formGroupIsActive.setValue({ 'isActive': isActive });
+    }
+
+    private onActiveChanged(activeState: boolean): void {
+        console.log("onActiveChanged()", activeState);
+    }
+
+    private setActiveStateSliderEnabled(canChange: boolean): void {
+        if (canChange) {
             this.formGroupIsActive.controls['isActive'].enable();
         } else {
             this.formGroupIsActive.controls['isActive'].disable();
         }
-
-        this.fetchIsActive();
     }
 
-    /**
-     * Fetch activity status from the backend.
-     */
-    private fetchIsActive(): void {
-        this.userService.getActive(this.authService.getUserId()).subscribe({
-            next: (active: boolean) => this.setIsActiveSliderValue(active),
-            error: (error) => console.error(error)
-        });
-    }
+    /*
+    Activity slider:
 
-    /**
-     * @param isActive Whether the user is active.
-     */
-    private setIsActiveSliderValue(isActive: boolean): void {
-        this.formGroupIsActive.setValue({ 'isActive': isActive });
-    }
+    [Driver] Begin Ride ---> active=true, canChange=false
+    [Driver] Finish Ride ]
+             Cancel Ride ]-> canChange=true
+             Reject Ride ]
+    
+    [Driver] Fetch ride, is active ---> active=true, canChange=false
+    */
 
-
-    /**
-     * Called whenever the driver's active flag changes (manually or automatically).
-     * @param active True if the driver is now active, false otherwise.
-     */
-    private onActivityChange(active: boolean) {
-        console.log("DriverNavbarComponent::getActive() " + active);
-        this.navbarService.emitActivityChanged(active);
-        this.formGroupIsActive.setValue({ 'isActive': active });
-    }
+    /*********************************************************************************************/
 
     logout() {
         this.authService.logout();
@@ -85,26 +88,4 @@ export class DriverNavbarComponent implements OnInit {
     info() {
         this.router.navigate(["driver/info"]);
     }
-
-    /**
-     * Callback for whenever the driver changes his activity status manually.
-     * The activity is updated on the server.
-     */
-    onToggleIsActive() {
-        const id: number = this.authService.getUserId();
-        const active: boolean = this.formGroupIsActive.getRawValue()['isActive'];
-
-        if (!active) {
-            this.userService.setInactive(id).subscribe({
-                next: (value) => this.onActivityChange(value),
-                error: (error) => console.error("NO:" + error)
-            });
-        } else {
-            this.userService.setActive(id).subscribe({
-                next: (value) => this.onActivityChange(value),
-                error: (error) => console.error("NO:" + error)
-            });
-        }
-    }
-
 }
