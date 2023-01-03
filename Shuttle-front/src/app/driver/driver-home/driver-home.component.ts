@@ -37,7 +37,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private mapRoute: L.Routing.Control | null = null;
     private _state: State = State.JUST_MAP;
     private timer: NodeJS.Timer | null = null;
-    protected isActive = false;
+    protected isActive = true;
     State = State;
     rides: Array<Ride> = [];
     timerText: string = "";
@@ -131,7 +131,9 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.isActive = active;
                 this.refreshRides();
             }
-        })
+        });
+
+        this.refreshRides();
     }
 
     private refreshActivitySlider(): void {
@@ -166,6 +168,7 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
      * @param receivedData Ride object that was retrieved from the backend. It can be a pending ride or an active ride.
      */
     private onGotRide(receivedData: Ride): void {
+        console.log("onGotRide", receivedData);
         if (receivedData == null) {
             return;
         }
@@ -188,9 +191,6 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
         this.rides.push(receivedData);
         let ride: Ride = this.rides[this.rides.length - 1];
 
-        console.log("Got ride:");
-        console.log(this.rides);
-
         this.fetchRouteToMap();
 
         // If you're already riding, no need to change status. We don't want a pending ride to
@@ -202,8 +202,6 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     private refreshStateAndStartTimerIfNecessary(): void {
-        console.log(this.rides);
-
         if (this.rides.length == 0) {
             this.state = State.JUST_MAP;
             return;
@@ -273,7 +271,6 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
             next: (response) => {
                 this.removeRideFromContext();
                 this.sharedService.showSnackBar("Ride request rejected.", 4000);
-                console.log(response);
                 this.mapRoute = null;
             }, error: (error) => {
                 this.sharedService.showSnackBar("Could not cancel the ride.", 4000);

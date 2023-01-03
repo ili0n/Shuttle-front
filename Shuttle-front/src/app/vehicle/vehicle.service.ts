@@ -31,6 +31,7 @@ export interface VehicleLocationDTO {
     id: number,
     location: Location,
     available: boolean,
+    vehicleTypeId: number,
 }
 
 @Injectable({

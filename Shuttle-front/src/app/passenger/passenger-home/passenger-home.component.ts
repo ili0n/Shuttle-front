@@ -22,8 +22,13 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     protected depPos!: L.LatLng;
     protected destPos!: L.LatLng;
     private carLayer!: L.LayerGroup;
+
     private iconCarAvailable!: L.Icon;
     private iconCarBusy!: L.Icon;
+    private iconLuxAvailable!: L.Icon;
+    private iconLuxBusy!: L.Icon;
+    private iconVanAvailable!: L.Icon;
+    private iconVanBusy!: L.Icon;
 
     /************************************ Form fields ********************************************/
 
@@ -163,31 +168,52 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
 
     private initMapIcons(): void {
         this.iconCarAvailable = L.icon({
-            iconUrl: 'assets/car_available.png',
+            iconUrl: 'assets/ico_car_avail.png',
             iconSize: [32, 32],
         });
 
         this.iconCarBusy = L.icon({
-            iconUrl: 'assets/car_busy.png',
+            iconUrl: 'assets/ico_car_busy.png',
+            iconSize: [32, 32],
+        });
+
+        this.iconLuxAvailable = L.icon({
+            iconUrl: 'assets/ico_luxury_avail.png',
+            iconSize: [32, 32],
+        });
+
+        this.iconLuxBusy = L.icon({
+            iconUrl: 'assets/ico_luxury_busy.png',
+            iconSize: [32, 32],
+        });
+
+        this.iconVanAvailable = L.icon({
+            iconUrl: 'assets/ico_van_avail.png',
+            iconSize: [32, 32],
+        });
+
+        this.iconVanBusy = L.icon({
+            iconUrl: 'assets/ico_van_busy.png',
             iconSize: [32, 32],
         });
     }
 
     private redrawVehicleMarkers(locations: Array<VehicleLocationDTO>) {
         let markers: Array<L.Marker> = [];
+
+        const icon_map = [
+            [this.iconCarAvailable, this.iconLuxAvailable, this.iconVanAvailable],
+            [this.iconCarBusy, this.iconLuxBusy, this.iconVanBusy],
+        ]
         
         for (let carLocation of locations) {
-            if (carLocation.available) {
-                markers.push(L.marker(
-                    [carLocation.location.latitude, carLocation.location.longitude],
-                    {icon: this.iconCarAvailable}
-                ));
-            } else {
-                markers.push(L.marker(
-                    [carLocation.location.latitude, carLocation.location.longitude],
-                    {icon: this.iconCarBusy}
-                ));
-            }
+            // -1 because IDs go from 1.
+            const ico = icon_map[carLocation.available ? 0 : 1][carLocation.vehicleTypeId - 1]; 
+
+            markers.push(L.marker(
+                [carLocation.location.latitude, carLocation.location.longitude],
+                {icon: ico}
+            ));
         }
 
         if (this.map.hasLayer(this.carLayer)) {
