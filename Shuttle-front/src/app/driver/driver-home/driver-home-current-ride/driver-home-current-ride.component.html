@@ -21,6 +21,13 @@
 
 <!-- While pending -->
 <ng-container *ngIf="isPending()">
+    <div *ngIf="isScheduledForFuture()">
+        <hr/>
+        <div>
+            <span class="label">Scheduled for: </span>
+            <span class="value">{{ getRideStartTime() | date:'HH:mm' }}</span>    
+        </div>
+    </div>
     <hr/>
     <button mat-raised-button color="primary" (click)="onBeginClick()"><mat-icon>play_circle_filled</mat-icon> Begin ride</button>
     <br/><br/>
@@ -32,7 +39,8 @@
     <hr/>
     
     <p id="elapsed-time">
-        Elapsed time: <b>{{ elapsedTime }}</b>
+        <span class="label">Elapsed time: </span>
+        <span class="value">{{ elapsedTime }}</span>
     </p>
 
     <button mat-raised-button color="warn" (click)="onFinishClick()"><mat-icon>stop</mat-icon> Finish</button>

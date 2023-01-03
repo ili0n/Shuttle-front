@@ -83,4 +83,18 @@ export class DriverHomeCurrentRideComponent {
             this.elapsedTime = this.getElapsedTime();
         });
     }
+
+    protected isScheduledForFuture(): boolean {
+        if (this.ride == null) {
+            return false;
+        }
+        return this.ride.startTime != null;
+    }
+
+    protected getRideStartTime(): string {
+        if (this.ride == null) {
+            return "";
+        }
+        return this.ride.startTime;
+    }
 }
