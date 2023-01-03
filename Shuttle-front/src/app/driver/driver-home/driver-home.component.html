@@ -6,7 +6,7 @@
         </div>
 
         <!-- Right side - info -->
-        <div class="column right" *ngIf="hasCurrentRide()">
+        <div class="column right" *ngIf="hasCurrentRide() && isActive">
         <app-driver-home-current-ride
             [ride]="ride!"
             (beginEvent)="onRideBegin()"

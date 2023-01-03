@@ -24,6 +24,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
     private carLayer!: L.LayerGroup;
 
     protected ride: Ride | null = null;
+    protected isActive: boolean = false;
 
     /****************************************** General ******************************************/
 
@@ -40,7 +41,6 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
         this.initMap("map");
         this.initMapIcons();
     }
-
     private subscribeToSocketSubjects(): void {
         this.navbarService.getVehicleLocation().subscribe({
             next: (value: VehicleLocationDTO) => this.onFetchCurrentLocation(value),

@@ -27,7 +27,17 @@ export class DriverNavbarComponent implements OnInit {
         });
 
         this.navbarService.getDriverActiveState().subscribe({
-            next: (isActive: boolean) => this.setDriverActiveState(isActive),
+            next: (isActive: boolean) => {
+                this.userService.setActive(this.authService.getUserId());
+                this.setDriverActiveState(isActive);
+            },
+        });
+
+        this.userService.getActive(this.authService.getUserId()).subscribe({
+            next: (active: boolean) => {
+                this.navbarService.setDriverActiveState(active);
+                this.setDriverActiveState(active);
+            },
         });
     }
 
