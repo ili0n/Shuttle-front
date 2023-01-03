@@ -12,15 +12,20 @@ import { AuthService } from '../auth/auth.service';
 })
 export class NavbarService {
     private stompClient: Stomp.Client | undefined;
-    private rideSubject: Subject<Ride> = new Subject();
+    private passengerRideSubject: Subject<Ride> = new Subject();
+    private driverRideSubject: Subject<Ride> = new Subject();
     private vehicleLocationsSubject: Subject<Array<VehicleLocationDTO>> = new Subject();
-
+    private vehicleLocationSubject: Subject<VehicleLocationDTO> = new Subject();
 
     private activitySliderSubject: Subject<boolean> = new Subject();
     private activityChangeSubject: Subject<boolean> = new Subject();
     
-    getRide(): Observable<Ride> {
-        return this.rideSubject.asObservable();
+    getRidePassenger(): Observable<Ride> {
+        return this.passengerRideSubject.asObservable();
+    }
+
+    getRideDriver(): Observable<Ride> {
+        return this.driverRideSubject.asObservable();
     }
 
     getVehicleLocations(): Observable<Array<VehicleLocationDTO>> {
@@ -45,6 +50,10 @@ export class NavbarService {
 
     public getActivityChanged(): Observable<boolean> {
         return this.activityChangeSubject.asObservable();
+    }
+
+    public getVehicleLocation(): Observable<VehicleLocationDTO> {
+        return this.vehicleLocationSubject.asObservable();
     }
 
     
@@ -121,12 +130,14 @@ export class NavbarService {
     private onConnectToWebSocketPassenger() {
         const passengerId: number = this.authService.getUserId();
 
-        // Whenever the backend has a new ride for me, I'll listen to it.
+        // Whenever the backend has a new ride for me.
 
         this.subscribeToWebSocketTopic(`ride/passenger/${passengerId}`, (message) => {
             let r: Ride = JSON.parse(message.body);
-            this.rideSubject.next(r);
+            this.passengerRideSubject.next(r);
         });
+
+        // Whenever the backend sends me new vehicle locations.
 
         this.subscribeToWebSocketTopic(`vehicle/locations`, (message) => {
             const locations = JSON.parse(message.body);
@@ -134,11 +145,30 @@ export class NavbarService {
         });
 
         // Ask the backend to fetch the latest ride.
+
         this.passengerRequestToFetchRide();
     }
 
     private onConnectToWebSocketDriver() {
+        const driverId: number = this.authService.getUserId();
 
+        // Whenever the backend has a new ride for me.
+
+        this.subscribeToWebSocketTopic(`ride/driver/${driverId}`, (message) => {
+            let r: Ride = JSON.parse(message.body);
+            this.driverRideSubject.next(r);
+        });
+
+        // Whenever the backend sends me my vehicle location.
+
+        this.subscribeToWebSocketTopic(`vehicle/locations/${driverId}`, (message) => {
+            const location = JSON.parse(message.body);
+            this.vehicleLocationSubject.next(location);
+        });
+
+        // Ask the backend to fetch the latest ride.
+
+        this.driverRequestToFetchRide();
     }
 
     private onConnectToWebSocketAdmin() {
@@ -147,12 +177,21 @@ export class NavbarService {
 
     public passengerRequestToFetchRide() {
         const isPassenger = this.authService.getRoles().filter(r => r == 'passenger').length != 0;
-
         if (!isPassenger) {
             return;
         }
         
         const passengerId: number = this.authService.getUserId();
         this.sendMessageToSocket("", `ride/passenger/${passengerId}`);
+    }
+
+    public driverRequestToFetchRide() {
+        const isDriver = this.authService.getRoles().filter(r => r == 'driver').length != 0;
+        if (!isDriver) {
+            return;
+        }
+        
+        const driverId: number = this.authService.getUserId();
+        this.sendMessageToSocket("", `ride/driver/${driverId}`);    
     }
 }

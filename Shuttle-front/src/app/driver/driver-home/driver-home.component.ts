@@ -1,368 +1,133 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
-import { interval, map, startWith, Subscription } from 'rxjs';
-import * as Stomp from 'stompjs';
-import * as SockJS from 'sockjs-client';
-import { AuthService } from 'src/app/auth/auth.service';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
-import { Ride, RideRequestSingleLocation, RideService, RideStatus } from 'src/app/ride/ride.service';
+import { PanicDTO, Ride, RideService, RideStatus } from 'src/app/ride/ride.service';
 import { SharedService } from 'src/app/shared/shared.service';
-import { UserService } from 'src/app/user/user.service';
-import { environment } from 'src/environments/environment';
-import { RejectRideDialogComponent } from '../reject-ride-dialog/reject-ride-dialog.component';
-import { RidePanicDialogComponent } from 'src/app/ride/ride-panic-dialog/ride-panic-dialog.component';
-
-enum State {
-    JUST_MAP,
-    RIDE_REQUEST,
-    RIDE_IN_PROGRESS,
-}
-
-export interface Message {
-    message: string,
-    fromId: string,
-    toId: string,
-}
+import { VehicleLocationDTO } from 'src/app/vehicle/vehicle.service';
 
 @Component({
     selector: 'app-driver-home',
     templateUrl: './driver-home.component.html',
     styleUrls: ['./driver-home.component.css']
 })
-export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
-    private map: any;
-    private mapRoute: L.Routing.Control | null = null;
-    private _state: State = State.JUST_MAP;
-    private timer: NodeJS.Timer | null = null;
-    protected isActive = true;
-    State = State;
-    rides: Array<Ride> = [];
-    timerText: string = "";
+export class DriverHomeComponent implements OnInit, AfterViewInit {
+    private iconCarAvailable!: L.Icon;
+    private iconCarBusy!: L.Icon;
+    private iconLuxAvailable!: L.Icon;
+    private iconLuxBusy!: L.Icon;
+    private iconVanAvailable!: L.Icon;
+    private iconVanBusy!: L.Icon;
 
-    private stompClient: Stomp.Client | undefined;
+    private map!: L.Map;
+    private route: L.Routing.Control | null = null;
+    private carLayer!: L.LayerGroup;
 
-    /**
-     * Connect to a websocket.
-     * @param stompEndpoint Name of the endpoint used by Stomp to connect to a websocket.
-     * Has to be one of the registered endpoints from `WebSocketConfiguration::registerStompEndpoints()`.
-     * Must *not* begin with a `/`.
-     */
-    connectToSocket(stompEndpoint: string) {
-        let ws = new SockJS(environment.serverOrigin + stompEndpoint);
-        this.stompClient = Stomp.over(ws);
-        this.stompClient.debug = () => {};
-        let self = this;
-        this.stompClient.connect({}, () => {
-            self.onConnectToWebSocket();
-        });
-    }
+    protected ride: Ride | null = null;
 
-    /**
-     * Disconnect from the websocket.
-     */
-    disconnectFromSocket() {
-        this.stompClient?.disconnect(() => {});
-    }
+    /****************************************** General ******************************************/
 
-    /**
-     * Subscribe to a given topic to listen to the messages in the topic.
-     * @param topicName Name of the topic, *must not* start with a `/`.
-     */
-    subscribeToWebSocketTopic(topicName: string, callback: (msg: Stomp.Message) => any) {
-        if (this.stompClient != undefined) {
-            this.stompClient.subscribe('/' + topicName, callback);
-        } else {
-            console.error("Cannot subscribe to topic" + topicName + ". Not connected to a websocket!");
-        }
-    }
-
-    /**
-     * Send message to socket at the provided endpoint.
-     * @param message Message payload.
-     * @param socketEndpoint Endpoint to send it to. Check Java methods annotated with `@MessageMapping()` for possible endpoints.
-     */
-    sendMessageToSocket(message: string, socketEndpoint: string) {
-        if (this.stompClient != undefined) {
-            this.stompClient.send("/shuttle/" + socketEndpoint, {}, message);
-        } else {
-            console.error("Cannot send message" + message + " to endpoint " + socketEndpoint + ". Not connected to a websocket!");
-        }
-    }
-
-    /**
-     * Callback for when the component gets connected to a websocket.
-     */
-    onConnectToWebSocket() {
-        const driverId: number = this.authService.getUserId();
-
-        // Whenever the backend has a new ride for me, I'll listen to it.
-
-        this.subscribeToWebSocketTopic(`ride/driver/${driverId}`, (message) => {
-            let r: Ride = JSON.parse(message.body);
-            this.onGotRide(r);
-        });
-
-        // Ask the backend to fetch the latest ride.
-
-        this.refreshRides();
-    }
-
-    private refreshRides(): void {
-        const driverId: number = this.authService.getUserId();
-        this.sendMessageToSocket("", `ride/driver/${driverId}`);
-    }
-    
-    constructor(private httpClient: HttpClient, public dialog: MatDialog, private sharedService: SharedService, private rideService: RideService, private navbarService: NavbarService, private userService: UserService, private authService: AuthService) {
-    }
-
-    ngOnDestroy() {
-        document.body.className = "";
+    constructor(private navbarService: NavbarService,
+                private sharedService: SharedService,
+                private rideService: RideService) {
     }
 
     ngOnInit(): void {
-        document.body.className = "body-graybg";
-        this.connectToSocket('socket');
-
-        this.navbarService.getActivityChanged().subscribe({
-            next: (active: boolean) => {
-                this.isActive = active;
-                this.refreshRides();
-            }
-        });
-
-        this.refreshRides();
+        this.subscribeToSocketSubjects();
     }
-
-    private refreshActivitySlider(): void {
-        const canToggleActivity = this._state != State.RIDE_IN_PROGRESS;
-        this.navbarService.refreshActivitySlider(canToggleActivity);
-    }
-
-
-
+    
     ngAfterViewInit(): void {
         this.initMap("map");
+        this.initMapIcons();
     }
 
-    /**
-     * Change the state.
-     * @param newState The new state.
-     */
-    private set state(newState: State) {
-        this._state = newState;
-        this.refreshActivitySlider();
-    }
+    private subscribeToSocketSubjects(): void {
+        this.navbarService.getVehicleLocation().subscribe({
+            next: (value: VehicleLocationDTO) => this.onFetchCurrentLocation(value),
+            error: (error) => console.log(error)
+        });
 
-    /**
-     * Get the state.
-     */
-    get state(): State {
-        return this._state
-    }
-
-    /**
-     * Callback that's called each time a new ride is received from the backend.
-     * @param receivedData Ride object that was retrieved from the backend. It can be a pending ride or an active ride.
-     */
-    private onGotRide(receivedData: Ride): void {
-        console.log("onGotRide", receivedData);
-        if (receivedData == null) {
-            return;
-        }
-
-        if (receivedData.status == RideStatus.Canceled) {
-            this.removeRideFromContext();
-            this.sharedService.showSnackBar("Ride canceled.", 4000);
-            this.mapRoute = null;
-            return;
-        }
-
-        // If this ride is already in the list, ignore it.
-
-        if (this.rides.filter(r => r.id == receivedData.id).length > 0) {
-            return;
-        }
-
-        // Otherwise, add it to the list of rides.
-
-        this.rides.push(receivedData);
-        let ride: Ride = this.rides[this.rides.length - 1];
-
-        this.fetchRouteToMap();
-
-        // If you're already riding, no need to change status. We don't want a pending ride to
-        // override the begin/reject/timer elements of an active ride.
-
-        if (this.state != State.RIDE_IN_PROGRESS) {
-            this.refreshStateAndStartTimerIfNecessary();
-        }
-    }
-
-    private refreshStateAndStartTimerIfNecessary(): void {
-        if (this.rides.length == 0) {
-            this.state = State.JUST_MAP;
-            return;
-        }
-        let ride: Ride = this.rides[this.rides.length - 1];
-
-        this.fetchRouteToMap();
-
-        if (ride.status == RideStatus.Pending) {
-            this.state = State.RIDE_REQUEST;
-        } else if (ride.status == RideStatus.Accepted) {
-            this.state = State.RIDE_IN_PROGRESS;
-            this.startRideTimer();
-        }
-    }
-
-    hasRideRequest(): boolean {
-        return this._state == State.RIDE_REQUEST;
-    }
-
-    hasActiveRide(): boolean {
-        return this._state == State.RIDE_IN_PROGRESS;
-    }
-
-    startRideTimer() {
-        this.timer = setInterval(() => {
-            this.timerText = this.getElapsedTime();
+        this.navbarService.getRideDriver().subscribe({
+            next: (value: Ride) => this.onFetchRide(value),
+            error: (error) => console.log(error)          
         });
     }
 
-    beginRide() {
-        let ride: Ride = this.rides[0];
-        if (ride == null) {
-            return;
-        }
+    /******************************************** Map ********************************************/
 
-        const obs = this.rideService.accept(ride.id);
-        obs.subscribe({
-            next: (response) => {
-                this.userService.setActive(this.authService.getUserId()).subscribe({
-                    next: (value) => {
-                        // Don't call refreshStateAndStartTimerIfNecessary() here!
-                        // It checks the ride state, but we're setting it here.
-
-                        this.state = State.RIDE_IN_PROGRESS;
-                        ride.startTime = new Date().toISOString();
-                        this.startRideTimer();
-                        this.sharedService.showSnackBar("Ride started.", 4000);
-                    }
-                });
-            },
-            error: (error) => {
-                this.sharedService.showSnackBar("Could not start the ride.", 4000);
-                console.error(error);
-            }
-        });
-    }
-
-    rejectRide(reason: string) {
-        let ride: Ride = this.rides[0];
-        if (ride == null) {
-            return;
-        }
-
-        const obs = this.rideService.reject(ride.id, reason);
-        obs.subscribe({
-            next: (response) => {
-                this.removeRideFromContext();
-                this.sharedService.showSnackBar("Ride request rejected.", 4000);
-                this.mapRoute = null;
-            }, error: (error) => {
-                this.sharedService.showSnackBar("Could not cancel the ride.", 4000);
-                console.error(error);
-            }
-        });
-    }
-
-    finishRide() {
-        let ride: Ride = this.rides[0];
-        if (ride == null) {
-            return;
-        }
-
-        const obs = this.rideService.end(ride.id);
-        obs.subscribe({
-            next: (response) => {
-                this.removeRideFromContext();
-                this.sharedService.showSnackBar("Ride completed.", 4000);
-                this.mapRoute = null;
-            }, error: (error) => {
-                this.sharedService.showSnackBar("Could not end the ride.", 4000);
-                console.error(error);
-            }
-        });
-    }
-
-    private removeRideFromContext() {
-        this.mapRoute!.remove();
-        this.rides.shift();
-        this.refreshStateAndStartTimerIfNecessary();
-        this.refreshRides();
-    }
-
-    private getElapsedTime(): string {
-        let ride: Ride = this.rides[0];
-        if (ride) {
-            let timeDiffMs: number = Date.now() - new Date(ride.startTime).getTime();
-            let time: string = new Date(timeDiffMs).toISOString().substr(11, 8);
-
-            if (time.substr(0, 2) == "00") {
-                time = time.substr(3, 5);
-            }
-            return time;
-        }
-        return "00:00";
-    }
-
-    openRejectionDialog(): void {
-        let ride: Ride = this.rides[0];
-
-        const dialogRef = this.dialog.open(RejectRideDialogComponent, { data: "" });
-
-        dialogRef.afterClosed().subscribe(reason => {
-            if (reason != undefined) {
-                if (ride != null) {
-                    this.rejectRide(reason);
-                }
-            }
-        });
-    }
-
-    initMap(id: string): void {
-        this.map = L.map(id, {
-            center: [45.2396, 19.8227],
-            zoom: 13,
-        });
-
+    private initMap(id: string): void {
+        this.map = L.map(id, {center: [45.2396, 19.8227], zoom: 13 });
         const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            minZoom: 3,
+            maxZoom: 18, minZoom: 3,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         });
-
         tiles.addTo(this.map);
     }
 
-    fetchRouteToMap(): void {
-        let ride: Ride = this.rides[0];
-        if (ride == null) {
-            return;
+    private initMapIcons(): void {
+        this.iconCarAvailable = L.icon({
+            iconUrl: 'assets/ico_car_avail.png',
+            iconSize: [32, 32],
+        });
+
+        this.iconCarBusy = L.icon({
+            iconUrl: 'assets/ico_car_busy.png',
+            iconSize: [32, 32],
+        });
+
+        this.iconLuxAvailable = L.icon({
+            iconUrl: 'assets/ico_luxury_avail.png',
+            iconSize: [32, 32],
+        });
+
+        this.iconLuxBusy = L.icon({
+            iconUrl: 'assets/ico_luxury_busy.png',
+            iconSize: [32, 32],
+        });
+
+        this.iconVanAvailable = L.icon({
+            iconUrl: 'assets/ico_van_avail.png',
+            iconSize: [32, 32],
+        });
+
+        this.iconVanBusy = L.icon({
+            iconUrl: 'assets/ico_van_busy.png',
+            iconSize: [32, 32],
+        });
+    }
+
+    private onFetchCurrentLocation(vehicle: VehicleLocationDTO): void {
+        const loc: L.LatLng = new L.LatLng(vehicle.location.latitude, vehicle.location.longitude);
+
+        if (this.map.getBounds().contains(loc)) {
+            this.map.flyTo(loc);
         }
+        this.drawMarker(vehicle);
+    }
 
-        if (this.mapRoute != null) {
-            this.map.removeControl(this.mapRoute);
+    private drawMarker(vehicle: VehicleLocationDTO) {
+        const icon_map = [
+            [this.iconCarAvailable, this.iconLuxAvailable, this.iconVanAvailable],
+            [this.iconCarBusy, this.iconLuxBusy, this.iconVanBusy],
+        ];
+        const ico = icon_map[vehicle.available ? 0 : 1][vehicle.vehicleTypeId - 1]; 
+        const marker: L.Marker = L.marker(
+            [vehicle.location.latitude, vehicle.location.longitude],
+            {icon: ico}
+        );
+        
+        if (this.map.hasLayer(this.carLayer)) {
+            this.map.removeLayer(this.carLayer);
         }
+        this.carLayer = new L.LayerGroup([marker]);
+        this.map.addLayer(this.carLayer);
+    }
 
-        const waypoints = this.getRoutePoints(ride).map(p => L.latLng(p.latitude, p.longitude));
+    private drawRoute(A: L.LatLng, B: L.LatLng) {
+        const waypoints = [A, B];
 
-        console.log(waypoints);
-
-        this.mapRoute = L.Routing.control({
+        this.clearRoute();
+        this.route = L.Routing.control({
             waypoints: waypoints,
             collapsible: true,
             fitSelectedRoutes: true,
@@ -373,47 +138,115 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
                 missingRouteTolerance: 0,
                 extendToWaypoints: true,
                 addWaypoints: false
-            }
+            },
         }).addTo(this.map);
-        this.mapRoute.hide();
+        this.route.hide();
     }
 
-    getRoutePoints(request: Ride): Array<RideRequestSingleLocation> {
-        let res = request.locations.map(l => l.departure);
-        res.push(request.locations[request.locations.length - 1].destination);
-        return res;
+    private clearRoute(): void {
+        if (this.route != null) {
+            this.map?.removeControl(this.route);
+        }
+        this.route = null;
     }
 
-    protected openPanicDialog(): void {
-        const dialogRef = this.dialog.open(RidePanicDialogComponent, { data: "" });
-
-        dialogRef.afterClosed().subscribe(reason => {
-            if (reason != undefined) {
-                if (this.rides[0] != null) {
-                    this.panicClick(reason);
-                }
-            }
-        });
+    private hasRouteOnMap(): boolean {
+        return this.route != null;
     }
 
-    protected panicClick(reason: string) {
-        if (this.rides[0] != null) {
-            this.rideService.panic(this.rides[0].id, reason).subscribe({
-                next: (value) => {
-                    console.log(value);
-                },
-                error: (error) => {
-                    console.error(error);
-                }
-            });
+    /******************************************** Ride********************************************/
+
+    private onFetchRide(ride: Ride): void {
+        // If the ride is cancelled/withdrawn/completed -> set this.ride to null.
+        // Because we want to see the right panel ONLY for pending/active rides.
+
+        console.log(ride);
+
+        if ([RideStatus.Canceled, RideStatus.Rejected, RideStatus.Finished].includes(ride.status)) {
+            this.ride = null;
+            this.clearRoute();
+            return;
+        }
+
+        // If the current ride is 'Accepted', ignore the upcoming ride (which can only be Pending).
+        // The reason for this is that we don't want to bother the driver while he's working. Once
+        // he finishes the current ride, he'll ask the backend to fetch again, and then he'll get
+        // the other ride.
+
+        if (this.ride && [RideStatus.Accepted].includes(this.ride.status)) {
+            return;
+        }
+        
+        this.ride = ride;
+
+        if (!this.hasRouteOnMap()) {
+            const A = this.ride.locations[0].departure;
+            const B = this.ride.locations.at(-1)!.destination;
+
+            const pointA = L.latLng(A.latitude, A.longitude);
+            const pointB = L.latLng(B.latitude, B.longitude);
+
+            this.drawRoute(pointA, pointB);
         }
     }
 
-    protected isScheduledForFuture(): boolean {
-        return this.rides[0].status == RideStatus.Pending &&  this.rides[0].startTime != null;
+    protected hasCurrentRide(): boolean {
+        return this.ride != null;
     }
 
-    protected getRideStartTime(): string {
-        return this.rides[0].startTime;
+    protected onRideBegin(): void {
+        if (!this.ride) {
+            return;
+        }
+   
+        this.rideService.accept(this.ride.id).subscribe({
+            next: (ride: Ride) => {
+                this.sharedService.showSnackBar("Ride started.", 3000);
+                this.onFetchRide(ride);
+            },
+            error: (error) => this.sharedService.showSnackBar("Cannot begin ride.", 3000)
+        });
+    }
+
+    protected onRideFinish(): void {
+        if (!this.ride) {
+            return;
+        }
+   
+        this.rideService.end(this.ride.id).subscribe({
+            next: (ride: Ride) => {
+                this.sharedService.showSnackBar("Ride finished.", 3000);
+                this.onFetchRide(ride);
+            },
+            error: (error) => this.sharedService.showSnackBar("Cannot finish ride.", 3000)
+        });
+    }
+
+    protected onRideReject(reason: string): void {
+        if (!this.ride) {
+            return;
+        }
+   
+        this.rideService.reject(this.ride.id, reason).subscribe({
+            next: (ride: Ride) => {
+                this.sharedService.showSnackBar("Ride rejected.", 3000);
+                this.onFetchRide(ride);
+            },
+            error: (error) => this.sharedService.showSnackBar("Cannot reject ride.", 3000)
+        });
+    }
+    
+    protected onRidePanic(reason: string): void {
+        if (!this.ride) {
+            return;
+        }
+   
+        this.rideService.panic(this.ride.id, reason).subscribe({
+            next: (panicDTO: PanicDTO) => {
+                this.sharedService.showSnackBar("Ride aborted. The staff has been notified", 3000);
+                this.onFetchRide(panicDTO.ride);
+            },
+            error: (error) => this.sharedService.showSnackBar("Cannot panic ride.", 3000)
+        });
     }
 }

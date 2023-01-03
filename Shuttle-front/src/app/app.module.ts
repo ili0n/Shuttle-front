@@ -30,6 +30,7 @@ import { PassengerModule } from './passenger/passenger.module';
 import { DriverModule } from './driver/driver/driver.module';
 import { RideModule } from './ride/ride.module';
 import { RidePanicDialogComponent } from './ride/ride-panic-dialog/ride-panic-dialog.component';
+import { DriverHomeCurrentRideComponent } from './driver/driver-home/driver-home-current-ride/driver-home-current-ride.component';
 
 @NgModule({
     declarations: [
@@ -45,6 +46,7 @@ import { RidePanicDialogComponent } from './ride/ride-panic-dialog/ride-panic-di
         DriverHomeComponent,
         RejectRideDialogComponent,
         LoginComponent,
+        DriverHomeCurrentRideComponent,
     ],
     imports: [
         BrowserModule,

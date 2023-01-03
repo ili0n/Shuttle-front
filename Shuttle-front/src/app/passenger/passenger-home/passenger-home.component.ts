@@ -241,7 +241,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     }
 
     private subscribeToSocketSubjects(): void {
-        this.navbarService.getRide().subscribe({
+        this.navbarService.getRidePassenger().subscribe({
             next: (value: Ride) => this.onFetchRide(value),
             error: (error) => console.log(error)
         })
