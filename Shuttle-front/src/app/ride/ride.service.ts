@@ -121,4 +121,10 @@ export class RideService {
             responseType: 'json'
         });
     }
+
+    public withdraw(rideId: number): Observable<Ride> {
+        return this.httpClient.put<Ride>(`${this.url}/${rideId}/withdraw`, {
+            responseType: 'json'
+        });
+    }
 }

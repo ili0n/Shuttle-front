@@ -20,6 +20,7 @@ export class PassengerCurrentRideComponent implements OnInit {
     @Input() isRouteFound!: boolean;
     @Input() otherPassengers!: Array<UserIdEmail>;
     @Output() private panicEvent = new EventEmitter<string>();
+    @Output() private cancelEvent = new EventEmitter<void>();
 
     protected timeUntilDriverArrives: string = "";
     protected myEmail!: string;
@@ -123,5 +124,9 @@ export class PassengerCurrentRideComponent implements OnInit {
 
     protected isScheduledForFuture(): boolean {
         return this.ride.status == RideStatus.Pending &&  this.ride.startTime != null;
+    }
+
+    protected cancelRide(): void {
+        this.cancelEvent.emit();
     }
 }

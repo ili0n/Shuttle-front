@@ -266,4 +266,20 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
             });
         }
     }
+
+    protected cancelPendingRide() {
+        if (this.ride == null) {
+            return;
+        }
+
+        this.rideService.withdraw(this.ride.id).subscribe({
+            next: (value) => {
+                this.sharedService.showSnackBar("Ride canceled!", 3000);
+            },
+            error: (error) => {
+                console.log(error);
+                this.sharedService.showSnackBar("Cannot cancel ride!", 3000);
+            }
+        });
+    }
 }

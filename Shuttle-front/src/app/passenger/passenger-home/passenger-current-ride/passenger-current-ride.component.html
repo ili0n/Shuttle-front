@@ -66,6 +66,12 @@
         </div>
     </ng-container>
 
+    <!-- Cancel before it begins -->
+
+    <ng-container *ngIf="isPending()">
+        <button mat-raised-button color="warn" (click)="cancelRide()">Cancel</button>
+    </ng-container>
+
     <!-- Panic button -->
 
     <ng-container *ngIf="isAccepted()">
