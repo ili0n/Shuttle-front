@@ -2,8 +2,11 @@ import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output } from
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { interval, startWith, Subscriber, Subscription } from 'rxjs';
+import * as SockJS from 'sockjs-client';
 import { DriverService } from '../driver/driver.service';
 import { MapEstimationService, RouteBaseInfo } from '../services/map/map-estimation.service';
+import { Stomp } from "@stomp/stompjs"
+import { environment } from 'src/environments/environment';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -44,12 +47,10 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
 
   @Output()
   routeInfoEmitter: EventEmitter<RouteBaseInfo> = new EventEmitter<RouteBaseInfo>();
+  isLoaded: boolean = false;
+  stompClient: any;
 
-  constructor(private mapService: MapEstimationService, private driverService: DriverService){
-    
-    this.pull = interval(3 * 1000).pipe(startWith(0)).subscribe(() => {
-      this.refreshActiveDrivers();
-    });
+  constructor(private mapService: MapEstimationService){
   }
 
 
@@ -59,7 +60,6 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
   private destinationCoordinates?: L.LatLng;
   private departureCoordinates?: L.LatLng;
 
-  private pull: Subscription;
   private driverLocationMarkers?: L.LayerGroup;
 
   private initMap(): void{
@@ -86,7 +86,27 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
 
   ngOnInit(): void {
     this.refreshRoutes();
+    let socket = new SockJS(environment.serverOrigin + "socket");
+    this.stompClient = Stomp.over(socket);
+    
+    this.stompClient.connect({}, () =>{
+      this.isLoaded = true;
+      this.openSocket();
+    })
   }
+  openSocket() {
+    if(this.isLoaded){
+      this.stompClient.subscribe('/active/vehicle/location', (message: {body: string}) =>{
+        this.handleMessage(message);        
+      });
+    }
+  }
+
+  handleMessage(message: {body: string}){
+    let activeDriversLocations: [{latitude: number, longitude: number}] = JSON.parse(message.body);
+    this.refreshActiveDrivers(activeDriversLocations); 
+  }
+
   ngOnChanges(): void {
     this.refreshRoutes();
     
@@ -119,9 +139,8 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
     }
   }
 
-  private refreshActiveDrivers() {
-    this.driverService.getActiveDriversLocations().subscribe({
-      next: (locations) => {
+  private refreshActiveDrivers(locations: [{latitude: number, longitude: number}]) {
+    
         if(this.driverLocationMarkers !== undefined){
           this.driverLocationMarkers.clearLayers();
         }
@@ -133,9 +152,6 @@ export class EstimationMapComponent implements AfterViewInit, OnChanges {
             this.driverLocationMarkers?.addLayer(marker);
           })
         }
-      },
-      error: () => {}
-    });
   } 
 
   private checkInput() {
