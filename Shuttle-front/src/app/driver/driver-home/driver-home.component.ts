@@ -217,6 +217,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
             next: (ride: Ride) => {
                 this.sharedService.showSnackBar("Ride finished.", 3000);
                 this.onFetchRide(ride);
+                this.navbarService.driverRequestToFetchRide();
             },
             error: (error) => this.sharedService.showSnackBar("Cannot finish ride.", 3000)
         });
@@ -231,6 +232,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
             next: (ride: Ride) => {
                 this.sharedService.showSnackBar("Ride rejected.", 3000);
                 this.onFetchRide(ride);
+                this.navbarService.driverRequestToFetchRide();
             },
             error: (error) => this.sharedService.showSnackBar("Cannot reject ride.", 3000)
         });
@@ -245,6 +247,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
             next: (panicDTO: PanicDTO) => {
                 this.sharedService.showSnackBar("Ride aborted. The staff has been notified", 3000);
                 this.onFetchRide(panicDTO.ride);
+                this.navbarService.driverRequestToFetchRide();
             },
             error: (error) => this.sharedService.showSnackBar("Cannot panic ride.", 3000)
         });
