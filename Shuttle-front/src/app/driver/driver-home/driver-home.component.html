@@ -55,6 +55,14 @@
 
             <div id="buttons-bottom">
                 <div *ngIf="state == State.RIDE_REQUEST">
+                    <div *ngIf="isScheduledForFuture()">
+                        <hr/>
+                        <div>
+                            <span class="label">Scheduled for: </span>
+                            <span class="value">{{ getRideStartTime() |  date:'HH:mm' }}</span>    
+                        </div>
+                    </div>
+
                     <button mat-raised-button color="primary" (click)="beginRide()"><mat-icon>play_circle_filled</mat-icon> Begin ride</button>
                     <div><br/></div>
                     <button type="submit" mat-raised-button color="warn" (click)="openRejectionDialog()"><mat-icon>stop</mat-icon> Reject ride</button>

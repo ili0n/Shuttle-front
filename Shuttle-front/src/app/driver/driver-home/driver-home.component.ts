@@ -411,4 +411,12 @@ export class DriverHomeComponent implements OnInit, OnDestroy, AfterViewInit {
             });
         }
     }
+
+    protected isScheduledForFuture(): boolean {
+        return this.rides[0].status == RideStatus.Pending &&  this.rides[0].startTime != null;
+    }
+
+    protected getRideStartTime(): string {
+        return this.rides[0].startTime;
+    }
 }

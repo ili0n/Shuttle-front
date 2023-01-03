@@ -109,8 +109,6 @@ export class PassengerCurrentRideComponent implements OnInit {
         this.timeUntilDriverArrives = timeLeftWhole.toString() + "s";
     }
 
-    
-
     protected openPanicDialog(): void {
         const dialogRef = this.dialog.open(RidePanicDialogComponent, { data: "" });
 
@@ -123,4 +121,7 @@ export class PassengerCurrentRideComponent implements OnInit {
         });
     }
 
+    protected isScheduledForFuture(): boolean {
+        return this.ride.status == RideStatus.Pending &&  this.ride.startTime != null;
+    }
 }

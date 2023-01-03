@@ -32,9 +32,6 @@
     <hr/>
 
     <!-- Passenger list -->
-
-    <hr/>
-
     
     <div class="ride-passenger">
         <img src="">
@@ -50,17 +47,24 @@
     </div>
 
     <!-- Driver arrival time -->
-
-    <hr/>
     
-    <ng-container *ngIf="isPending()">
+    <ng-container *ngIf="isPending() && !isScheduledForFuture()">
+        <hr/>
         <div>
             <span class="label">Time of arrival: </span>
             <span class="value">{{ timeUntilDriverArrives }}</span>
         </div>
     </ng-container>
 
-    <hr/>
+    <!-- Only if scheduled in the future. -->
+
+    <ng-container *ngIf="isScheduledForFuture()">
+        <hr/>
+        <div>
+            <span class="label">Scheduled for: </span>
+            <span class="value">{{ ride.startTime |  date:'HH:mm' }}</span>    
+        </div>
+    </ng-container>
 
     <!-- Panic button -->
 
