@@ -54,7 +54,7 @@ export class ResetPasswordComponent implements OnInit {
         this.route.params.subscribe(params => {
             if (params['key'] != undefined) {
                 this.key = params['key'];
-                console.log(this.decodeKey());
+                //console.log(this.decodeKey());
             } else {
                 this.router.navigate(["/login"]);
             }

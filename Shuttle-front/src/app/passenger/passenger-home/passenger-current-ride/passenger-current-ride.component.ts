@@ -28,6 +28,14 @@ export class PassengerCurrentRideComponent implements OnInit {
     private vehicleID: number = -1;
     private timer: NodeJS.Timer | null = null;
 
+    protected getDriverEmail(): string {
+        if (this.ride.driver.email != null) {
+            return this.ride.driver.email;
+        } else {
+            return "No driver assigned yet!"
+        }
+    }
+
     constructor(private authService: AuthService,
                 private driverService: DriverService,
                 private navbarService: NavbarService,
