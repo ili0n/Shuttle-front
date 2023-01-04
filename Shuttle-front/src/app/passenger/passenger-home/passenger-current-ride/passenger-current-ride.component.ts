@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DriverService } from 'src/app/driver/driver.service';
+import { Message, MessageService } from 'src/app/message/message.service';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
 import { RidePanicDialogComponent } from 'src/app/ride/ride-panic-dialog/ride-panic-dialog.component';
 import { Ride, RideStatus } from 'src/app/ride/ride.service';
@@ -39,7 +40,8 @@ export class PassengerCurrentRideComponent implements OnInit {
     constructor(private authService: AuthService,
                 private driverService: DriverService,
                 private navbarService: NavbarService,
-                private dialog: MatDialog) {
+                private dialog: MatDialog,
+                private messageService: MessageService) {
         this.startElapsedTimeTimer();
     }
 
@@ -153,6 +155,14 @@ export class PassengerCurrentRideComponent implements OnInit {
     private startElapsedTimeTimer(): void {
         this.timer = setInterval(() => {
             this.elapsedTime = this.getElapsedTime();
+        });
+    }
+
+    protected reportInconsistency(): void {
+        this.messageService.sendDriverInconsistencyNote(this.ride.id).subscribe({
+            next: (msg: Message) => {
+                console.log(msg);
+            }
         });
     }
 }

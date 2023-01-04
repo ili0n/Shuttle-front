@@ -80,7 +80,7 @@
         <button mat-raised-button color="warn" (click)="cancelRide()">Cancel</button>
     </ng-container>
 
-    <!-- Panic button -->
+    <!-- Elapsed time, panic button, leaving a note etc. -->
 
     <ng-container *ngIf="isAccepted()">
         <hr/>
@@ -88,6 +88,8 @@
             <span class="label">Elapsed time: </span>
             <span class="value">{{ elapsedTime }}</span>
         </span>
+        <hr/>
+        <button mat-raised-button color="warn" (click)="reportInconsistency()"><mat-icon>warning</mat-icon> Report Inconsistency</button>
         <hr/>
         <button mat-raised-button color="warn" (click)="openPanicDialog()"><mat-icon>warning</mat-icon> Panic</button>
     </ng-container>
