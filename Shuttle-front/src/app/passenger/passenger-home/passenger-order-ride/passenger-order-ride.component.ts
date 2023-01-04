@@ -54,7 +54,7 @@ export class PassengerOrderRideComponent implements OnInit {
         for (let i = 0; i <= 23; i++) {
             this.allowedHours.push(i);
         }
-        for (let i = 0; i <= 59; i++) {
+        for (let i = 0; i <= 59; i += 15) {
             this.allowedMinutes.push(i);
         }
     }

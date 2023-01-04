@@ -268,6 +268,12 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     }
 
     private onFetchRide(r: Ride): void {
+        if (r.status == RideStatus.Pending) {
+            if (r.startTime != null) {
+                this.sharedService.showSnackBar("Reminder: You have a ride scheduled for " + r.startTime, 3000);
+            }
+        }
+
         if ([RideStatus.Pending, RideStatus.Accepted].includes(r.status)) {
             this.ride = r;
             this.recalculateRouteFromRideIfNoneFound();
