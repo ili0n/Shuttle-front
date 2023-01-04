@@ -1,9 +1,7 @@
-import { outputAst } from '@angular/compiler';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DriverService } from 'src/app/driver/driver.service';
-import { Message, MessageService } from 'src/app/message/message.service';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
 import { RidePanicDialogComponent } from 'src/app/ride/ride-panic-dialog/ride-panic-dialog.component';
 import { Ride, RideStatus } from 'src/app/ride/ride.service';
@@ -22,6 +20,7 @@ export class PassengerCurrentRideComponent implements OnInit {
     @Input() otherPassengers!: Array<UserIdEmail>;
     @Output() private panicEvent = new EventEmitter<string>();
     @Output() private cancelEvent = new EventEmitter<void>();
+    @Output() private inconsistencyEvent = new EventEmitter<void>();
 
     protected elapsedTime: string = "";
     protected timeUntilDriverArrives: string = "";
@@ -40,8 +39,7 @@ export class PassengerCurrentRideComponent implements OnInit {
     constructor(private authService: AuthService,
                 private driverService: DriverService,
                 private navbarService: NavbarService,
-                private dialog: MatDialog,
-                private messageService: MessageService) {
+                private dialog: MatDialog) {
         this.startElapsedTimeTimer();
     }
 
@@ -159,10 +157,6 @@ export class PassengerCurrentRideComponent implements OnInit {
     }
 
     protected reportInconsistency(): void {
-        this.messageService.sendDriverInconsistencyNote(this.ride.id).subscribe({
-            next: (msg: Message) => {
-                console.log(msg);
-            }
-        });
+        this.inconsistencyEvent.emit();
     }
 }

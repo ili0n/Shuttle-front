@@ -1,6 +1,7 @@
 import { HttpStatusCode } from "@angular/common/http";
 import { Component, OnInit, AfterViewInit } from "@angular/core";
 import * as L from "leaflet";
+import { Message, MessageService } from "src/app/message/message.service";
 import { NavbarService } from "src/app/navbar-module/navbar.service";
 import { Ride, RideService, RideRequest, RideStatus } from "src/app/ride/ride.service";
 import { MapEstimationService } from "src/app/services/map/map-estimation.service";
@@ -45,7 +46,8 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
     constructor(private mapService: MapEstimationService,
                 private rideService: RideService,
                 private sharedService: SharedService,
-                private navbarService: NavbarService) {
+                private navbarService: NavbarService,
+                private messageService: MessageService) {
     }
 
     ngOnInit(): void {
@@ -307,5 +309,16 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
                 this.sharedService.showSnackBar("Cannot cancel ride!", 3000);
             }
         });
+    }
+
+    protected reportDriverInconsistency(): void {
+        if (this.ride) {
+            this.messageService.sendDriverInconsistencyNote(this.ride.id).subscribe({
+                next: (msg: Message) => {
+                    console.log(msg);
+                    this.sharedService.showSnackBar("Note sent!", 3000);
+                }
+            });
+        }
     }
 }

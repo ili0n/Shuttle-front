@@ -21,6 +21,7 @@
             [routeDistance]="this.routeDistance"
             (panicEvent)="panicClick($event)"
             (cancelEvent)="cancelPendingRide()"
+            (inconsistencyEvent)="reportDriverInconsistency()"
             >
         </app-passenger-current-ride>
     </div>
