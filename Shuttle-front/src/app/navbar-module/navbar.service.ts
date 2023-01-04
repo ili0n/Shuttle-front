@@ -18,7 +18,8 @@ export class NavbarService {
     private vehicleLocationSubject: Subject<VehicleLocationDTO> = new Subject();
 
     private canChangeActiveStateSubject: Subject<boolean> = new Subject();
-    private driverActiveStateSubject: Subject<boolean> = new Subject();
+    private driverActiveStateFromDriverSubject: Subject<boolean> = new Subject();
+    private driverActiveStateFromOutsideSubject: Subject<boolean> = new Subject();
 
     public setCanDriverChangeActiveState(canChange: boolean): void {
         this.canChangeActiveStateSubject.next(canChange);
@@ -28,12 +29,20 @@ export class NavbarService {
         return this.canChangeActiveStateSubject.asObservable();
     }
 
-    public setDriverActiveState(active: boolean): void {
-        this.driverActiveStateSubject.next(active);
+    public setDriverActiveFromDriverState(active: boolean): void {
+        this.driverActiveStateFromDriverSubject.next(active);
     }
 
-    public getDriverActiveState(): Observable<boolean> {
-        return this.driverActiveStateSubject.asObservable();
+    public getDriverActiveFromDriverState(): Observable<boolean> {
+        return this.driverActiveStateFromDriverSubject.asObservable();
+    }
+
+    public setDriverActiveFromOutsideState(active: boolean): void {
+        this.driverActiveStateFromOutsideSubject.next(active);
+    }
+
+    public getDriverActiveFromOutsideState(): Observable<boolean> {
+        return this.driverActiveStateFromOutsideSubject.asObservable();
     }
 
     getRidePassenger(): Observable<Ride> {

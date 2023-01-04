@@ -26,34 +26,46 @@ export class DriverNavbarComponent implements OnInit {
             next: (canChange: boolean) => this.setActiveStateSliderEnabled(canChange),
         });
 
-        this.navbarService.getDriverActiveState().subscribe({
-            next: (isActive: boolean) => this.setDriverActiveState(isActive),
+        // driver-home ---> navbar ---> [here]
+        this.navbarService.getDriverActiveFromDriverState().subscribe({
+            next: (isActive: boolean) => {
+                this.sendActiveStateToUserService(isActive);
+                this.formGroupIsActive.setValue({ 'isActive': isActive });
+            },
         });
+
+        // backend ---> [here] ---> navbar ---> driver-home
+        this.userService.getActive(this.authService.getUserId()).subscribe({
+            next: (isActive: boolean) => {
+                this.getDriverActiveStateFromUserService(isActive);
+            }
+        })
     }
 
+    // Toggled from the UI.
     protected onToggleIsActive(): void {
-        const id: number = this.authService.getUserId();
         const active: boolean = this.formGroupIsActive.getRawValue()['isActive'];
+        this.sendActiveStateToUserService(active);
+    }
 
+    private sendActiveStateToUserService(active: boolean): void {
+        const id: number = this.authService.getUserId();
         if (!active) {
             this.userService.setInactive(id).subscribe({
-                next: (value) => this.onActiveChanged(value),
+                next: (value) => this.getDriverActiveStateFromUserService(value),
                 error: (error) => console.error("NO:" + error)
             });
         } else {
             this.userService.setActive(id).subscribe({
-                next: (value) => this.onActiveChanged(value),
+                next: (value) => this.getDriverActiveStateFromUserService(value),
                 error: (error) => console.error("NO:" + error)
             });
         }
     }
 
-    private setDriverActiveState(isActive: boolean): void {
+    private getDriverActiveStateFromUserService(isActive: boolean): void {
+        this.navbarService.setDriverActiveFromOutsideState(isActive);
         this.formGroupIsActive.setValue({ 'isActive': isActive });
-    }
-
-    private onActiveChanged(activeState: boolean): void {
-        console.log("onActiveChanged()", activeState);
     }
 
     private setActiveStateSliderEnabled(canChange: boolean): void {
@@ -63,17 +75,6 @@ export class DriverNavbarComponent implements OnInit {
             this.formGroupIsActive.controls['isActive'].disable();
         }
     }
-
-    /*
-    Activity slider:
-
-    [Driver] Begin Ride ---> active=true, canChange=false
-    [Driver] Finish Ride ]
-             Cancel Ride ]-> canChange=true
-             Reject Ride ]
-    
-    [Driver] Fetch ride, is active ---> active=true, canChange=false
-    */
 
     /*********************************************************************************************/
 

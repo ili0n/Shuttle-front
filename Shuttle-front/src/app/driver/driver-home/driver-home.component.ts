@@ -22,6 +22,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
     private carLayer!: L.LayerGroup;
+    private isActive: boolean = false;
 
     protected ride: Ride | null = null;
 
@@ -50,6 +51,16 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
         this.navbarService.getRideDriver().subscribe({
             next: (value: Ride) => this.onFetchRide(value),
             error: (error) => console.log(error)          
+        });
+
+        this.navbarService.getDriverActiveFromOutsideState().subscribe({
+            next: (value: boolean) => {
+                //console.log("driver-home-component :: ", value);
+                this.isActive = value;
+                if (this.isActive) {
+                    this.navbarService.driverRequestToFetchRide();
+                }
+            }
         });
     }
 
@@ -157,10 +168,18 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
     /******************************************** Ride********************************************/
 
     private onFetchRide(ride: Ride): void {
+        // If you're not active, ignore the ride. Once you become active, driverRequestToFetchRide()
+        // will be fired.
+
+        if (!this.isActive) {
+            this.ride = null;
+            this.clearRoute();
+        }
+
         // If the ride is cancelled/withdrawn/completed -> set this.ride to null.
         // Because we want to see the right panel ONLY for pending/active rides.
 
-        if ([RideStatus.Canceled, RideStatus.Rejected, RideStatus.Finished].includes(ride.status)) {
+        else if ([RideStatus.Canceled, RideStatus.Rejected, RideStatus.Finished].includes(ride.status)) {
             this.ride = null;
             this.clearRoute();
         } 
@@ -197,7 +216,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
 
         if (this.ride.status == RideStatus.Accepted) {
             this.navbarService.setCanDriverChangeActiveState(false);
-            this.navbarService.setDriverActiveState(true);        
+            this.navbarService.setDriverActiveFromDriverState(true);
         } else {
             this.navbarService.setCanDriverChangeActiveState(true);
             this.navbarService.driverRequestToFetchRide();
