@@ -12,14 +12,18 @@ export class DriverRideHistoryService {
     constructor(private http: HttpClient, private authService: AuthService) {
     }
 
-    getAll(): Observable<Response> {
+    getAll(page:number,size:number,sort:string,from: string, to: string): Observable<Response> {
         let params = new HttpParams();
-        params = params.set("page", 0);
-        params = params.set("size", 2);
-        params = params.set("sort", "totalCost");
-        params = params.set("from", "2017-07-21T17:32:28Z");
-        params = params.set("to", "2024-07-21T17:32:28Z");
+        params = params.set("page", page);
+        params = params.set("size", size);
+        params = params.set("sort", sort);
+        params = params.set("from", from);
+        params = params.set("to", to);
         return this.http.get<Response>(environment.serverOrigin + 'api/driver/' + this.authService.getId() + "/ride",{params:params});
+    }
+
+    getReviews(id: string): Observable<ReviewRide>{
+        return this.http.get<ReviewRide>(environment.serverOrigin + 'api/review/' + id);
     }
 }
 
@@ -33,8 +37,8 @@ export interface Ride {
     startTime: Date,
     endTime: Date,
     totalCost: number,
-    driver: Person[],
-    passengers: Person[]
+    driver: ReviewPassengerDTO[],
+    passengers: ReviewPassengerDTO[]
     estimatedTimeInMinutes: number,
     vehicleType: string,
     babyTransport: boolean,
@@ -46,10 +50,6 @@ export interface Ride {
     }
 }
 
-export interface Person {
-    id: number,
-    email: string
-}
 
 export interface Rejection {
     reason: string
@@ -63,3 +63,19 @@ export interface Location {
     longitude: number
 }
 
+export interface ReviewRide {
+    vehicleReview: ReviewDTO,
+    driverReview: ReviewDTO
+
+}
+
+export interface ReviewDTO {
+    id: number,
+    rating: number
+    comment: string
+    passenger: ReviewPassengerDTO
+}
+export interface ReviewPassengerDTO {
+    id: number,
+    email: string
+}

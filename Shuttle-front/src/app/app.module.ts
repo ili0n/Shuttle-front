@@ -28,6 +28,7 @@ import {
 } from './driver/driver-ride-history/driver-ride-history/driver-ride-history.component';
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {Interceptor} from "./auth/interceptor/login.interceptor";
+import {MatNativeDateModule} from "@angular/material/core";
 
 @NgModule({
     declarations: [
@@ -56,9 +57,12 @@ import {Interceptor} from "./auth/interceptor/login.interceptor";
         ReactiveFormsModule,
         MatInputModule,
         NavbarModuleModule,
-        MatDatepickerModule
+        MatDatepickerModule,
+        MatNativeDateModule
     ],
-    providers: [{
+    providers: [
+        MatDatepickerModule,
+        {
         provide: HTTP_INTERCEPTORS,
         useClass: Interceptor,
         multi: true
