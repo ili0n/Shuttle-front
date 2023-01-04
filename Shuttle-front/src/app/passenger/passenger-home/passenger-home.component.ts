@@ -252,6 +252,15 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
             next: (value: Array<VehicleLocationDTO>) => this.onFetchVehicleLocations(value),
             error: (error) => console.log(error)
         })
+
+        this.navbarService.getVehicleArrivedSubject().subscribe({
+            next: () => this.onVehicleArrivedAtLocation(),
+            error: (error) => console.log(error)
+        })
+    }
+
+    private onVehicleArrivedAtLocation(): void {
+        this.sharedService.showSnackBar("Vehicle is on location.", 3000);
     }
 
     private onFetchVehicleLocations(locations: Array<VehicleLocationDTO>): void {

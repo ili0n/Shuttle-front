@@ -20,6 +20,7 @@ export class NavbarService {
     private canChangeActiveStateSubject: Subject<boolean> = new Subject();
     private driverActiveStateFromDriverSubject: Subject<boolean> = new Subject();
     private driverActiveStateFromOutsideSubject: Subject<boolean> = new Subject();
+    private vehicleIsOnLocationSubject: Subject<void> = new Subject();
 
     public setCanDriverChangeActiveState(canChange: boolean): void {
         this.canChangeActiveStateSubject.next(canChange);
@@ -63,6 +64,10 @@ export class NavbarService {
 
     public getVehicleLocation(): Observable<VehicleLocationDTO> {
         return this.vehicleLocationSubject.asObservable();
+    }
+
+    getVehicleArrivedSubject(): Observable<void> {
+        return this.vehicleIsOnLocationSubject.asObservable();
     }
 
     
@@ -156,6 +161,12 @@ export class NavbarService {
         // Ask the backend to fetch the latest ride.
 
         this.passengerRequestToFetchRide();
+
+        // Whenever the driver of my ride arrives at a location, let me know.
+
+        this.subscribeToWebSocketTopic(`vehicle/arrived/${passengerId}`, (message) => {
+            this.vehicleIsOnLocationSubject.next();
+        });
     }
 
     private onConnectToWebSocketDriver() {
