@@ -68,4 +68,11 @@ export class AuthService {
         }
         return "";
     }
+
+    refreshToken(token: string) {
+        return this.http.put('api/user/' + 'refreshtoken', {
+            refreshToken: token
+        });
+    }
+
 }

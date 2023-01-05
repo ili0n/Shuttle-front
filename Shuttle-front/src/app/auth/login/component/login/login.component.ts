@@ -22,6 +22,8 @@ export class LoginComponent {
                     console.log(JSON.stringify(result['accessToken']));
                     // @ts-ignore
                     localStorage.setItem('user', JSON.stringify(result['accessToken']));
+                    // @ts-ignore
+                    localStorage.setItem('refresh', JSON.stringify(result['refreshToken']));
                     this.authService.setUser();
                     let homeRoute = this.authService.getRole() + '/home';
                     this.router.navigate([homeRoute]);
