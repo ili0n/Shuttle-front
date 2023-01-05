@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, Validators } from "@angular/forms";
+import {FormBuilder, FormControl, Validators } from "@angular/forms";
+import { RegisterService } from '../services/register/register.service';
 import {CustomValidators} from "./confirm.validator"
 
 @Component({
@@ -13,16 +14,21 @@ export class RegisterComponent implements OnInit {
     email: ["", [Validators.required, Validators.email]],
     password: ["", [Validators.required]],
     confirmPassword: ["", [Validators.required]],
-    location: ["", [Validators.required]],
-    phone: ["", [Validators.required, Validators.pattern("^[\+]?[0-9]+$")]],
+    address: ["", [Validators.required]],
+    telephoneNumber: ["", [Validators.required, Validators.pattern("^[\+]?[0-9]+$")]],
     name: ["", [Validators.required]],
     surname: ["", [Validators.required]],
+    profilePicture: new FormControl(null, [Validators.required]),
   },
     [CustomValidators.MatchValidator('password', 'confirmPassword')]
   )
 
+  selectedFile?: File;
+  selectedFileName?: string; 
+
   constructor(
     private formBuilder: FormBuilder,
+    private registerService: RegisterService
   ) { }
 
   ngOnInit(): void {
@@ -30,10 +36,26 @@ export class RegisterComponent implements OnInit {
 
   onSubmit(): void{
     if (this.registerForm.valid) {
+      const dataForSubmit = {...this.registerForm.value};
+      dataForSubmit.profilePicture = this.selectedFileName;
+      // dataForSubmit.picture = this.selectedFile;
+      this.registerService.submit(dataForSubmit, this.selectedFile!);
 			console.log("valid");
 		}
     else{
       console.log("false");
+    }
+  }
+
+  selectFile(event : any): void{
+    const reader = new FileReader();
+    this.selectedFile = event.target.files[0];
+
+    if(this.selectedFile !== undefined){
+      reader.onloadend = (e) => {
+     };
+    reader.readAsDataURL(this.selectedFile);
+    this.selectedFileName = this.selectedFile.name;
     }
   }
 
