@@ -25,6 +25,7 @@ export class RegisterComponent implements OnInit {
 
   selectedFile?: File;
   selectedFileName?: string; 
+  private selectedFileBase64: string = "";
 
   constructor(
     private formBuilder: FormBuilder,
@@ -36,9 +37,10 @@ export class RegisterComponent implements OnInit {
 
   onSubmit(): void{
     if (this.registerForm.valid) {
+
       const dataForSubmit = {...this.registerForm.value};
-      dataForSubmit.profilePicture = this.selectedFileName;
-      // dataForSubmit.picture = this.selectedFile;
+      dataForSubmit.profilePicture = this.selectedFileBase64;
+
       this.registerService.submit(dataForSubmit, this.selectedFile!);
 			console.log("valid");
 		}
@@ -53,6 +55,11 @@ export class RegisterComponent implements OnInit {
 
     if(this.selectedFile !== undefined){
       reader.onloadend = (e) => {
+        this.selectedFileBase64 = e.target?.result as string;
+        let tokens = this.selectedFileBase64.split(",");
+        if(tokens.length >= 2){
+          this.selectedFileBase64 = tokens[1];
+        }
      };
     reader.readAsDataURL(this.selectedFile);
     this.selectedFileName = this.selectedFile.name;

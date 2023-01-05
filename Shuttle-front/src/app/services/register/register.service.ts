@@ -21,12 +21,7 @@ export class RegisterService {
   constructor(private http: HttpClient) { }
 
   submit(formData: FormData, file: File): void{
-    let newFormData: FormData = new FormData();
-    newFormData.append('passengerDTO', JSON.stringify(formData));
-    // newFormData.append('passengerDTO', new Blob([JSON.stringify(formData)],{type: "application/json"}));
-    newFormData.append('picture', file);
-    const req = new HttpRequest('POST', `${environment.serverOrigin}api/dummy`, newFormData, {
-      headers : new HttpHeaders({ 'Content-Type': 'multipart/form-data; boundary=--------------------------286826552678490793180326' }),
+    const req = new HttpRequest('POST', `${environment.serverOrigin}api/passenger`, formData, {
       responseType: 'json'
     });
 
