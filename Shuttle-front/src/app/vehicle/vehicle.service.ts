@@ -22,6 +22,18 @@ export interface Vehicle {
     petTransport: boolean,
 }
 
+export interface VehicleType {
+    name: string,
+    pricePerKm: number,
+};
+
+export interface VehicleLocationDTO {
+    id: number,
+    location: Location,
+    available: boolean,
+    vehicleTypeId: number,
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -33,5 +45,19 @@ export class VehicleService {
             responseType: 'json'
         };
         return this.httpClient.post(environment.serverOrigin + 'api/vehicle', vehicle, options);
+    }
+
+    public getTypes(): VehicleType[] {
+        return [
+            {name: 'Standard', pricePerKm: 5},
+            {name: 'Luxury', pricePerKm: 50},
+            {name: 'Van', pricePerKm: 10},
+        ];
+    }
+
+    public getLocations(): Observable<Array<VehicleLocationDTO>> {
+        return this.httpClient.get<Array<VehicleLocationDTO>>(environment.serverOrigin + 'api/vehicle/locations', {
+            responseType: 'json'
+        });
     }
 }

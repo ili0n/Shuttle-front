@@ -1,0 +1,13 @@
+<div id="mat-dialog-box">
+    <h1 mat-dialog-title>Specify a reason</h1>
+
+    <form [formGroup]="panicFormGroup">
+        <mat-form-field>
+            <mat-label>Reason</mat-label>
+            <input matInput formControlName="reason" />
+        </mat-form-field>
+        <br/>
+        <button mat-button mat-raised-button color="primary" (click)="onOk()" [disabled]="!panicFormGroup.valid">OK</button>
+        <button mat-button mat-raised-button color="secondary" (click)="onCancel()">CANCEL</button>
+    </form>
+</div>

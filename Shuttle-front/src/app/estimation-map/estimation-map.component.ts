@@ -5,7 +5,8 @@ import { interval, startWith, Subscriber, Subscription } from 'rxjs';
 import * as SockJS from 'sockjs-client';
 import { DriverService } from '../driver/driver.service';
 import { MapEstimationService, RouteBaseInfo } from '../services/map/map-estimation.service';
-import { Stomp } from "@stomp/stompjs"
+//import { Stomp } from "@stomp/stompjs"
+import * as Stomp from 'stompjs';
 import { environment } from 'src/environments/environment';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
