@@ -26,6 +26,7 @@ import { EstimationFormComponent } from './estimation-form/estimation-form.compo
 import { DriverHomeComponent } from './driver/driver-home/driver-home.component';
 import { RejectRideDialogComponent } from './driver/reject-ride-dialog/reject-ride-dialog.component';
 import {NavbarModuleModule} from "./navbar-module/navbar-module.module";
+import { SnackbarComponent } from './util/snackbar/snackbar/snackbar.component';
 
 @NgModule({
     declarations: [
@@ -40,7 +41,8 @@ import {NavbarModuleModule} from "./navbar-module/navbar-module.module";
         EstimationFormComponent,
         DriverHomeComponent,
         RejectRideDialogComponent,
-        LoginComponent
+        LoginComponent,
+        SnackbarComponent
     ],
     imports: [
         BrowserModule,

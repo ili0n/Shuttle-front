@@ -1,13 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, Validators } from "@angular/forms";
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
+import { catchError, tap } from 'rxjs';
 import { RegisterService } from '../services/register/register.service';
+import { SnackbarComponent } from '../util/snackbar/snackbar/snackbar.component';
 import {CustomValidators} from "./confirm.validator"
+
+
+
+export class SimpleSnackBarComponent {
+  snackBarRef = inject(MatSnackBarRef);
+}
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
+
 export class RegisterComponent implements OnInit {
 
   registerForm = this.formBuilder.group({
@@ -29,7 +39,8 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private registerService: RegisterService
+    private registerService: RegisterService,
+    private _snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -41,7 +52,10 @@ export class RegisterComponent implements OnInit {
       const dataForSubmit = {...this.registerForm.value};
       dataForSubmit.profilePicture = this.selectedFileBase64;
 
-      this.registerService.submit(dataForSubmit, this.selectedFile!);
+      this.registerService.submit(dataForSubmit, this.selectedFile!).subscribe({
+        complete: () => this.openSnackBar(),
+        error: (e) => console.error(e),
+    })
 			console.log("valid");
 		}
     else{
@@ -65,5 +79,14 @@ export class RegisterComponent implements OnInit {
     this.selectedFileName = this.selectedFile.name;
     }
   }
+
+  openSnackBar() {
+    this._snackBar.openFromComponent(SnackbarComponent, {
+      duration: 5 * 1000,
+      panelClass: "success-dialog"
+    });
+  }
+
+
 
 }

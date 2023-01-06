@@ -1,0 +1,15 @@
+:host {
+    display: flex;
+  }
+
+.example-pizza-party {
+    color: #279386;
+}
+
+button {
+    /* background-color: gray !important; */
+    color: #279386 !important;
+}
+button:hover {
+    background-color: gray !important;
+}
