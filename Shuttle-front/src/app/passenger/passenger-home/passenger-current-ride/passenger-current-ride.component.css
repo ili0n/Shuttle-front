@@ -1,0 +1,31 @@
+
+.label {
+    color: gray;
+    font-weight: 200;
+}
+
+.value {
+    color: black;
+}
+
+.label, .value {
+    font-size: large;
+}
+
+.ride-passenger {
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+.timePicker {
+    font-size: 1.5em;
+}
+
+.shortInput {
+    font-size: 0.8em;
+    width: 10em;
+}
+
+.space {
+    margin-left: 1em;
+}

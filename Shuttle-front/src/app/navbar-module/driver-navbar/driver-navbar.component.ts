@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router } from "@angular/router";
+import { Observable, Subject } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { UserService } from 'src/app/user/user.service';
 import { __values } from 'tslib';
@@ -21,56 +22,61 @@ export class DriverNavbarComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.userService.getActive(this.authService.getUserId()).subscribe({
-            next: (value) => this.onActivityChange(value),
-            error: (error) => console.error(error)
+        this.navbarService.getCanChangeActiveState().subscribe({
+            next: (canChange: boolean) => this.setActiveStateSliderEnabled(canChange),
         });
 
-        this.navbarService.onRefreshActivitySlider().subscribe({
-            next: (canToggle) => this.setActivitySliderIsEnabled(canToggle),
-            error: (error) => console.error(error)
+        // driver-home ---> navbar ---> [here]
+        this.navbarService.getDriverActiveFromDriverState().subscribe({
+            next: (isActive: boolean) => {
+                this.sendActiveStateToUserService(isActive);
+                this.formGroupIsActive.setValue({ 'isActive': isActive });
+            },
         });
+
+        // backend ---> [here] ---> navbar ---> driver-home
+        this.userService.getActive(this.authService.getUserId()).subscribe({
+            next: (isActive: boolean) => {
+                this.getDriverActiveStateFromUserService(isActive);
+            }
+        })
     }
 
-    /**
-     * @param canToggle Whether the activity slider can be changed.
-     */
-    private setActivitySliderIsEnabled(canToggle: boolean) {
-        if (canToggle) {
+    // Toggled from the UI.
+    protected onToggleIsActive(): void {
+        const active: boolean = this.formGroupIsActive.getRawValue()['isActive'];
+        this.sendActiveStateToUserService(active);
+    }
+
+    private sendActiveStateToUserService(active: boolean): void {
+        const id: number = this.authService.getUserId();
+        if (!active) {
+            this.userService.setInactive(id).subscribe({
+                next: (value) => this.getDriverActiveStateFromUserService(value),
+                error: (error) => console.error("NO:" + error)
+            });
+        } else {
+            this.userService.setActive(id).subscribe({
+                next: (value) => this.getDriverActiveStateFromUserService(value),
+                error: (error) => console.error("NO:" + error)
+            });
+        }
+    }
+
+    private getDriverActiveStateFromUserService(isActive: boolean): void {
+        this.navbarService.setDriverActiveFromOutsideState(isActive);
+        this.formGroupIsActive.setValue({ 'isActive': isActive });
+    }
+
+    private setActiveStateSliderEnabled(canChange: boolean): void {
+        if (canChange) {
             this.formGroupIsActive.controls['isActive'].enable();
         } else {
             this.formGroupIsActive.controls['isActive'].disable();
         }
-
-        this.fetchIsActive();
     }
 
-    /**
-     * Fetch activity status from the backend.
-     */
-    private fetchIsActive(): void {
-        this.userService.getActive(this.authService.getUserId()).subscribe({
-            next: (active: boolean) => this.setIsActiveSliderValue(active),
-            error: (error) => console.error(error)
-        });
-    }
-
-    /**
-     * @param isActive Whether the user is active.
-     */
-    private setIsActiveSliderValue(isActive: boolean): void {
-        this.formGroupIsActive.setValue({ 'isActive': isActive });
-    }
-
-
-    /**
-     * Called whenever the driver's active flag changes (manually or automatically).
-     * @param active True if the driver is now active, false otherwise.
-     */
-    private onActivityChange(active: boolean) {
-        console.log("DriverNavbarComponent::getActive() " + active);
-        this.formGroupIsActive.setValue({ 'isActive': active });
-    }
+    /*********************************************************************************************/
 
     logout() {
         this.authService.logout();
@@ -83,26 +89,4 @@ export class DriverNavbarComponent implements OnInit {
     info() {
         this.router.navigate(["driver/info"]);
     }
-
-    /**
-     * Callback for whenever the driver changes his activity status manually.
-     * The activity is updated on the server.
-     */
-    onToggleIsActive() {
-        const id: number = this.authService.getUserId();
-        const active: boolean = this.formGroupIsActive.getRawValue()['isActive'];
-
-        if (!active) {
-            this.userService.setInactive(id).subscribe({
-                next: (value) => console.log("OK: " + value),
-                error: (error) => console.error("NO:" + error)
-            });
-        } else {
-            this.userService.setActive(id).subscribe({
-                next: (value) => console.log("OK: " + value),
-                error: (error) => console.error("NO:" + error)
-            });
-        }
-    }
-
 }

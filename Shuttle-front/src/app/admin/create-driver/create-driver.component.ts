@@ -2,12 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Driver, DriverService } from 'src/app/driver/driver.service';
-import { Vehicle, VehicleService } from 'src/app/vehicle/vehicle.service';
-
-interface VehicleType {
-    name: string,
-    pricePerKm: number,
-};
+import { Vehicle, VehicleService, VehicleType } from 'src/app/vehicle/vehicle.service';
 
 @Component({
     selector: 'app-create-driver',
@@ -22,11 +17,7 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         document.body.className = "body-gradient1"; // Defined in src/styles.css
 
-        this.vehicleTypes = [
-            {name: 'Standard', pricePerKm: 20},
-            {name: 'Luxury', pricePerKm: 80},
-            {name: 'Van', pricePerKm: 40},
-        ];
+        this.vehicleTypes = this.vehicleService.getTypes();
     }
 
     ngOnDestroy() {

@@ -58,6 +58,14 @@ export class AuthService {
         return -1;
     }
 
+    getUserEmail(): string {
+        if (this.isLoggedIn()) {
+            //console.log(new JwtHelperService().decodeToken(localStorage.getItem('user')!));
+            return new JwtHelperService().decodeToken(localStorage.getItem('user')!).sub;
+        }
+        return "";
+    }
+
     getRoles(): string[] {
         if (this.isLoggedIn()) {
             const accessToken: any = localStorage.getItem('user');

@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { UserIdEmail } from '../user/user.service';
 
 
 export interface Passenger {
@@ -16,10 +17,22 @@ export interface Passenger {
     providedIn: 'root'
 })
 export class PassengerService {
+    readonly url: string = environment.serverOrigin + 'api/passenger';
+
     constructor(private httpClient: HttpClient) { }
 
     public findById(id: number): Observable<Passenger> {
-        return this.httpClient.get<Passenger>(environment.serverOrigin + "api/passenger/" + id, {
+
+        return this.httpClient.get<Passenger>(`${this.url}/${id}`, {
+            observe: "body",
+            responseType: "json",
+        });
+    }
+
+    public findByEmail(email: string): Observable<UserIdEmail> {
+        const params = new HttpParams().set('email', email);
+        return this.httpClient.get<UserIdEmail>(`${this.url}/email`, {
+            params: params,
             observe: "body",
             responseType: "json",
         });
