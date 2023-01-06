@@ -12,7 +12,9 @@
     
         <mat-form-field appearance="fill">
             <mat-label>Password: </mat-label>
-            <input matInput type="password" formControlName="password" required/>
+            <input matInput type="password" formControlName="password" required 
+             title="Minimum 8 characters, at least one letter and one number"
+             pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" />
         </mat-form-field>
     
         <mat-form-field appearance="fill">

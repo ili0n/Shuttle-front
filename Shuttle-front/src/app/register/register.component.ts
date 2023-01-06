@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, Validators } from "@angular/forms";
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
-import { catchError, tap } from 'rxjs';
 import { RegisterService } from '../services/register/register.service';
 import { SnackbarComponent } from '../util/snackbar/snackbar/snackbar.component';
 import {CustomValidators} from "./confirm.validator"
@@ -22,7 +21,7 @@ export class RegisterComponent implements OnInit {
 
   registerForm = this.formBuilder.group({
     email: ["", [Validators.required, Validators.email]],
-    password: ["", [Validators.required]],
+    password: ["", [Validators.required, Validators.pattern("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")]],
     confirmPassword: ["", [Validators.required]],
     address: ["", [Validators.required]],
     telephoneNumber: ["", [Validators.required, Validators.pattern("^[\+]?[0-9]+$")]],
@@ -30,7 +29,7 @@ export class RegisterComponent implements OnInit {
     surname: ["", [Validators.required]],
     profilePicture: new FormControl(null, [Validators.required]),
   },
-    [CustomValidators.MatchValidator('password', 'confirmPassword')]
+    []
   )
 
   selectedFile?: File;
@@ -41,7 +40,9 @@ export class RegisterComponent implements OnInit {
     private formBuilder: FormBuilder,
     private registerService: RegisterService,
     private _snackBar: MatSnackBar
-  ) { }
+  ) { 
+    this.registerForm.setValidators(CustomValidators.MatchValidator('password', 'confirmPassword'))
+  }
 
   ngOnInit(): void {
   }
