@@ -48,8 +48,8 @@ import { Interceptor } from './auth/interceptor/login.interceptor';
         DriverHomeComponent,
         RejectRideDialogComponent,
         LoginComponent,
-        SnackbarComponent
-        DriverHomeCurrentRideComponent
+        SnackbarComponent,
+        DriverHomeCurrentRideComponent,
     ],
     imports: [
         BrowserModule,
