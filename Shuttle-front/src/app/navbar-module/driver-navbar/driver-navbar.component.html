@@ -21,7 +21,11 @@
         <button mat-icon-button (click)="info()">
             <mat-icon>account_circle</mat-icon>
         </button>
-        <mat-slide-toggle><span id="slider-text">Active</span></mat-slide-toggle>
+
+        <form class="isActiveForm" [formGroup]="formGroupIsActive">
+            <mat-slide-toggle formControlName="isActive" (change)="onToggleIsActive()"><span>Active</span></mat-slide-toggle>
+        </form>
+
         <button mat-flat-button class="button" id="sign-out" (click)="logout()">Sign out</button>
     </div>
 </mat-toolbar>

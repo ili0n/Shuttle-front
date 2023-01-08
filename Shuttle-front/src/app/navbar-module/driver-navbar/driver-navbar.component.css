@@ -42,11 +42,12 @@ mat-icon {
     color: white;
 }
 
-mat-slide-toggle {
-    color: white;
-
+.isActiveForm {
+    margin-top: 5px;
+    margin-left: 8px;
 }
 
-#slider-text {
+.isActiveForm span {
+    font-size: 1.25em;
     color: white;
 }

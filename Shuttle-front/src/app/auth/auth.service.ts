@@ -4,6 +4,8 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {JwtHelperService} from '@auth0/angular-jwt';
+import { UserService } from '../user/user.service';
+import { SharedService } from '../shared/shared.service';
 import {TokenStorageService} from "./token-storage.service";
 
 @Injectable({
@@ -18,7 +20,7 @@ export class AuthService {
     user$ = new BehaviorSubject(null);
     userState$ = this.user$.asObservable();
 
-    constructor(private http: HttpClient, private tokenStorage: TokenStorageService) {
+    constructor(private http: HttpClient, private userService: UserService, private sharedService: SharedService,private tokenStorage: TokenStorageService) {
         this.user$.next(this.getRole());
     }
 
@@ -37,8 +39,16 @@ export class AuthService {
     }
 
     logout() {
-        localStorage.clear();
-        window.location.reload();
+        this.userService.setInactive(this.getUserId()).subscribe({
+            next: (result) => {
+                localStorage.clear();
+                window.location.reload();
+            },
+            error: (error) => {
+                console.error("Could not log out: " + error);
+                this.sharedService.showSnackBar("Could not sign out.", 3000);
+            }
+        })
     }
 
     getRole(): any {
@@ -50,9 +60,24 @@ export class AuthService {
         return null;
     }
 
+    getUserId(): number {
+        if (this.isLoggedIn()) {
+            return new JwtHelperService().decodeToken(localStorage.getItem('user')!).id;
+        }
+        return -1;
+    }
+
+    getUserEmail(): string {
+        if (this.isLoggedIn()) {
+            //console.log(new JwtHelperService().decodeToken(localStorage.getItem('user')!));
+            return new JwtHelperService().decodeToken(localStorage.getItem('user')!).sub;
+        }
+        return "";
+    }
+
     getRoles(): string[] {
         if (this.isLoggedIn()) {
-            const accessToken: any = this.tokenStorage.getToken();
+            const accessToken: any = localStorage.getItem('user');
             const helper = new JwtHelperService();
             const roles: any[] = helper.decodeToken(accessToken).role;
             return roles.map(r => r.name);
@@ -61,7 +86,7 @@ export class AuthService {
     }
 
     isLoggedIn(): boolean {
-        return this.tokenStorage.getToken() != null;
+        return localStorage.getItem('user') != null;
 
     }
 

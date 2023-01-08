@@ -3,7 +3,7 @@
         <h2>Sign up</h2>
     </div>
 
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" accept-charset="UTF-8">
 
         <mat-form-field appearance="fill">
             <mat-label>Email: </mat-label>
@@ -12,7 +12,9 @@
     
         <mat-form-field appearance="fill">
             <mat-label>Password: </mat-label>
-            <input matInput type="password" formControlName="password" required/>
+            <input matInput type="password" formControlName="password" required 
+             title="Minimum 8 characters, at least one letter and one number"
+             pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" />
         </mat-form-field>
     
         <mat-form-field appearance="fill">
@@ -32,13 +34,30 @@
     
         <mat-form-field appearance="fill">
             <mat-label>Location: </mat-label>
-            <input matInput type="text" formControlName="location" required/>
+            <input matInput type="text" formControlName="address" required/>
         </mat-form-field>
     
         <mat-form-field appearance="fill">
             <mat-label>Phone: </mat-label>
-            <input matInput type="text" formControlName="phone" pattern="^[\+]?[0-9]+$" required/>
+            <input matInput type="text" formControlName="telephoneNumber" pattern="^[\+]?[0-9]+$" required/>
         </mat-form-field>
+
+        <mat-form-field>
+            <div>
+              <mat-toolbar>
+                <input matInput [value]="selectedFileName ? selectedFileName : 'Select Image'" />
+              </mat-toolbar>
+          
+              <input
+                type="file"
+                id="profilePicture"
+                name="profilePicture"
+                accept="image/*" multiple 
+                formControlName="profilePicture"
+                (change)="selectFile($event)"
+              />
+            </div>
+          </mat-form-field>
 
         <button mat-raised-button type="submit">Sign up</button>
     

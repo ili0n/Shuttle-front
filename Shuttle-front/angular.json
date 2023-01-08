@@ -22,15 +22,22 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/leaflet/dist/images/",
+                "output": "./assets"
+              }
             ],
             "styles": [
-                "./node_modules/leaflet/dist/leaflet.css",
-                "./node_modules/leaflet-routing-machine/dist/leaflet-routing-machine.css",
-                "@angular/material/prebuilt-themes/indigo-pink.css",
-             "src/styles.css"
+              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "./node_modules/leaflet/dist/leaflet.css",
+              "./node_modules/leaflet-routing-machine/dist/leaflet-routing-machine.css",
+              "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              
+            ]
           },
           "configurations": {
             "production": {
