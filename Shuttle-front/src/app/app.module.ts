@@ -22,20 +22,9 @@ import {SharedModule} from './shared/shared.module';
 import {DriverProfileComponent} from './driver-profile/driver-profile.component';
 import {DriverHomeComponent} from './driver/driver-home/driver-home.component';
 import {RejectRideDialogComponent} from './driver/reject-ride-dialog/reject-ride-dialog.component';
-import { LoginComponent } from './auth/login/component/login/login.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { UnregisteredNavbarComponent } from './navbar-module/unregistered-navbar/unregistered-navbar.component';
-import { MaterialModule } from 'src/infrastructure/material.module';
-import { AdminModule } from './admin/admin.module';
-import { ForgotPasswordComponent } from './auth/login/component/forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from './auth/login/component/reset-password/reset-password.component';
-import { SharedModule } from './shared/shared.module';
-import { DriverProfileComponent } from './driver-profile/driver-profile.component';
-import { EstimationMapComponent } from './estimation-map/estimation-map.component';
-import { UnregisteredPageComponent } from './unregistered-page/unregistered-page.component';
-import { EstimationFormComponent } from './estimation-form/estimation-form.component';
-import { DriverHomeComponent } from './driver/driver-home/driver-home.component';
-import { RejectRideDialogComponent } from './driver/reject-ride-dialog/reject-ride-dialog.component';
+import {EstimationMapComponent} from './estimation-map/estimation-map.component';
+import {UnregisteredPageComponent} from './unregistered-page/unregistered-page.component';
+import {EstimationFormComponent} from './estimation-form/estimation-form.component';
 import {NavbarModuleModule} from "./navbar-module/navbar-module.module";
 import {
     DriverRideHistoryComponent
@@ -43,13 +32,14 @@ import {
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {Interceptor} from "./auth/interceptor/login.interceptor";
 import {MatNativeDateModule} from "@angular/material/core";
-import { SnackbarComponent } from './util/snackbar/snackbar/snackbar.component';
-import { PassengerModule } from './passenger/passenger.module';
-import { DriverModule } from './driver/driver/driver.module';
-import { RideModule } from './ride/ride.module';
-import { RidePanicDialogComponent } from './ride/ride-panic-dialog/ride-panic-dialog.component';
-import { DriverHomeCurrentRideComponent } from './driver/driver-home/driver-home-current-ride/driver-home-current-ride.component';
-import { Interceptor } from './auth/interceptor/login.interceptor';
+import {SnackbarComponent} from './util/snackbar/snackbar/snackbar.component';
+import {PassengerModule} from './passenger/passenger.module';
+import {DriverModule} from './driver/driver/driver.module';
+import {RideModule} from './ride/ride.module';
+import {RidePanicDialogComponent} from './ride/ride-panic-dialog/ride-panic-dialog.component';
+import {
+    DriverHomeCurrentRideComponent
+} from './driver/driver-home/driver-home-current-ride/driver-home-current-ride.component';
 
 @NgModule({
     declarations: [
@@ -94,11 +84,12 @@ import { Interceptor } from './auth/interceptor/login.interceptor';
     providers: [
         MatDatepickerModule,
         {
-        provide: HTTP_INTERCEPTORS,
-        useClass: Interceptor,
-        multi: true
+            provide: HTTP_INTERCEPTORS,
+            useClass: Interceptor,
+            multi: true
         },
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

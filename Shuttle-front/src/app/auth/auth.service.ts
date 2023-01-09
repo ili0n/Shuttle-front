@@ -62,7 +62,7 @@ export class AuthService {
 
     getUserId(): number {
         if (this.isLoggedIn()) {
-            return new JwtHelperService().decodeToken(localStorage.getItem('user')!).id;
+            return new JwtHelperService().decodeToken(this.tokenStorage.getToken()!).id;
         }
         return -1;
     }
@@ -70,14 +70,14 @@ export class AuthService {
     getUserEmail(): string {
         if (this.isLoggedIn()) {
             //console.log(new JwtHelperService().decodeToken(localStorage.getItem('user')!));
-            return new JwtHelperService().decodeToken(localStorage.getItem('user')!).sub;
+            return new JwtHelperService().decodeToken(this.tokenStorage.getToken()!).sub;
         }
         return "";
     }
 
     getRoles(): string[] {
         if (this.isLoggedIn()) {
-            const accessToken: any = localStorage.getItem('user');
+            const accessToken: any = this.tokenStorage.getToken();
             const helper = new JwtHelperService();
             const roles: any[] = helper.decodeToken(accessToken).role;
             return roles.map(r => r.name);
@@ -86,7 +86,7 @@ export class AuthService {
     }
 
     isLoggedIn(): boolean {
-        return localStorage.getItem('user') != null;
+        return this.tokenStorage.getToken() != null;
 
     }
 
