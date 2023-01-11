@@ -88,13 +88,13 @@ export class DriverHomeCurrentRideComponent {
         if (this.ride == null) {
             return false;
         }
-        return this.ride.startTime != null;
+        return this.ride.scheduledTime != null;
     }
 
-    protected getRideStartTime(): string {
-        if (this.ride == null) {
+    protected getRideScheduledTime(): string {
+        if (this.ride == null ){
             return "";
         }
-        return this.ride.startTime;
+        return new Date(this.ride.scheduledTime).toLocaleTimeString();
     }
 }
