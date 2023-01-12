@@ -198,7 +198,8 @@ export class PassengerOrderRideComponent implements OnInit {
             next: (value: UserIdEmail) => {
                 this.addPassenger(value);
             },
-            error: () => {
+            error: (error) => {
+                console.log(error);
                 this.sharedService.showSnackBar("User not found!", 2000);
             }
         })
@@ -244,6 +245,17 @@ export class PassengerOrderRideComponent implements OnInit {
         let passengersAll = [...this.otherPassengers];
         passengersAll.push(mePassenger);
 
+        let scheduledTimeStr: string | null = null;
+        if (this.isOrderingLater()) {
+            let now: Date = new Date();
+            now.setHours(this.mainForm.get('route_options_form.later.at_hour')?.value);
+            now.setMinutes(this.mainForm.get('route_options_form.later.at_minute')?.value);
+            now.setSeconds(0);   
+
+            // JS's Date API sucks.
+            scheduledTimeStr = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString();
+        }
+
         const request: RideRequest = {
             locations: [
                 {
@@ -263,9 +275,10 @@ export class PassengerOrderRideComponent implements OnInit {
             vehicleType: this.mainForm.get('route_options_form.vehicle_type')?.value,
             babyTransport: this.mainForm.get('route_options_form.babies')?.value,
             petTransport: this.mainForm.get('route_options_form.pets')?.value,
-            hour: this.mainForm.get('route_options_form.later.at_hour')?.value,
-            minute: this.mainForm.get('route_options_form.later.at_minute')?.value,
+            scheduledTime: scheduledTimeStr,
         }
+
+        console.log(request);
 
         this.orderRideEvent.emit(request);
     }

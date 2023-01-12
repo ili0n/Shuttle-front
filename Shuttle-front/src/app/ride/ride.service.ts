@@ -55,6 +55,7 @@ export interface Ride {
     vehicleType: string,
     rejection: RejectionTimeDTO,
     driver: UserIdEmail,
+    scheduledTime: string,
 }
 
 export interface RideRequest {
@@ -63,8 +64,7 @@ export interface RideRequest {
     vehicleType: string,
     babyTransport: boolean,
     petTransport: boolean,
-    hour: string,
-    minute: string,
+    scheduledTime: string | null,
 }
 
 @Injectable({
@@ -117,7 +117,7 @@ export class RideService {
     }
 
     public panic(rideId: number, reason: string): Observable<PanicDTO> {
-        return this.httpClient.put<PanicDTO>(`${this.url}/${rideId}/panic`, reason, {
+        return this.httpClient.put<PanicDTO>(`${this.url}/${rideId}/panic`, {reason: reason}, {
             responseType: 'json'
         });
     }

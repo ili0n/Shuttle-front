@@ -49,7 +49,11 @@ export class PassengerCurrentRideComponent implements OnInit {
 
         this.driverService.getVehicle(this.ride.driver.id).subscribe({
             next: (vehicle: Vehicle) => {
+                console.log("..");
                 this.vehicleID = vehicle.id!;
+            },
+            error: (error) => {
+                console.error("WHAT", error);
             }
         });
     }
@@ -93,7 +97,9 @@ export class PassengerCurrentRideComponent implements OnInit {
 
     private onFetchVehicleLocations(value: Array<VehicleLocationDTO>): void {
         for (let v of value) {
+            console.log(v.id, this.vehicleID);
             if (v.id == this.vehicleID) {
+                console.log("B");
                 this.getDriverArrivalTimeEst(v.location);
             }
         }
@@ -133,7 +139,14 @@ export class PassengerCurrentRideComponent implements OnInit {
     }
 
     protected isScheduledForFuture(): boolean {
-        return this.ride.status == RideStatus.Pending &&  this.ride.startTime != null;
+        return this.ride != null && this.ride.scheduledTime != null;
+    }
+
+    protected getRideScheduledTime(): string {
+        if (this.ride == null ){
+            return "";
+        }
+        return new Date(this.ride.scheduledTime).toLocaleTimeString();
     }
 
     protected cancelRide(): void {
