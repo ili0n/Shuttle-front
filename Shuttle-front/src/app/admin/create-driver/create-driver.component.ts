@@ -17,7 +17,11 @@ export class CreateDriverComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         document.body.className = "body-gradient1"; // Defined in src/styles.css
 
-        this.vehicleTypes = this.vehicleService.getTypes();
+        this.vehicleService.getTypes().subscribe({
+            next: res => {
+                this.vehicleTypes = res;
+            }
+        });
     }
 
     ngOnDestroy() {

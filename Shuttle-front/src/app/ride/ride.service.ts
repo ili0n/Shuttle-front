@@ -65,6 +65,7 @@ export interface RideRequest {
     babyTransport: boolean,
     petTransport: boolean,
     scheduledTime: string | null,
+    distance: number,
 }
 
 @Injectable({
