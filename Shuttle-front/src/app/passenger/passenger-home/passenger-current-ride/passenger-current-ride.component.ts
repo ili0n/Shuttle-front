@@ -84,6 +84,10 @@ export class PassengerCurrentRideComponent implements OnInit {
         return this.ride.status == RideStatus.Accepted;
     }
 
+    protected isStarted(): boolean {
+        return this.ride.status == RideStatus.Started;
+    }
+
     protected sendPanic(reason: string): void {
         this.panicEvent.emit(reason);
     }

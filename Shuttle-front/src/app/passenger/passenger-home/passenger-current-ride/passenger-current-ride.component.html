@@ -64,7 +64,7 @@
         </div>
     </ng-container>
 
-    <!-- Only if scheduled in the future. -->
+    <!-- Show when it's scheduled for. -->
 
     <ng-container *ngIf="isScheduledForFuture()">
         <hr/>
@@ -74,15 +74,22 @@
         </div>
     </ng-container>
 
-    <!-- Cancel before it begins -->
+    <!-- Before the ride begins, you can cancel it. -->
 
-    <ng-container *ngIf="isPending()">
+    <ng-container *ngIf="isPending() || isAccepted()">
         <button mat-raised-button color="warn" (click)="cancelRide()">Cancel</button>
+    </ng-container>
+
+    <!-- While it's accepted, wait -->
+
+    <ng-container *ngIf="isAccepted()">
+        <hr/>
+        <div>Your ride has been accepted.</div>
     </ng-container>
 
     <!-- Elapsed time, panic button, leaving a note etc. -->
 
-    <ng-container *ngIf="isAccepted()">
+    <ng-container *ngIf="isStarted()">
         <hr/>
         <span id="elapsed-time">
             <span class="label">Elapsed time: </span>

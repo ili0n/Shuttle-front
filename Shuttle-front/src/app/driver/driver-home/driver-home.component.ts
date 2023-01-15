@@ -177,31 +177,42 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
         }
 
         // If the ride is cancelled/withdrawn/completed -> set this.ride to null.
-        // Because we want to see the right panel ONLY for pending/active rides.
+        // Because we want to see the right panel ONLY for pending/active/started rides.
 
         else if ([RideStatus.Canceled, RideStatus.Rejected, RideStatus.Finished].includes(ride.status)) {
             this.ride = null;
             this.clearRoute();
         } 
             
-        // If the current ride is 'Accepted', ignore the upcoming ride (which can only be Pending).
+        // If the current ride is Accepted/Started, ignore upcoming ride (which can only be Pending).
         // The reason for this is that we don't want to bother the driver while he's working. Once
         // he finishes the current ride, he'll ask the backend to fetch again, and then he'll get
         // the other ride.
-        
-        else if (this.ride && [RideStatus.Accepted].includes(this.ride.status)) {
-            // Do nothing.
-        } else {    
-            this.ride = ride;
 
-            if (!this.hasRouteOnMap()) {
-                const A = this.ride.locations[0].departure;
-                const B = this.ride.locations.at(-1)!.destination;
+        else {
+            // If upstream ride has a weaker status than the current ride, ignore it (for now, it'll
+            // come back later).
 
-                const pointA = L.latLng(A.latitude, A.longitude);
-                const pointB = L.latLng(B.latitude, B.longitude);
+            let m: any = {};
+            m[RideStatus.Pending] = 0;
+            m[RideStatus.Accepted] = 1;
+            m[RideStatus.Started] = 2;
 
-                this.drawRoute(pointA, pointB);
+            if (this.ride != null && m[ride.status] < m[this.ride.status]) {
+                // Ignore.
+            } else {
+                this.ride = ride;
+
+                // If no route for this ride, draw it now.
+                if (!this.hasRouteOnMap()) {
+                    const A = this.ride.locations[0].departure;
+                    const B = this.ride.locations.at(-1)!.destination;
+    
+                    const pointA = L.latLng(A.latitude, A.longitude);
+                    const pointB = L.latLng(B.latitude, B.longitude);
+    
+                    this.drawRoute(pointA, pointB);
+                }
             }
         }
 
@@ -214,7 +225,8 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
             return;
         }
 
-        if (this.ride.status == RideStatus.Accepted) {
+        if (/*this.ride.status == RideStatus.Accepted || When he accepts, it doesn't matter what the status is.*/
+            this.ride.status == RideStatus.Started) {
             this.navbarService.setCanDriverChangeActiveState(false);
             this.navbarService.setDriverActiveFromDriverState(true);
         } else {
@@ -227,17 +239,32 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
         return this.ride != null;
     }
 
-    protected onRideBegin(): void {
+    protected onRideAccept(): void {
         if (!this.ride) {
             return;
         }
    
         this.rideService.accept(this.ride.id).subscribe({
             next: (ride: Ride) => {
+                this.sharedService.showSnackBar("Ride accepted.", 3000);
+                this.onFetchRide(ride);
+            },
+            error: (error) => this.sharedService.showSnackBar("Cannot accept ride.", 3000)
+        });
+    }
+
+    protected onRideStart(): void {
+        console.log("QQ1", "RIDE START");
+        if (!this.ride) {
+            return;
+        }
+   
+        this.rideService.start(this.ride.id).subscribe({
+            next: (ride: Ride) => {
                 this.sharedService.showSnackBar("Ride started.", 3000);
                 this.onFetchRide(ride);
             },
-            error: (error) => this.sharedService.showSnackBar("Cannot begin ride.", 3000)
+            error: (error) => this.sharedService.showSnackBar("Cannot start ride.", 3000)
         });
     }
 

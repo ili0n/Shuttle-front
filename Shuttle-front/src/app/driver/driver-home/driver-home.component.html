@@ -9,7 +9,8 @@
         <div class="column right" *ngIf="hasCurrentRide()">
         <app-driver-home-current-ride
             [ride]="ride!"
-            (beginEvent)="onRideBegin()"
+            (acceptEvent)="onRideAccept()"
+            (startEvent)="onRideStart()"
             (finishEvent)="onRideFinish()"
             (rejectEvent)="onRideReject($event)"
             (panicEvent)="onRidePanic($event)"
