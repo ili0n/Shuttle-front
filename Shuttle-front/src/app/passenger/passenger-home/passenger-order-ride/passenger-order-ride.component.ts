@@ -44,7 +44,11 @@ export class PassengerOrderRideComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.vehicleTypes = this.vehicleService.getTypes();
+        this.vehicleService.getTypes().subscribe({
+            next: res => {
+                this.vehicleTypes = res;
+            }
+        });
     }
 
     /**
@@ -223,8 +227,9 @@ export class PassengerOrderRideComponent implements OnInit {
         const vehicleType: string = this.mainForm.get('route_options_form.vehicle_type')?.getRawValue();
 
         if (vehicleType) {
-            const vehicleTypeCost: number = this.vehicleTypes.filter(t => t.name == vehicleType)[0].pricePerKm;
+            const vehicleTypeCost: number = this.vehicleTypes.filter(t => t.name == vehicleType)[0].pricePerKM;
             const price = (kmInt * (120 + vehicleTypeCost));
+            console.log(vehicleTypeCost, 120 + vehicleTypeCost, price);
             return price.toString() + " RSD";
         } else {
             return "? RSD";
@@ -276,6 +281,7 @@ export class PassengerOrderRideComponent implements OnInit {
             babyTransport: this.mainForm.get('route_options_form.babies')?.value,
             petTransport: this.mainForm.get('route_options_form.pets')?.value,
             scheduledTime: scheduledTimeStr,
+            distance: this.routeDistance
         }
 
         console.log(request);

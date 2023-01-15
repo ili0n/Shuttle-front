@@ -23,8 +23,9 @@ export interface Vehicle {
 }
 
 export interface VehicleType {
+    id: number,
     name: string,
-    pricePerKm: number,
+    pricePerKM: number,
 };
 
 export interface VehicleLocationDTO {
@@ -47,13 +48,17 @@ export class VehicleService {
         return this.httpClient.post(environment.serverOrigin + 'api/vehicle', vehicle, options);
     }
 
-    public getTypes(): VehicleType[] {
-        return [
-            {name: 'Standard', pricePerKm: 5},
-            {name: 'Luxury', pricePerKm: 50},
-            {name: 'Van', pricePerKm: 10},
-        ];
+    public getTypes(): Observable<Array<VehicleType>> {
+        return this.httpClient.get<Array<VehicleType>>(environment.serverOrigin + "api/vehicle/types", {responseType:'json'});
     }
+
+    // public getTypes(): VehicleType[] {
+    //     return [
+    //         {name: 'Standard', pricePerKm: 5},
+    //         {name: 'Luxury', pricePerKm: 50},
+    //         {name: 'Van', pricePerKm: 10},
+    //     ];
+    // }
 
     public getLocations(): Observable<Array<VehicleLocationDTO>> {
         return this.httpClient.get<Array<VehicleLocationDTO>>(environment.serverOrigin + 'api/vehicle/locations', {
