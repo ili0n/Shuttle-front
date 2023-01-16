@@ -276,7 +276,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
             }
         }
 
-        if ([RideStatus.Pending, RideStatus.Accepted].includes(r.status)) {
+        if ([RideStatus.Pending, RideStatus.Accepted, RideStatus.Started].includes(r.status)) {
             this.ride = r;
             this.recalculateRouteFromRideIfNoneFound();
         } else if ([RideStatus.Canceled, RideStatus.Finished, RideStatus.Rejected].includes(r.status)) {

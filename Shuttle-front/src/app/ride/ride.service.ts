@@ -33,7 +33,7 @@ export interface RideRequestLocation {
 }
 
 export enum RideStatus {
-    Pending = "Pending", Accepted = "Accepted", Rejected = "Rejected", Canceled = "Canceled", Finished = "Finished"
+    Pending = "Pending", Accepted = "Accepted", Rejected = "Rejected", Canceled = "Canceled", Finished = "Finished", Started = "Started"
 }
 
 export interface PanicDTO {
@@ -85,6 +85,11 @@ export class RideService {
     public accept(rideID: number): Observable<any> {
         const options: any = { responseType: 'json' };
         return this.httpClient.put(`${this.url}/${rideID}/accept`, options);
+    }
+
+    public start(rideID: number): Observable<any> {
+        const options: any = { responseType: 'json' };
+        return this.httpClient.put(`${this.url}/${rideID}/start`, options);
     }
 
     public reject(rideID: number, reason: string): Observable<Ride> {
