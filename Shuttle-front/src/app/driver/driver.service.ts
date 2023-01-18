@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { User } from '../services/register/register.service';
 import { Vehicle } from '../vehicle/vehicle.service';
 
 export interface Driver {
@@ -31,6 +32,12 @@ export class DriverService {
             responseType: 'json'
         };
         return this.httpClient.post(environment.serverOrigin + 'api/driver', driver, options);
+    }
+
+    public get(id: number): Observable<User> {
+        return this.httpClient.get<User>(environment.serverOrigin + 'api/driver/' + id, {
+            responseType: 'json'
+        });
     }
 
     public getActiveDriversLocations(): Observable<Array<Location>> {

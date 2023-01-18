@@ -1,7 +1,10 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as L from 'leaflet';
 import { AuthService } from 'src/app/auth/auth.service';
+import { DriverService } from 'src/app/driver/driver.service';
 import { Ride, RideListDTO } from 'src/app/ride/ride.service';
+import { User } from 'src/app/services/register/register.service';
+import { UserService } from 'src/app/user/user.service';
 import { PassengerService } from '../passenger.service';
 
 @Component({
@@ -13,6 +16,7 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
     protected dataSource: Array<Ride> = [];
     protected displayedColumns: string[] = ['number', 'route', 'startTime', 'endTime'];
     private selectedRide: Ride | null = null;
+    private selectedRideDriver: User | null = null;
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
 
@@ -21,7 +25,8 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
     
     constructor(
         private authService: AuthService,
-        private passengerService: PassengerService
+        private passengerService: PassengerService,
+        private driverService: DriverService,
     ) {}
 
     ngOnInit(): void {
@@ -44,9 +49,20 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
             this.map = this.map.remove();
         }
     }
+
+    protected getSelectedRideDriverName(): string {
+        if (this.selectedRideDriver == null) {
+            return "";
+        }
+        return this.selectedRideDriver.name + " " + this.selectedRideDriver.surname;
+    }
     
     private onRidesFetch(rides: RideListDTO) {
         this.dataSource = rides.results;
+
+        if (this.dataSource.length > 0) {
+            this.onRideSelected(this.dataSource[0]);
+        } 
     }
 
     private initMap(id: string): void {
@@ -64,13 +80,33 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
         return dep + " - " + dest;
     }
 
-    protected onRowClick(row: Ride): void {
+    protected onRideSelected(row: Ride): void {
         this.selectedRide = row;
         this.drawRouteFrom(this.selectedRide);
+        this.fetchDriverData(this.selectedRide);
+    }
+
+    private fetchDriverData(ride: Ride): void {
+        this.driverService.get(ride.driver.id).subscribe({
+            next: (driver: User) => {
+                this.selectedRideDriver = driver;
+            },
+            error: (error) => {
+                console.error(error);
+            }
+        });
     }
 
     protected isSelected(row: Ride): boolean {
         return row.id == this.selectedRide?.id;
+    }
+
+    protected hasAnySelected(): boolean {
+        return this.selectedRide != null;
+    }
+
+    protected hasRides(): boolean {
+        return this.dataSource.length > 0;
     }
 
     private clearRoute(): void {
