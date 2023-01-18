@@ -38,18 +38,30 @@
         <div class="height-70">
             <div id="map" class="mat-elevation-z3" #leafletMap></div>
         </div>
-        <div class="height-30 row">
+        <div class="height-30 flex">
 
-            <div class="column left">
-            <mat-card class="height-100">
-                <div class="text-regular"><span class=text-thin>Driver: </span><b>{{ getSelectedRideDriverName() }}</b></div>     
-            </mat-card>
+            <div class="left pad mat-elevation-z3 flex-hor margin">
+                <div class="text-regular"><span class=text-thin>Driver: </span><b>{{ getSelectedRideDriverName() }}</b></div>
+                <br/>
             </div>
 
-            <div class="column right">
-            <mat-card class="height-100">
-                y
-            </mat-card>
+            <div class="right pad mat-elevation-z3 flex-hor margin">
+                <div class="text-regular"><span class=text-thin>From: </span><b>{{ getSelectedRideDeparture() }}</b></div>
+                <div class="text-regular"><span class=text-thin>To: </span><b>{{ getSelectedRideDestination() }}</b></div>
+                <div class="text-regular"><span class=text-thin>Vehicle type: </span><b>{{ getSelectedRideVehicleType() }}</b></div>
+
+                <span class="text-regular text-thin">Baby: </span>
+                <span *ngIf="getSelectedRideBaby(); else elseBlock"><mat-icon>check</mat-icon></span>
+                <ng-template #elseBlock><mat-icon>close</mat-icon></ng-template>
+                <br/>
+
+                <span class="text-regular text-thin">Pet: </span>
+                <span *ngIf="getSelectedRidePet(); else elseBlock"><mat-icon>check</mat-icon></span>
+                <ng-template #elseBlock><mat-icon>close</mat-icon></ng-template>
+                <br/>
+
+                <hr/>
+                <button class="align-right" mat-raised-button color="primary">Purchase again</button>
             </div>
 
         </div>

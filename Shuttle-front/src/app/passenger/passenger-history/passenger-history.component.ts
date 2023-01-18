@@ -56,6 +56,41 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
         }
         return this.selectedRideDriver.name + " " + this.selectedRideDriver.surname;
     }
+
+    protected getSelectedRideVehicleType(): string {
+        if (this.selectedRide == null) {
+            return "";
+        }
+        return this.selectedRide.vehicleType;
+    }
+
+    protected getSelectedRideBaby(): boolean {
+        if (this.selectedRide == null) {
+            return false;
+        }
+        return this.selectedRide.babyTransport;       
+    }
+
+    protected getSelectedRidePet(): boolean {
+        if (this.selectedRide == null) {
+            return false;
+        }
+        return this.selectedRide.petTransport;       
+    }
+    
+    protected getSelectedRideDeparture(): string {
+        if (this.selectedRide == null) {
+            return "";
+        }
+        return this.selectedRide.locations[0].departure.address;    
+    }
+
+    protected getSelectedRideDestination(): string {
+        if (this.selectedRide == null) {
+            return "";
+        }
+        return this.selectedRide.locations.at(-1)!.destination.address;    
+    }
     
     private onRidesFetch(rides: RideListDTO) {
         this.dataSource = rides.results;
