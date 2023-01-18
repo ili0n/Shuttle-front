@@ -1,5 +1,5 @@
 import { HttpStatusCode } from "@angular/common/http";
-import { Component, OnInit, AfterViewInit } from "@angular/core";
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from "@angular/core";
 import * as L from "leaflet";
 import { Message, MessageService } from "src/app/message/message.service";
 import { NavbarService } from "src/app/navbar-module/navbar.service";
@@ -15,9 +15,11 @@ import { RecalculateRouteDTO } from "./passenger-order-ride/passenger-order-ride
     templateUrl: './passenger-home.component.html',
     styleUrls: ['./passenger-home.component.css']
 })
-export class PassengerHomeComponent implements OnInit, AfterViewInit {
+export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     /************************************ Map fields *********************************************/
 
+    @ViewChild('leafletMap')
+    private mapElement!: ElementRef;
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
     protected depPos!: L.LatLng;
@@ -59,6 +61,12 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
         this.initMapIcons();
     }
 
+    ngOnDestroy(): void {
+        if (this.map) {
+            this.map = this.map.remove();
+        }
+    }
+
     /************************************ Form methods *******************************************/
 
     canOrderRide(): boolean {
@@ -80,7 +88,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit {
      * @param id HTML id of the element where the map will be rendered in.
      */
     private initMap(id: string): void {
-        this.map = L.map(id, {center: [45.2396, 19.8227], zoom: 13 });
+        this.map = L.map(this.mapElement.nativeElement, {center: [45.2396, 19.8227], zoom: 13 });
         const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18, minZoom: 3,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
