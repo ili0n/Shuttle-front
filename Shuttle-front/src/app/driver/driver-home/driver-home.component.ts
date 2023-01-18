@@ -254,7 +254,6 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
     }
 
     protected onRideStart(): void {
-        console.log("QQ1", "RIDE START");
         if (!this.ride) {
             return;
         }

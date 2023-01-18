@@ -32,8 +32,13 @@ export interface RideRequestLocation {
     destination: RideRequestSingleLocation,
 }
 
+export interface RideListDTO {
+    totalCount: number,
+    results: Array<Ride>
+}
+
 export enum RideStatus {
-    Pending = "Pending", Accepted = "Accepted", Rejected = "Rejected", Canceled = "Canceled", Finished = "Finished", Started = "Started"
+    Pending = "PENDING", Accepted = "ACCEPTED", Rejected = "REJECTED", Canceled = "CANCELED", Finished = "FINISHED", Started = "STARTED"
 }
 
 export interface PanicDTO {

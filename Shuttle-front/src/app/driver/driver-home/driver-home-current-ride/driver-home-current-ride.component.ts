@@ -44,7 +44,6 @@ export class DriverHomeCurrentRideComponent {
     }
 
     protected isStarted(): boolean {
-        console.log(this.ride.status);
         return this.ride.status == RideStatus.Started;
     }
 

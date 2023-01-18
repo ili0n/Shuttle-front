@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { RideListDTO } from '../ride/ride.service';
 import { UserIdEmail } from '../user/user.service';
 
 
@@ -35,6 +36,13 @@ export class PassengerService {
             params: params,
             observe: "body",
             responseType: "json",
+        });
+    }
+
+    public getRides(passengerId: number): Observable<RideListDTO> {
+        return this.httpClient.get<RideListDTO>(`${this.url}/${passengerId}/ride`, {
+            observe: "body",
+            responseType: "json"
         });
     }
 }
