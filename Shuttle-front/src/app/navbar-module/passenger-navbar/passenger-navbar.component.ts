@@ -25,4 +25,8 @@ export class PassengerNavbarComponent implements OnInit {
     home() {
         this.router.navigate(["passenger/home"]);
     }
+
+    history() {
+        this.router.navigate(["passenger/history"]);
+    }
 }

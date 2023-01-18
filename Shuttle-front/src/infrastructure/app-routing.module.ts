@@ -12,6 +12,7 @@ import { DriverHomeComponent } from 'src/app/driver/driver-home/driver-home.comp
 import {LoginGuard} from "../app/auth/guard/login.guard";
 import { UserGuard } from 'src/app/auth/guard/user.guard';
 import { PassengerHomeComponent } from 'src/app/passenger/passenger-home/passenger-home.component';
+import { PassengerHistoryComponent } from 'src/app/passenger/passenger-history/passenger-history.component';
 
 const routes: Routes = [
 	{path: "login",
@@ -30,6 +31,7 @@ const routes: Routes = [
   {path: "admin/create-driver", component: CreateDriverComponent , canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
 
   {path: 'passenger/home', component: PassengerHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  {path: 'passenger/history', component: PassengerHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
 ];
 
 @NgModule({
