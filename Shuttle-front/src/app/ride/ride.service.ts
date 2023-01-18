@@ -57,6 +57,7 @@ export interface Ride {
     petTransport: boolean,
     status: RideStatus,
     startTime: string,
+    endTime: string,
     vehicleType: string,
     rejection: RejectionTimeDTO,
     driver: UserIdEmail,

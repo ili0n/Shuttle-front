@@ -41,14 +41,29 @@
         <div class="height-30 flex">
 
             <div class="left pad mat-elevation-z3 flex-hor margin">
-                <div class="text-regular"><span class=text-thin>Driver: </span><b>{{ getSelectedRideDriverName() }}</b></div>
-                <br/>
+                <div class="text-regular"><span class=text-thin>Driver: </span>{{ getSelectedRideDriverName() }}</div>
+                <div class="text-regular"><span class=text-thin>Status: </span>{{ getSelectedRideStatus() }}</div>
+                <hr/>
+                <span *ngIf="tooLateToRateRide()">
+                    You cannot rate this ride.
+                </span>
+                <span *ngIf="!tooLateToRateRide()">
+                    <div class="text-regular text-thin">Vehicle rating:</div>
+                    <div class="text-regular text-thin">Driver rating:</div>
+                    <br/>
+                    <span *ngIf="isRideRated()">
+                        <button mat-raised-button color="primary" (click)="viewRating()">View your rating</button>
+                    </span>
+                    <span *ngIf="canRateRide()">
+                        <button mat-raised-button color="primary" (click)="leaveRating()">Leave a rating</button>
+                    </span>
+                </span>
             </div>
 
             <div class="right pad mat-elevation-z3 flex-hor margin">
-                <div class="text-regular"><span class=text-thin>From: </span><b>{{ getSelectedRideDeparture() }}</b></div>
-                <div class="text-regular"><span class=text-thin>To: </span><b>{{ getSelectedRideDestination() }}</b></div>
-                <div class="text-regular"><span class=text-thin>Vehicle type: </span><b>{{ getSelectedRideVehicleType() }}</b></div>
+                <div class="text-regular"><span class=text-thin>From: </span>{{ getSelectedRideDeparture() }}</div>
+                <div class="text-regular"><span class=text-thin>To: </span>{{ getSelectedRideDestination() }}</div>
+                <div class="text-regular"><span class=text-thin>Vehicle type: </span>{{ getSelectedRideVehicleType() }}</div>
 
                 <span class="text-regular text-thin">Baby: </span>
                 <span *ngIf="getSelectedRideBaby(); else elseBlock"><mat-icon>check</mat-icon></span>
@@ -61,7 +76,7 @@
                 <br/>
 
                 <hr/>
-                <button class="align-right" mat-raised-button color="primary">Purchase again</button>
+                <button class="align-right" mat-raised-button color="primary" (click)="orderAgain()">Order again</button>
             </div>
 
         </div>

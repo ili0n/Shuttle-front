@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } fr
 import * as L from 'leaflet';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DriverService } from 'src/app/driver/driver.service';
-import { Ride, RideListDTO } from 'src/app/ride/ride.service';
+import { Ride, RideListDTO, RideStatus } from 'src/app/ride/ride.service';
 import { User } from 'src/app/services/register/register.service';
 import { UserService } from 'src/app/user/user.service';
 import { PassengerService } from '../passenger.service';
@@ -91,6 +91,36 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
         }
         return this.selectedRide.locations.at(-1)!.destination.address;    
     }
+
+    protected getSelectedRideStatus(): string {
+        if (this.selectedRide == null) {
+            return "";
+        }
+        return this.selectedRide.status;    
+    }
+
+    protected isRideRated(): boolean {
+        return false;
+    }
+
+    protected canRateRide(): boolean {
+        if (this.selectedRide == null) {
+            return false;
+        }
+        if (this.selectedRide.status != RideStatus.Finished) {
+            return false;
+        }
+        const dateFinished = new Date(this.selectedRide.endTime);
+        const dateNow = new Date();
+        const diff = Math.abs(dateNow.getTime() - dateFinished.getTime());
+        const diffDays = Math.ceil(diff / (1000 * 3600 * 24)); 
+
+        return diffDays < 3;
+    }
+
+    protected tooLateToRateRide(): boolean {
+        return !this.canRateRide() && !this.isRideRated();
+    }
     
     private onRidesFetch(rides: RideListDTO) {
         this.dataSource = rides.results;
@@ -177,5 +207,17 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
             },
         }).addTo(this.map);
         this.route.hide();
+    }
+    
+    protected viewRating(): void {
+        console.log("viewRating");
+    }
+
+    protected leaveRating(): void {
+        console.log("leaveRating");
+    }
+
+    protected orderAgain(): void {
+        console.log("orderAgain");
     }
 }
