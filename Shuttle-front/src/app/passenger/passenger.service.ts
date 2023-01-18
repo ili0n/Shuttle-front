@@ -37,9 +37,9 @@ export class PassengerService {
             observe: "body",
             responseType: "json",
         });
-    }
+    }//?page=${page}&size=${count}
 
-    public getRides(passengerId: number): Observable<RideListDTO> {
+    public getRides(passengerId: number, page: number | null = null, count: number | null = null): Observable<RideListDTO> {
         return this.httpClient.get<RideListDTO>(`${this.url}/${passengerId}/ride`, {
             observe: "body",
             responseType: "json"

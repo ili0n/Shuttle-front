@@ -32,6 +32,15 @@
                     *matRowDef="let row; columns: displayedColumns;">
                 </tr>
             </table>
+            <mat-paginator 
+                (page)="onPageChange($event)"
+                [pageSizeOptions]="[1, 5, 10, 20]"
+                [pageSize]="3"
+                [length]="ridesTotal"
+                [pageIndex]="page"
+                showFirstLastButtons
+                aria-label="Select page of periodic elements">
+            </mat-paginator>
         </ng-container>
     </div>
     <div class="column right">

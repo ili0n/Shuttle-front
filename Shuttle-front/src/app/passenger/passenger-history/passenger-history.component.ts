@@ -1,4 +1,7 @@
+import { ListKeyManager } from '@angular/cdk/a11y';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import * as L from 'leaflet';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DriverService } from 'src/app/driver/driver.service';
@@ -13,12 +16,16 @@ import { PassengerService } from '../passenger.service';
   styleUrls: ['./passenger-history.component.css']
 })
 export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnInit {
-    protected dataSource: Array<Ride> = [];
+    protected dataSource: MatTableDataSource<Ride> = new MatTableDataSource();
+    @ViewChild(MatPaginator) paginator!: MatPaginator;
+
     protected displayedColumns: string[] = ['number', 'route', 'startTime', 'endTime'];
     private selectedRide: Ride | null = null;
     private selectedRideDriver: User | null = null;
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
+    protected ridesTotal: number = 0;
+    protected page: number = 0;
 
     @ViewChild('leafletMap')
     private mapElement!: ElementRef;
@@ -33,15 +40,17 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
         this.passengerService.getRides(this.authService.getUserId()).subscribe({
             next: (result: RideListDTO) => {
                 this.onRidesFetch(result);
+                this.ridesTotal = result.totalCount;
             },
             error: (error) => {
                 console.log(error);
             }
-        })
+        });
     }
 
     ngAfterViewInit(): void {
         this.initMap("map");
+        this.dataSource.paginator = this.paginator;
     }
 
     ngOnDestroy(): void {
@@ -123,11 +132,32 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
     }
     
     private onRidesFetch(rides: RideListDTO) {
-        this.dataSource = rides.results;
+        //this.dataSource.data = rides.results;
+        this.dataSource = new MatTableDataSource<Ride>(rides.results);
+        this.dataSource.paginator = this.paginator;
 
-        if (this.dataSource.length > 0) {
-            this.onRideSelected(this.dataSource[0]);
+        if (this.hasRides()) {
+            this.onRideSelected(this.dataSource.data[0]);
         } 
+    }
+
+    protected onPageChange(event: PageEvent) {
+        console.log(event);
+
+        const page: number = event.pageIndex;
+        const count: number = event.pageSize;
+
+        this.passengerService.getRides(this.authService.getUserId(), page, count).subscribe({
+            next: (result: RideListDTO) => {
+                this.onRidesFetch(result);
+                console.log(result);
+            },
+            error: (error) => {
+                console.log(error);
+            }
+        });
+
+        this.page = page;
     }
 
     private initMap(id: string): void {
@@ -171,7 +201,7 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
     }
 
     protected hasRides(): boolean {
-        return this.dataSource.length > 0;
+        return this.dataSource.data.length > 0;
     }
 
     private clearRoute(): void {
