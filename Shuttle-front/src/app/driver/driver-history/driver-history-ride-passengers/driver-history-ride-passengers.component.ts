@@ -46,7 +46,7 @@ export class DriverHistoryRidePassengersComponent implements OnChanges {
             this.passengerService.findById(p.id).subscribe({
                 next: passenger => {
                     const reviews: ReviewPairDTO | undefined = this.reviews.find(r => 
-                        r.rideReview.passenger.id == passenger.id ||
+                        r.driverReview.passenger.id == passenger.id ||
                         r.vehicleReview.passenger.id == passenger.id
                     );
 
@@ -56,6 +56,9 @@ export class DriverHistoryRidePassengersComponent implements OnChanges {
                     }
 
                     this.passengers.push(result);
+                },
+                error: (error) => {
+                    console.error(error);
                 }
             });
         }

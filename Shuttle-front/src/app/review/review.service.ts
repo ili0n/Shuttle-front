@@ -19,7 +19,7 @@ export interface ReviewDTO {
 
 export interface ReviewPairDTO {
     vehicleReview: ReviewDTO,
-    rideReview: ReviewDTO,
+    driverReview: ReviewDTO,
 }
 
 @Injectable({
