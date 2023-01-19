@@ -6,6 +6,7 @@ import { AdminHistoryComponent } from './admin-history/admin-history.component';
 import { AdminHistoryUserTableComponent } from './admin-history/admin-history-user-table/admin-history-user-table.component';
 import { AdminHistoryRideTableComponent } from './admin-history/admin-history-ride-table/admin-history-ride-table.component';
 import { AdminHistoryRideDetailsComponent } from './admin-history/admin-history-ride-details/admin-history-ride-details.component';
+import { AdminHistoryRidePassengersComponent } from './admin-history/admin-history-ride-passengers/admin-history-ride-passengers.component';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { AdminHistoryRideDetailsComponent } from './admin-history/admin-history-
         AdminHistoryComponent,
         AdminHistoryUserTableComponent,
         AdminHistoryRideTableComponent,
-        AdminHistoryRideDetailsComponent
+        AdminHistoryRideDetailsComponent,
+        AdminHistoryRidePassengersComponent
     ],
     imports: [
         CommonModule,
