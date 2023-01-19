@@ -6,6 +6,9 @@ import { PassengerService } from './passenger.service';
 import { PassengerOrderRideComponent } from './passenger-home/passenger-order-ride/passenger-order-ride.component';
 import { PassengerCurrentRideComponent } from './passenger-home/passenger-current-ride/passenger-current-ride.component';
 import { PassengerHistoryComponent } from './passenger-history/passenger-history.component';
+import { PassengerHistoryRideTableComponent } from './passenger-history/passenger-history-ride-table/passenger-history-ride-table.component';
+import { PassengerHistoryRideDetailsComponent } from './passenger-history/passenger-history-ride-details/passenger-history-ride-details.component';
+import { PassengerHistoryRideRateComponent } from './passenger-history/passenger-history-ride-rate/passenger-history-ride-rate.component';
 
 @NgModule({
   declarations: [
@@ -13,6 +16,9 @@ import { PassengerHistoryComponent } from './passenger-history/passenger-history
     PassengerOrderRideComponent,
     PassengerCurrentRideComponent,
     PassengerHistoryComponent,
+    PassengerHistoryRideTableComponent,
+    PassengerHistoryRideDetailsComponent,
+    PassengerHistoryRideRateComponent,
   ],
   imports: [
     CommonModule,

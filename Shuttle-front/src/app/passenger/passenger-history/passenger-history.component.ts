@@ -31,7 +31,7 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
     @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
     protected displayedColumns: string[] = ['id', 'route', 'startTime', 'endTime'];
-    private selectedRide: Ride | null = null;
+    protected selectedRide: Ride | null = null;
     private selectedRideDriver: User | null = null;
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
@@ -48,6 +48,11 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
         private driverService: DriverService,
         private router: Router,
     ) {}
+
+    protected onChangeSelectedRide(ride: Ride) {
+        this.selectedRide = ride;
+        this.onRideSelected(this.selectedRide);
+    }
 
     ngOnInit(): void {
         this.passengerService.getRides(this.authService.getUserId()).subscribe({
