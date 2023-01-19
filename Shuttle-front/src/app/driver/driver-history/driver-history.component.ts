@@ -7,6 +7,7 @@ import * as L from 'leaflet';
 import { AuthService } from 'src/app/auth/auth.service';
 import { RideOrderAgain } from 'src/app/passenger/passenger-history/passenger-history.component';
 import { PassengerService } from 'src/app/passenger/passenger.service';
+import { ReviewPairDTO, ReviewService } from 'src/app/review/review.service';
 import { Ride, RideListDTO, RideStatus } from 'src/app/ride/ride.service';
 import { User } from 'src/app/services/register/register.service';
 import { DriverService } from '../driver.service';
@@ -24,6 +25,7 @@ export class DriverHistoryComponent {
     protected displayedColumns: string[] = ['id', 'route', 'startTime', 'endTime'];
     private selectedRide: Ride | null = null;
     private selectedRideDriver: User | null = null;
+    private selectedRideReviews: Array<ReviewPairDTO> = [];
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
     protected ridesTotal: number = 0;
@@ -38,6 +40,7 @@ export class DriverHistoryComponent {
         private passengerService: PassengerService,
         private driverService: DriverService,
         private router: Router,
+        private reviewService: ReviewService,
     ) {}
 
     ngOnInit(): void {
@@ -213,6 +216,15 @@ export class DriverHistoryComponent {
         this.selectedRide = row;
         this.drawRouteFrom(this.selectedRide);
         this.fetchDriverData(this.selectedRide);
+
+        this.reviewService.findByRide(row.id).subscribe({
+            next: (reviews) => {
+                this.selectedRideReviews = reviews;
+            },
+            error: (error) => {
+                console.error(error);
+            }
+        })
     }
 
     private fetchDriverData(ride: Ride): void {

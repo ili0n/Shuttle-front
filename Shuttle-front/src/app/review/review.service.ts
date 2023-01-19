@@ -1,5 +1,9 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { Passenger } from '../passenger/passenger.service';
+import { Ride } from '../ride/ride.service';
 
 export interface ReviewDTO {
     id: number,
@@ -18,6 +22,13 @@ export interface ReviewPairDTO {
     providedIn: 'root'
 })
 export class ReviewService {
+    constructor(private httpClient: HttpClient) { }
+    readonly url: string = environment.serverOrigin + 'api/review';
 
-    constructor() { }
+    public findByRide(rideId: number): Observable<Array<ReviewPairDTO>> {
+        return this.httpClient.get<Array<ReviewPairDTO>>(`${this.url}/${rideId}`, {
+            observe: "body",
+            responseType: "json",
+        });    
+    }
 }
