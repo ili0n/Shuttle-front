@@ -1,1 +1,36 @@
-<p>ride-rate-dialog works!</p>
+<div id="mat-dialog-box">
+    <h1 mat-dialog-title>How was the ride?</h1>
+
+    <form [formGroup]="formGroup">
+
+        <mat-form-field>
+            <mat-label>Vehicle</mat-label>
+            <input matInput formControlName="commentVehicle" />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Vehicle</mat-label>
+            <mat-select formControlName="ratingVehicle">
+                <mat-option *ngFor="let r of possibleRatings" [value]="r">
+                    {{ r }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Driver</mat-label>
+            <input matInput formControlName="commentDriver" />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Driver</mat-label>
+            <mat-select formControlName="ratingDriver">
+                <mat-option *ngFor="let r of possibleRatings" [value]="r">
+                    {{ r }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <br />
+        <button mat-button mat-raised-button color="primary" (click)="onOk()" [disabled]="!formGroup.valid">OK</button>
+        <button mat-button mat-raised-button color="secondary" (click)="onCancel()">CANCEL</button>
+    </form>
+</div>

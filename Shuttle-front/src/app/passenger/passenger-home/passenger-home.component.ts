@@ -1,8 +1,11 @@
 import { HttpStatusCode } from "@angular/common/http";
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import * as L from "leaflet";
 import { Message, MessageService } from "src/app/message/message.service";
 import { NavbarService } from "src/app/navbar-module/navbar.service";
+import { ReviewService } from "src/app/review/review.service";
+import { ReviewDialogResult, RideRateDialogComponent } from "src/app/ride/ride-rate-dialog/ride-rate-dialog.component";
 import { Ride, RideService, RideRequest, RideStatus } from "src/app/ride/ride.service";
 import { MapEstimationService } from "src/app/services/map/map-estimation.service";
 import { RESTError } from "src/app/shared/rest-error/rest-error";
@@ -49,7 +52,9 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
                 private rideService: RideService,
                 private sharedService: SharedService,
                 private navbarService: NavbarService,
-                private messageService: MessageService) {
+                private messageService: MessageService,
+                private dialog: MatDialog,
+                private reviewService: ReviewService) {
     }
 
     ngOnInit(): void {
@@ -291,8 +296,9 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
             this.ride = r; // No need for this since it'll be null by the end of this block, but it
             // makes the code a bit more tidy since it's consistent in using this.ride instead of r.
 
-            
-
+            if (this.ride.status == RideStatus.Finished) {
+                this.promptToRate(this.ride);
+            }
 
             this.ride = null;
             this.clearRoute();
@@ -305,6 +311,30 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
             this.destPos =  new L.LatLng(this.ride.locations.at(-1)!.destination.latitude, this.ride.locations.at(-1)!.destination.longitude);
             this.onFoundRoute();
         }
+    }
+
+    private promptToRate(ride: Ride): void {
+        const dialogRef = this.dialog.open(RideRateDialogComponent, { data: "" });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result == undefined) {
+                return;
+            }
+            const reviews: ReviewDialogResult = result;
+
+            const reviewVehicle = reviews.vehicle;
+            if (reviewVehicle.comment != "" || reviewVehicle.rating != 0) {
+                this.reviewService.leaveReviewVehicle(ride.id, reviewVehicle).subscribe({
+
+                });
+            }
+
+            const reviewDriver = reviews.driver;
+            if (reviewDriver.comment != "" || reviewDriver.rating != 0) {
+                this.reviewService.leaveReviewDriver(ride.id, reviewDriver).subscribe({
+                    
+                });
+            }
+        });
     }
 
     /************************************ Current ride screen ************************************/
