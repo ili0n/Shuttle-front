@@ -1,40 +1,9 @@
 <div class="row">
     <div class="column left">
-        <ng-container *ngIf="!hasRides()">
-            <div class="grey-centered-text">
-                You have no rides!
-            </div>
-        </ng-container>
-        <ng-container *ngIf="hasRides()">
-            <table mat-table [dataSource]='dataSource' class="mat-elevation-z3" matSort
-                (matSortChange)="onSortChange($event)" matSortActive="startTime" matSortDirection="desc">
-                <ng-container matColumnDef="id">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>
-                    <td mat-cell *matCellDef="let element"> {{ element.id }} </td>
-                </ng-container>
-                <ng-container matColumnDef="route">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Route</th>
-                    <td mat-cell *matCellDef="let element"> {{ getFieldRoute(element) }} </td>
-                </ng-container>
-                <ng-container matColumnDef="startTime">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Start</th>
-                    <td mat-cell *matCellDef="let element"> {{ element.startTime | date:'medium' }} </td>
-                </ng-container>
-                <ng-container matColumnDef="endTime">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>End</th>
-                    <td mat-cell *matCellDef="let element"> {{ element.endTime | date:'medium' }} </td>
-                </ng-container>
-
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr (click)="onRideSelected(row)" [class.row-selected]="isSelected(row)" mat-row
-                    *matRowDef="let row; columns: displayedColumns;">
-                </tr>
-            </table>
-            <br />
-            <mat-paginator (page)="onPageChange($event)" [pageSizeOptions]="[10]" [length]="ridesTotal"
-                [pageIndex]="page" showFirstLastButtons>
-            </mat-paginator>
-        </ng-container>
+        <app-driver-history-ride-table
+            class="flex-1"
+            (selectedRideEvent)="onChangeSelectedRide($event)">
+        </app-driver-history-ride-table>
     </div>
     <div class="column right">
         <div class="height-70">
@@ -42,44 +11,16 @@
         </div>
         <div class="height-30 flex">
             <div class="pad mat-elevation-z3 flex-hor margin">
-                <span class="text-regular"><span class=text-thin>Status: </span>{{ getSelectedRideStatus() }}</span>
-                <div class="text-regular"><span class=text-thin>From: </span>{{ getSelectedRideDeparture() }}</div>
-                <div class="text-regular"><span class=text-thin>To: </span>{{ getSelectedRideDestination() }}</div>
-                <div class="text-regular"><span class=text-thin>Vehicle type: </span>{{ getSelectedRideVehicleType() }}
-                </div>
-
-                <span class="text-regular text-thin">Baby: </span>
-                <span *ngIf="getSelectedRideBaby(); else elseBlock"><mat-icon>check</mat-icon></span>
-                <ng-template #elseBlock><mat-icon>close</mat-icon></ng-template>
-                <br />
-
-                <span class="text-regular text-thin">Pet: </span>
-                <span *ngIf="getSelectedRidePet(); else elseBlock"><mat-icon>check</mat-icon></span>
-                <ng-template #elseBlock><mat-icon>close</mat-icon></ng-template>
-                <br />
+                <app-driver-history-ride-details
+                    [ride]="selectedRide">
+                </app-driver-history-ride-details>
             </div>
-
         </div>
     </div>
 
     <div class="column right-narrow scrollable passengers-card">
-        <h2>Passengers</h2>
-        <hr/>
-        <mat-accordion *ngFor="let p of getSelectedRidePassengers()">
-            <mat-expansion-panel hideToggle class="passenger-card">
-                <mat-expansion-panel-header>
-                    <mat-panel-title>{{p.passenger.name}} {{p.passenger.surname}}</mat-panel-title>
-                    <mat-panel-description>{{p.passenger.email}}</mat-panel-description>
-                </mat-expansion-panel-header>
-                <div *ngIf="p.reviews != undefined">
-                    {{ p.reviews.vehicleReview }}
-
-                    {{ p.reviews.rideReview }}
-                </div>
-                <div *ngIf="p.reviews == undefined">
-                    {{p.passenger.name}} did not leave a review.
-                </div>
-            </mat-expansion-panel>
-        </mat-accordion>
+        <app-driver-history-ride-passengers
+            [ride]="selectedRide">
+        </app-driver-history-ride-passengers>
     </div>
 </div>

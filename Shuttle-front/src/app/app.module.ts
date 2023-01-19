@@ -34,6 +34,9 @@ import { RidePanicDialogComponent } from './ride/ride-panic-dialog/ride-panic-di
 import { DriverHomeCurrentRideComponent } from './driver/driver-home/driver-home-current-ride/driver-home-current-ride.component';
 import { Interceptor } from './auth/interceptor/login.interceptor';
 import { DriverHistoryComponent } from './driver/driver-history/driver-history.component';
+import { DriverHistoryRideTableComponent } from './driver/driver-history/driver-history-ride-table/driver-history-ride-table.component';
+import { DriverHistoryRideDetailsComponent } from './driver/driver-history/driver-history-ride-details/driver-history-ride-details.component';
+import { DriverHistoryRidePassengersComponent } from './driver/driver-history/driver-history-ride-passengers/driver-history-ride-passengers.component';
 
 @NgModule({
     declarations: [
@@ -52,6 +55,9 @@ import { DriverHistoryComponent } from './driver/driver-history/driver-history.c
         SnackbarComponent,
         DriverHomeCurrentRideComponent,
         DriverHistoryComponent,
+        DriverHistoryRideTableComponent,
+        DriverHistoryRideDetailsComponent,
+        DriverHistoryRidePassengersComponent,
     ],
     imports: [
         BrowserModule,

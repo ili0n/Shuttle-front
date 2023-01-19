@@ -1,15 +1,15 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { PassengerWithRideReview } from 'src/app/driver/driver-history/driver-history.component';
 import { PassengerService } from 'src/app/passenger/passenger.service';
 import { ReviewPairDTO, ReviewService } from 'src/app/review/review.service';
 import { Ride } from 'src/app/ride/ride.service';
+import { PassengerWithRideReview } from '../driver-history.component';
 
 @Component({
-  selector: 'app-admin-history-ride-passengers',
-  templateUrl: './admin-history-ride-passengers.component.html',
-  styleUrls: ['./admin-history-ride-passengers.component.css']
+  selector: 'app-driver-history-ride-passengers',
+  templateUrl: './driver-history-ride-passengers.component.html',
+  styleUrls: ['./driver-history-ride-passengers.component.css']
 })
-export class AdminHistoryRidePassengersComponent implements OnChanges {
+export class DriverHistoryRidePassengersComponent implements OnChanges {
     @Input() public ride: Ride | null = null;
     private passengers: Array<PassengerWithRideReview> = [];
     private reviews: Array<ReviewPairDTO> = [];
