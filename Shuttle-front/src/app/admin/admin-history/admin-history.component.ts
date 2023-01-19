@@ -24,7 +24,7 @@ export class AdminHistoryComponent {
     @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
     protected displayedColumns: string[] = ['id', 'route', 'startTime', 'endTime'];
-    private selectedRide: Ride | null = null;
+    
     private selectedRideDriver: User | null = null;
     private selectedRideReviews: Array<ReviewPairDTO> = [];
     private selectedRidePassengers: Array<PassengerWithRideReview> = [];
@@ -39,6 +39,7 @@ export class AdminHistoryComponent {
         this.selectedUser = user;
     }
 
+    protected selectedRide: Ride | null = null;
     protected onChangeSelectedRide(ride: Ride) {
         this.selectedRide = ride;
         this.onRideSelected(this.selectedRide);

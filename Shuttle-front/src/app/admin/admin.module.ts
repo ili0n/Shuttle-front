@@ -5,6 +5,7 @@ import { MaterialModule } from 'src/infrastructure/material.module';
 import { AdminHistoryComponent } from './admin-history/admin-history.component';
 import { AdminHistoryUserTableComponent } from './admin-history/admin-history-user-table/admin-history-user-table.component';
 import { AdminHistoryRideTableComponent } from './admin-history/admin-history-ride-table/admin-history-ride-table.component';
+import { AdminHistoryRideDetailsComponent } from './admin-history/admin-history-ride-details/admin-history-ride-details.component';
 
 
 @NgModule({
@@ -12,7 +13,8 @@ import { AdminHistoryRideTableComponent } from './admin-history/admin-history-ri
         CreateDriverComponent,
         AdminHistoryComponent,
         AdminHistoryUserTableComponent,
-        AdminHistoryRideTableComponent
+        AdminHistoryRideTableComponent,
+        AdminHistoryRideDetailsComponent
     ],
     imports: [
         CommonModule,
