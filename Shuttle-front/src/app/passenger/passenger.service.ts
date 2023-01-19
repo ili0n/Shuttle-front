@@ -12,7 +12,9 @@ export interface Passenger {
     name: string,
     surname: string,
     email: string,
-    password: string,
+    profilePicture: string,
+    telephoneNumber: string,
+    address: string,
 }
 
 @Injectable({

@@ -71,14 +71,11 @@
     </div>
 
     <div class="column right scrollable">
-
-        *ngFor="let item of list"
-
-        <mat-accordion>
+        <mat-accordion *ngFor="let passenger of getSelectedRidePassengers()">
             <mat-expansion-panel hideToggle>
                 <mat-expansion-panel-header>
-                    <mat-panel-title>Passenger name</mat-panel-title>
-                    <mat-panel-description>Rating</mat-panel-description>
+                    <mat-panel-title>{{passenger.name}} {{passenger.surname}}</mat-panel-title>
+                    <mat-panel-description>{{passenger.email}}</mat-panel-description>
                 </mat-expansion-panel-header>
                 <div>
                     This is the full rating.

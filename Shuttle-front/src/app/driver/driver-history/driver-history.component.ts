@@ -26,6 +26,7 @@ export class DriverHistoryComponent {
     private selectedRide: Ride | null = null;
     private selectedRideDriver: User | null = null;
     private selectedRideReviews: Array<ReviewPairDTO> = [];
+    private selectedRidePassengers: Array<User> = [];
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
     protected ridesTotal: number = 0;
@@ -114,21 +115,8 @@ export class DriverHistoryComponent {
         return this.selectedRide.status;    
     }
 
-    protected selectedRideIsFavorite(): boolean {
-        if (this.selectedRide == null) {
-            return false;
-        }
-
-        // TODO
-        return true;
-    }
-
-    protected toggleSelectedRideIsFavorite(): void {
-        if (this.selectedRide == null) {
-            return;
-        }
-        
-        // TODO
+    protected getSelectedRidePassengers(): Array<User> {
+        return this.selectedRidePassengers;
     }
 
     protected isRideRated(): boolean {
@@ -216,15 +204,30 @@ export class DriverHistoryComponent {
         this.selectedRide = row;
         this.drawRouteFrom(this.selectedRide);
         this.fetchDriverData(this.selectedRide);
+        this.fetchReviews(this.selectedRide);
+        this.fetchPassengerData(this.selectedRide);
+    }
 
-        this.reviewService.findByRide(row.id).subscribe({
+    private fetchReviews(ride: Ride): void {
+        this.reviewService.findByRide(ride.id).subscribe({
             next: (reviews) => {
                 this.selectedRideReviews = reviews;
             },
             error: (error) => {
                 console.error(error);
             }
-        })
+        });
+    }
+
+    private fetchPassengerData(ride: Ride): void {
+        this.selectedRidePassengers = [];
+        for (let p of ride.passengers) {
+            this.passengerService.findById(p.id).subscribe({
+                next: passenger => {
+                    this.selectedRidePassengers.push(passenger);
+                }
+            });
+        }
     }
 
     private fetchDriverData(ride: Ride): void {
