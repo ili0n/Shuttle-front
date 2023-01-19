@@ -1,3 +1,4 @@
+import { ReadPropExpr } from '@angular/compiler';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -11,6 +12,11 @@ import { ReviewPairDTO, ReviewService } from 'src/app/review/review.service';
 import { Ride, RideListDTO, RideStatus } from 'src/app/ride/ride.service';
 import { User } from 'src/app/services/register/register.service';
 import { DriverService } from '../driver.service';
+
+interface PassengerWithRideReview {
+    passenger: User,
+    reviews: ReviewPairDTO | undefined
+}
 
 @Component({
   selector: 'app-driver-history',
@@ -26,7 +32,7 @@ export class DriverHistoryComponent {
     private selectedRide: Ride | null = null;
     private selectedRideDriver: User | null = null;
     private selectedRideReviews: Array<ReviewPairDTO> = [];
-    private selectedRidePassengers: Array<User> = [];
+    private selectedRidePassengers: Array<PassengerWithRideReview> = [];
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
     protected ridesTotal: number = 0;
@@ -115,7 +121,7 @@ export class DriverHistoryComponent {
         return this.selectedRide.status;    
     }
 
-    protected getSelectedRidePassengers(): Array<User> {
+    protected getSelectedRidePassengers(): Array<PassengerWithRideReview> {
         return this.selectedRidePassengers;
     }
 
@@ -204,14 +210,14 @@ export class DriverHistoryComponent {
         this.selectedRide = row;
         this.drawRouteFrom(this.selectedRide);
         this.fetchDriverData(this.selectedRide);
-        this.fetchReviews(this.selectedRide);
-        this.fetchPassengerData(this.selectedRide);
+        this.fetchReviewsAndThenPassengerData(this.selectedRide);
     }
 
-    private fetchReviews(ride: Ride): void {
+    private fetchReviewsAndThenPassengerData(ride: Ride): void {
         this.reviewService.findByRide(ride.id).subscribe({
             next: (reviews) => {
                 this.selectedRideReviews = reviews;
+                this.fetchPassengerData(ride);
             },
             error: (error) => {
                 console.error(error);
@@ -224,7 +230,17 @@ export class DriverHistoryComponent {
         for (let p of ride.passengers) {
             this.passengerService.findById(p.id).subscribe({
                 next: passenger => {
-                    this.selectedRidePassengers.push(passenger);
+                    const reviews: ReviewPairDTO | undefined = this.selectedRideReviews.find(r => 
+                        r.rideReview.passenger.id == passenger.id ||
+                        r.vehicleReview.passenger.id == passenger.id
+                    );
+
+                    const result: PassengerWithRideReview = {
+                        passenger: passenger,
+                        reviews: reviews,
+                    }
+
+                    this.selectedRidePassengers.push(result);
                 }
             });
         }

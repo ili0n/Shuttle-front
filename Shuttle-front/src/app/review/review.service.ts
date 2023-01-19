@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Passenger } from '../passenger/passenger.service';
 import { Ride } from '../ride/ride.service';
+import { UserIdEmail } from '../user/user.service';
 
 export interface ReviewDTO {
     id: number,
     rating: number,
     comment: string,
-    UserIdEmail: Passenger,
+    passenger: UserIdEmail,
     forDriver: boolean,
 }
 

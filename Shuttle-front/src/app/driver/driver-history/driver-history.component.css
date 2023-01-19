@@ -85,3 +85,18 @@
     max-height: 100%;
     overflow-y: auto;
 }
+
+.passenger-card {
+    padding: 10px;
+    margin: 10px;
+}
+
+.passengers-card {
+    background: whitesmoke;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.passengers-card h2 {
+    padding-top: 10px;
+}
