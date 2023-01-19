@@ -322,14 +322,14 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
             const reviews: ReviewDialogResult = result;
 
             const reviewVehicle = reviews.vehicle;
-            if (reviewVehicle.comment != "" || reviewVehicle.rating != 0) {
+            if (reviewVehicle.rating != 0) {
                 this.reviewService.leaveReviewVehicle(ride.id, reviewVehicle).subscribe({
 
                 });
             }
 
             const reviewDriver = reviews.driver;
-            if (reviewDriver.comment != "" || reviewDriver.rating != 0) {
+            if (reviewDriver.rating != 0) {
                 this.reviewService.leaveReviewDriver(ride.id, reviewDriver).subscribe({
                     
                 });

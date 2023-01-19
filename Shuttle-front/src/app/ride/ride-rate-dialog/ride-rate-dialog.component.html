@@ -3,30 +3,30 @@
 
     <form [formGroup]="formGroup">
 
-        <mat-form-field>
-            <mat-label>Vehicle</mat-label>
-            <input matInput formControlName="commentVehicle" />
-        </mat-form-field>
         <mat-form-field appearance="fill">
-            <mat-label>Vehicle</mat-label>
-            <mat-select formControlName="ratingVehicle">
+            <mat-label>Rate the driver</mat-label>
+            <mat-select formControlName="ratingDriver" (selectionChange)="onChangeDriverRating()">
                 <mat-option *ngFor="let r of possibleRatings" [value]="r">
                     {{ r }}
                 </mat-option>
             </mat-select>
+        </mat-form-field>
+        <mat-form-field >
+            <mat-label>Leave a comment on the driver</mat-label>
+            <input matInput formControlName="commentDriver"/>
         </mat-form-field>
 
-        <mat-form-field>
-            <mat-label>Driver</mat-label>
-            <input matInput formControlName="commentDriver" />
-        </mat-form-field>
         <mat-form-field appearance="fill">
-            <mat-label>Driver</mat-label>
-            <mat-select formControlName="ratingDriver">
+            <mat-label>Rate the vehicle</mat-label>
+            <mat-select formControlName="ratingVehicle" (selectionChange)="onChangeVehicleRating()">
                 <mat-option *ngFor="let r of possibleRatings" [value]="r">
                     {{ r }}
                 </mat-option>
             </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Leave a comment on the vehicle</mat-label>
+            <input matInput formControlName="commentVehicle"/>
         </mat-form-field>
 
         <br />

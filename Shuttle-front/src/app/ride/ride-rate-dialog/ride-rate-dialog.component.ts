@@ -18,6 +18,7 @@ export class RideRateDialogComponent {
     formGroup: FormGroup;
     protected possibleRatings = ['', '1', '2', '3', '4', '5'];
 
+
     constructor(public dialogRef: MatDialogRef<RideRateDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: string, private readonly formBuilder: FormBuilder) {
         this.formGroup = this.formBuilder.group({
             commentVehicle: [''],
@@ -25,6 +26,9 @@ export class RideRateDialogComponent {
             ratingVehicle: [],
             ratingDriver: [],
         });
+
+        this.onChangeDriverRating();
+        this.onChangeDriverRating();
     }
 
     onCancel(): void {
@@ -46,5 +50,29 @@ export class RideRateDialogComponent {
         };
 
         this.dialogRef.close(result);
+    }
+
+    protected hasRatedDriver(): boolean {
+        return Number(this.formGroup.get('ratingDriver')?.getRawValue()) != 0;
+    }
+
+    protected hasRatedVehicle(): boolean {
+        return Number(this.formGroup.get('ratingVehicle')?.getRawValue()) != 0;
+    }
+
+    protected onChangeDriverRating(): void {
+        if (!this.hasRatedDriver()) {
+            this.formGroup.get('commentDriver')?.disable();
+        } else {
+            this.formGroup.get('commentDriver')?.enable();
+        }
+    }
+
+    protected onChangeVehicleRating(): void {
+        if (!this.hasRatedVehicle()) {
+            this.formGroup.get('commentVehicle')?.disable();
+        } else {
+            this.formGroup.get('commentVehicle')?.enable();
+        }
     }
 }
