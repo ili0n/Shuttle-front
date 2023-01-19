@@ -21,6 +21,10 @@
     flex: 4;
 }
 
+.right-narrow {
+    flex: 2
+}
+
 #map {
     width: 100%;
     height: 100%;

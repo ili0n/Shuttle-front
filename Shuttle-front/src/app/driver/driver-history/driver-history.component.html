@@ -41,12 +41,8 @@
             <div id="map" class="mat-elevation-z3" #leafletMap></div>
         </div>
         <div class="height-30 flex">
-
-            <div class="left pad mat-elevation-z3 flex-hor margin">
+            <div class="pad mat-elevation-z3 flex-hor margin">
                 <span class="text-regular"><span class=text-thin>Status: </span>{{ getSelectedRideStatus() }}</span>
-            </div>
-
-            <div class="right pad mat-elevation-z3 flex-hor margin">
                 <div class="text-regular"><span class=text-thin>From: </span>{{ getSelectedRideDeparture() }}</div>
                 <div class="text-regular"><span class=text-thin>To: </span>{{ getSelectedRideDestination() }}</div>
                 <div class="text-regular"><span class=text-thin>Vehicle type: </span>{{ getSelectedRideVehicleType() }}
@@ -61,16 +57,12 @@
                 <span *ngIf="getSelectedRidePet(); else elseBlock"><mat-icon>check</mat-icon></span>
                 <ng-template #elseBlock><mat-icon>close</mat-icon></ng-template>
                 <br />
-
-                <hr />
-                <button class="align-right" mat-raised-button color="primary" (click)="orderAgain()">Order
-                    again</button>
             </div>
 
         </div>
     </div>
 
-    <div class="column right scrollable passengers-card">
+    <div class="column right-narrow scrollable passengers-card">
         <h2>Passengers</h2>
         <hr/>
         <mat-accordion *ngFor="let p of getSelectedRidePassengers()">
