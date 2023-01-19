@@ -6,15 +6,8 @@
             </div>
         </ng-container>
         <ng-container *ngIf="hasRides()">
-            <table 
-                mat-table 
-                [dataSource]='dataSource' 
-                class="mat-elevation-z3" 
-                matSort 
-                (matSortChange)="onSortChange($event)"
-                matSortActive="startTime"
-                matSortDirection="desc"
-                >
+            <table mat-table [dataSource]='dataSource' class="mat-elevation-z3" matSort
+                (matSortChange)="onSortChange($event)" matSortActive="startTime" matSortDirection="desc">
                 <ng-container matColumnDef="id">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>
                     <td mat-cell *matCellDef="let element"> {{ element.id }} </td>
@@ -31,22 +24,15 @@
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>End</th>
                     <td mat-cell *matCellDef="let element"> {{ element.endTime | date:'medium' }} </td>
                 </ng-container>
-            
+
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr 
-                    (click)="onRideSelected(row)"
-                    [class.row-selected]="isSelected(row)"
-                    mat-row 
+                <tr (click)="onRideSelected(row)" [class.row-selected]="isSelected(row)" mat-row
                     *matRowDef="let row; columns: displayedColumns;">
                 </tr>
             </table>
-            <br/>
-            <mat-paginator 
-                (page)="onPageChange($event)"
-                [pageSizeOptions]="[10]"
-                [length]="ridesTotal"
-                [pageIndex]="page"
-                showFirstLastButtons>
+            <br />
+            <mat-paginator (page)="onPageChange($event)" [pageSizeOptions]="[10]" [length]="ridesTotal"
+                [pageIndex]="page" showFirstLastButtons>
             </mat-paginator>
         </ng-container>
     </div>
@@ -57,55 +43,47 @@
         <div class="height-30 flex">
 
             <div class="left pad mat-elevation-z3 flex-hor margin">
-                <div class="flex">
-                    <span class="left">
-                        <div class="text-regular"><span class=text-thin>Driver: </span>{{ getSelectedRideDriverName() }}</div>
-                        <span class="text-regular"><span class=text-thin>Status: </span>{{ getSelectedRideStatus() }}</span>
-                    </span>
-                    <span class="right">
-                        <button class="align-right" mat-fab color="warn" aria-label="Example icon button with a home icon" (click)="toggleSelectedRideIsFavorite()">
-                            <mat-icon *ngIf="selectedRideIsFavorite()">favorite</mat-icon>
-                            <mat-icon *ngIf="!selectedRideIsFavorite()">favorite_border</mat-icon>
-                        </button>
-                    </span>
-                </div>
-                <hr/>
-                <br/>
-                <span *ngIf="tooLateToRateRide()">
-                    You cannot rate this ride.
-                </span>
-                <span *ngIf="!tooLateToRateRide()">
-                    <div class="text-regular text-thin">Vehicle rating:</div>
-                    <div class="text-regular text-thin">Driver rating:</div>
-                    <br/>
-                    <span *ngIf="isRideRated()">
-                        <button mat-raised-button color="primary" (click)="viewRating()">View your rating</button>
-                    </span>
-                    <span *ngIf="canRateRide()">
-                        <button mat-raised-button color="primary" (click)="leaveRating()">Leave a rating</button>
-                    </span>
-                </span>
+                <span class="text-regular"><span class=text-thin>Status: </span>{{ getSelectedRideStatus() }}</span>
             </div>
 
             <div class="right pad mat-elevation-z3 flex-hor margin">
                 <div class="text-regular"><span class=text-thin>From: </span>{{ getSelectedRideDeparture() }}</div>
                 <div class="text-regular"><span class=text-thin>To: </span>{{ getSelectedRideDestination() }}</div>
-                <div class="text-regular"><span class=text-thin>Vehicle type: </span>{{ getSelectedRideVehicleType() }}</div>
+                <div class="text-regular"><span class=text-thin>Vehicle type: </span>{{ getSelectedRideVehicleType() }}
+                </div>
 
                 <span class="text-regular text-thin">Baby: </span>
                 <span *ngIf="getSelectedRideBaby(); else elseBlock"><mat-icon>check</mat-icon></span>
                 <ng-template #elseBlock><mat-icon>close</mat-icon></ng-template>
-                <br/>
+                <br />
 
                 <span class="text-regular text-thin">Pet: </span>
                 <span *ngIf="getSelectedRidePet(); else elseBlock"><mat-icon>check</mat-icon></span>
                 <ng-template #elseBlock><mat-icon>close</mat-icon></ng-template>
-                <br/>
+                <br />
 
-                <hr/>
-                <button class="align-right" mat-raised-button color="primary" (click)="orderAgain()">Order again</button>
+                <hr />
+                <button class="align-right" mat-raised-button color="primary" (click)="orderAgain()">Order
+                    again</button>
             </div>
 
         </div>
+    </div>
+
+    <div class="column right scrollable">
+
+        *ngFor="let item of list"
+
+        <mat-accordion>
+            <mat-expansion-panel hideToggle>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Passenger name</mat-panel-title>
+                    <mat-panel-description>Rating</mat-panel-description>
+                </mat-expansion-panel-header>
+                <div>
+                    This is the full rating.
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
     </div>
 </div>

@@ -41,7 +41,7 @@ export class DriverHistoryComponent {
     ) {}
 
     ngOnInit(): void {
-        this.passengerService.getRides(this.authService.getUserId()).subscribe({
+        this.driverService.getRides(this.authService.getUserId()).subscribe({
             next: (result: RideListDTO) => {
                 this.onRidesFetch(result);
                 this.ridesTotal = result.totalCount;
