@@ -288,6 +288,12 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
             this.ride = r;
             this.recalculateRouteFromRideIfNoneFound();
         } else if ([RideStatus.Canceled, RideStatus.Finished, RideStatus.Rejected].includes(r.status)) {
+            this.ride = r; // No need for this since it'll be null by the end of this block, but it
+            // makes the code a bit more tidy since it's consistent in using this.ride instead of r.
+
+            
+
+
             this.ride = null;
             this.clearRoute();
         }
