@@ -1,3 +1,4 @@
+import { query } from '@angular/animations';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -37,10 +38,18 @@ export class PassengerService {
             observe: "body",
             responseType: "json",
         });
-    }//?page=${page}&size=${count}
+    }
 
-    public getRides(passengerId: number, page: number | null = null, count: number | null = null): Observable<RideListDTO> {
-        return this.httpClient.get<RideListDTO>(`${this.url}/${passengerId}/ride`, {
+    public getRides(passengerId: number, sort: string | null = null, dir: string | null = null): Observable<RideListDTO> {
+        let queryParams = "";
+        if (sort != null) {
+            if (dir != null && dir == "desc") {
+                queryParams = queryParams + "sort=" + sort + ",desc";
+            } else {
+                queryParams = queryParams + "sort=" + sort;
+            }
+        }
+        return this.httpClient.get<RideListDTO>(`${this.url}/${passengerId}/ride?${queryParams}`, {
             observe: "body",
             responseType: "json"
         });

@@ -1,6 +1,7 @@
 import { ListKeyManager } from '@angular/cdk/a11y';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as L from 'leaflet';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -18,14 +19,16 @@ import { PassengerService } from '../passenger.service';
 export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnInit {
     protected dataSource: MatTableDataSource<Ride> = new MatTableDataSource();
     @ViewChild(MatPaginator) paginator!: MatPaginator;
+    @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
-    protected displayedColumns: string[] = ['number', 'route', 'startTime', 'endTime'];
+    protected displayedColumns: string[] = ['id', 'route', 'startTime', 'endTime'];
     private selectedRide: Ride | null = null;
     private selectedRideDriver: User | null = null;
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
     protected ridesTotal: number = 0;
     protected page: number = 0;
+    protected count: number = 0;
 
     @ViewChild('leafletMap')
     private mapElement!: ElementRef;
@@ -50,7 +53,6 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
 
     ngAfterViewInit(): void {
         this.initMap("map");
-        this.dataSource.paginator = this.paginator;
     }
 
     ngOnDestroy(): void {
@@ -151,13 +153,14 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
     private onRidesFetch(rides: RideListDTO) {
         this.dataSource = new MatTableDataSource<Ride>(rides.results);
         this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
     }
 
     protected onPageChange(event: PageEvent) {
         const page: number = event.pageIndex;
         const count: number = event.pageSize;
 
-        this.passengerService.getRides(this.authService.getUserId(), page, count).subscribe({
+        this.passengerService.getRides(this.authService.getUserId()).subscribe({
             next: (result: RideListDTO) => {
                 this.onRidesFetch(result);
             },
@@ -167,7 +170,21 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
         });
 
         this.page = page;
-        this.selectFirstRideInPage();
+        this.count = count;
+    }
+
+    protected onSortChange(event: Sort): void {
+        const field: string = event.active;
+        const dir: string = event.direction;
+
+        this.passengerService.getRides(this.authService.getUserId(), field, dir).subscribe({
+            next: (result: RideListDTO) => {
+                this.onRidesFetch(result);
+            },
+            error: (error) => {
+                console.log(error);
+            }
+        });
     }
 
     private selectFirstRideInPage(): void {

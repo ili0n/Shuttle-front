@@ -6,21 +6,29 @@
             </div>
         </ng-container>
         <ng-container *ngIf="hasRides()">
-            <table mat-table [dataSource]='dataSource' class="mat-elevation-z3">
-                <ng-container matColumnDef="number">
-                    <th mat-header-cell *matHeaderCellDef>No.</th>
+            <table 
+                mat-table 
+                [dataSource]='dataSource' 
+                class="mat-elevation-z3" 
+                matSort 
+                (matSortChange)="onSortChange($event)"
+                matSortActive="startTime"
+                matSortDirection="desc"
+                >
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>
                     <td mat-cell *matCellDef="let element"> {{ element.id }} </td>
                 </ng-container>
                 <ng-container matColumnDef="route">
-                    <th mat-header-cell *matHeaderCellDef>Route</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Route</th>
                     <td mat-cell *matCellDef="let element"> {{ getFieldRoute(element) }} </td>
                 </ng-container>
                 <ng-container matColumnDef="startTime">
-                    <th mat-header-cell *matHeaderCellDef>Start</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Start</th>
                     <td mat-cell *matCellDef="let element"> {{ element.startTime | date:'medium' }} </td>
                 </ng-container>
                 <ng-container matColumnDef="endTime">
-                    <th mat-header-cell *matHeaderCellDef>End</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>End</th>
                     <td mat-cell *matCellDef="let element"> {{ element.endTime | date:'medium' }} </td>
                 </ng-container>
             
