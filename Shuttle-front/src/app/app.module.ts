@@ -33,6 +33,7 @@ import { RideModule } from './ride/ride.module';
 import { RidePanicDialogComponent } from './ride/ride-panic-dialog/ride-panic-dialog.component';
 import { DriverHomeCurrentRideComponent } from './driver/driver-home/driver-home-current-ride/driver-home-current-ride.component';
 import { Interceptor } from './auth/interceptor/login.interceptor';
+import { DriverHistoryComponent } from './driver/driver-history/driver-history.component';
 
 @NgModule({
     declarations: [
@@ -50,6 +51,7 @@ import { Interceptor } from './auth/interceptor/login.interceptor';
         LoginComponent,
         SnackbarComponent,
         DriverHomeCurrentRideComponent,
+        DriverHistoryComponent,
     ],
     imports: [
         BrowserModule,
