@@ -1,0 +1,61 @@
+<div class="row">
+    <div class="column left flex-vertical">
+        <app-admin-history-user-table
+            class="flex-1"
+            (selectedUserEvent)="onChangeSelectedUser($event)">
+        </app-admin-history-user-table>
+
+        <app-admin-history-ride-table
+            class="flex-1"
+            [user]="selectedUser"
+            (selectedRideEvent)="onChangeSelectedRide($event)">
+        </app-admin-history-ride-table>
+
+    </div>
+    <div class="column right">
+        <div class="height-70">
+            <div id="map" class="mat-elevation-z3" #leafletMap></div>
+        </div>
+        <div class="height-30 flex">
+            <div class="pad mat-elevation-z3 flex-hor margin">
+                <span class="text-regular"><span class=text-thin>Status: </span>{{ getSelectedRideStatus() }}</span>
+                <div class="text-regular"><span class=text-thin>From: </span>{{ getSelectedRideDeparture() }}</div>
+                <div class="text-regular"><span class=text-thin>To: </span>{{ getSelectedRideDestination() }}</div>
+                <div class="text-regular"><span class=text-thin>Vehicle type: </span>{{ getSelectedRideVehicleType() }}
+                </div>
+
+                <span class="text-regular text-thin">Baby: </span>
+                <span *ngIf="getSelectedRideBaby(); else elseBlock"><mat-icon>check</mat-icon></span>
+                <ng-template #elseBlock><mat-icon>close</mat-icon></ng-template>
+                <br />
+
+                <span class="text-regular text-thin">Pet: </span>
+                <span *ngIf="getSelectedRidePet(); else elseBlock"><mat-icon>check</mat-icon></span>
+                <ng-template #elseBlock><mat-icon>close</mat-icon></ng-template>
+                <br />
+            </div>
+
+        </div>
+    </div>
+
+    <div class="column right-narrow scrollable passengers-card">
+        <h2>Passengers</h2>
+        <hr/>
+        <mat-accordion *ngFor="let p of getSelectedRidePassengers()">
+            <mat-expansion-panel hideToggle class="passenger-card">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>{{p.passenger.name}} {{p.passenger.surname}}</mat-panel-title>
+                    <mat-panel-description>{{p.passenger.email}}</mat-panel-description>
+                </mat-expansion-panel-header>
+                <div *ngIf="p.reviews != undefined">
+                    {{ p.reviews.vehicleReview }}
+
+                    {{ p.reviews.rideReview }}
+                </div>
+                <div *ngIf="p.reviews == undefined">
+                    {{p.passenger.name}} did not leave a review.
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+</div>

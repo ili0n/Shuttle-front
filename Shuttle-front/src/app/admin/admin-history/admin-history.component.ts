@@ -1,4 +1,3 @@
-import { ReadPropExpr } from '@angular/compiler';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -6,24 +5,20 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import * as L from 'leaflet';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PassengerWithRideReview } from 'src/app/driver/driver-history/driver-history.component';
+import { DriverService } from 'src/app/driver/driver.service';
 import { RideOrderAgain } from 'src/app/passenger/passenger-history/passenger-history.component';
 import { PassengerService } from 'src/app/passenger/passenger.service';
 import { ReviewPairDTO, ReviewService } from 'src/app/review/review.service';
 import { Ride, RideListDTO, RideStatus } from 'src/app/ride/ride.service';
 import { User } from 'src/app/services/register/register.service';
-import { DriverService } from '../driver.service';
-
-export interface PassengerWithRideReview {
-    passenger: User,
-    reviews: ReviewPairDTO | undefined
-}
 
 @Component({
-  selector: 'app-driver-history',
-  templateUrl: './driver-history.component.html',
-  styleUrls: ['./driver-history.component.css']
+  selector: 'app-admin-history',
+  templateUrl: './admin-history.component.html',
+  styleUrls: ['./admin-history.component.css']
 })
-export class DriverHistoryComponent {
+export class AdminHistoryComponent {
     protected dataSource: MatTableDataSource<Ride> = new MatTableDataSource();
     @ViewChild(MatPaginator) paginator!: MatPaginator;
     @ViewChild(MatSort, {static: true}) sort!: MatSort;
@@ -38,6 +33,16 @@ export class DriverHistoryComponent {
     protected ridesTotal: number = 0;
     protected page: number = 0;
     protected count: number = 0;
+
+    protected selectedUser: User | null = null; 
+    protected onChangeSelectedUser(user: User) {
+        this.selectedUser = user;
+    }
+
+    protected onChangeSelectedRide(ride: Ride) {
+        this.selectedRide = ride;
+        this.onRideSelected(this.selectedRide);
+    }
 
     @ViewChild('leafletMap')
     private mapElement!: ElementRef;

@@ -14,6 +14,7 @@ import { UserGuard } from 'src/app/auth/guard/user.guard';
 import { PassengerHomeComponent } from 'src/app/passenger/passenger-home/passenger-home.component';
 import { PassengerHistoryComponent } from 'src/app/passenger/passenger-history/passenger-history.component';
 import { DriverHistoryComponent } from 'src/app/driver/driver-history/driver-history.component';
+import { AdminHistoryComponent } from 'src/app/admin/admin-history/admin-history.component';
 
 const routes: Routes = [
 	{path: "login",
@@ -32,6 +33,7 @@ const routes: Routes = [
   {path: 'driver/history', component: DriverHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
   
   {path: "admin/create-driver", component: CreateDriverComponent , canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  {path: 'admin/history', component: AdminHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
 
   {path: 'passenger/home', component: PassengerHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
   {path: 'passenger/history', component: PassengerHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
