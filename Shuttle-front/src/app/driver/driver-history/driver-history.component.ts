@@ -33,13 +33,14 @@ export class DriverHistoryComponent {
     }
 
     protected onChangeSelectedRide(ride: Ride) {
-        this.selectedRide = ride;
-        this.onRideSelected(this.selectedRide);
+        this.onRideSelected(ride);
     }
     
     protected onRideSelected(row: Ride): void {
-        this.selectedRide = row;
-        this.drawRouteFrom(this.selectedRide);
+        if (this.selectedRide != row) {
+            this.selectedRide = row;
+            this.drawRouteFrom(this.selectedRide);
+        }
     }
 
     private initMap(id: string): void {
