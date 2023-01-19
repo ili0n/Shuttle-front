@@ -1,0 +1,18 @@
+<h2>Passengers</h2>
+<hr/>
+<mat-accordion *ngFor="let p of getSelectedRidePassengers()">
+    <mat-expansion-panel hideToggle class="passenger-card">
+        <mat-expansion-panel-header>
+            <mat-panel-title>{{p.passenger.name}} {{p.passenger.surname}}</mat-panel-title>
+            <mat-panel-description>{{p.passenger.email}}</mat-panel-description>
+        </mat-expansion-panel-header>
+        <div *ngIf="p.reviews != undefined">
+            {{ p.reviews.vehicleReview }}
+
+            {{ p.reviews.rideReview }}
+        </div>
+        <div *ngIf="p.reviews == undefined">
+            {{p.passenger.name}} did not leave a review.
+        </div>
+    </mat-expansion-panel>
+</mat-accordion>

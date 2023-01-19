@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
@@ -19,6 +19,8 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
     private iconVanAvailable!: L.Icon;
     private iconVanBusy!: L.Icon;
 
+    @ViewChild('leafletMap')
+    private mapElement!: ElementRef;
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
     private carLayer!: L.LayerGroup;
@@ -67,7 +69,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
     /******************************************** Map ********************************************/
 
     private initMap(id: string): void {
-        this.map = L.map(id, {center: [45.2396, 19.8227], zoom: 13 });
+        this.map = L.map(this.mapElement.nativeElement, {center: [45.2396, 19.8227], zoom: 13 });
         const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18, minZoom: 3,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -254,7 +256,6 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
     }
 
     protected onRideStart(): void {
-        console.log("QQ1", "RIDE START");
         if (!this.ride) {
             return;
         }

@@ -101,9 +101,9 @@ export class PassengerCurrentRideComponent implements OnInit {
 
     private onFetchVehicleLocations(value: Array<VehicleLocationDTO>): void {
         for (let v of value) {
-            console.log(v.id, this.vehicleID);
+            //console.log(v.id, this.vehicleID);
             if (v.id == this.vehicleID) {
-                console.log("B");
+                //console.log("B");
                 this.getDriverArrivalTimeEst(v.location);
             }
         }

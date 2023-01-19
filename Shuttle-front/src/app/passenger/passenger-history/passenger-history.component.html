@@ -1,0 +1,25 @@
+<div class="row">
+    <div class="column left">
+        <app-passenger-history-ride-table
+            class="flex-1"
+            (selectedRideEvent)="onChangeSelectedRide($event)">
+        </app-passenger-history-ride-table>
+    </div>
+    <div class="column right">
+        <div class="height-70">
+            <div id="map" class="mat-elevation-z3" #leafletMap></div>
+        </div>
+        <div class="height-30 flex">
+            <div class="pad mat-elevation-z3 flex-hor margin">
+                <app-passenger-history-ride-details
+                    [ride]="selectedRide">
+                </app-passenger-history-ride-details>
+            </div>
+            <div class="right pad mat-elevation-z3 flex-hor margin">
+                <app-passenger-history-ride-rate 
+                    [ride]="selectedRide">
+                </app-passenger-history-ride-rate>
+            </div>
+        </div>
+    </div>
+</div>

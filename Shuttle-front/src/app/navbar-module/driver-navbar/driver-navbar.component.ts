@@ -89,4 +89,8 @@ export class DriverNavbarComponent implements OnInit {
     info() {
         this.router.navigate(["driver/info"]);
     }
+
+    history() {
+        this.router.navigate(["driver/history"]);
+    }
 }

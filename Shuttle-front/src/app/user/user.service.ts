@@ -2,10 +2,17 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Passenger } from '../passenger/passenger.service';
+import { RideListDTO } from '../ride/ride.service';
 
 export interface UserIdEmail {
     id: number;
     email: string;
+}
+
+export interface ListUserDTO {
+    totalCount: number;
+    results: Array<Passenger>; // TODO: Same interface different name.
 }
 
 @Injectable({
@@ -34,5 +41,19 @@ export class UserService {
             observe: "body",
             responseType: "json",
         });
+    }
+
+    public get(): Observable<ListUserDTO> {
+        return this.httpClient.get<ListUserDTO>(`${this.url}`, {
+            observe: "body",
+            responseType: "json",
+        });
+    }
+
+    public getRides(userId: number): Observable<RideListDTO> {
+        return this.httpClient.get<RideListDTO>(`${this.url}/${userId}/ride`, {
+            observe: "body",
+            responseType: "json",
+        });     
     }
 }
