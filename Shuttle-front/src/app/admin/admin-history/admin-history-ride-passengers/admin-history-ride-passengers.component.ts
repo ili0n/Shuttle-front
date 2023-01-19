@@ -21,15 +21,18 @@ export class AdminHistoryRidePassengersComponent implements OnChanges {
     
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['ride']) {
-            this.fetchReviewsAndThenPassengerData(this.ride!);
+            this.fetchReviewsAndThenPassengerData();
         }
     }
 
-    private fetchReviewsAndThenPassengerData(ride: Ride): void {
-        this.reviewService.findByRide(ride.id).subscribe({
+    private fetchReviewsAndThenPassengerData(): void {
+        if (this.ride == null) {
+            return;
+        }
+        this.reviewService.findByRide(this.ride.id).subscribe({
             next: (reviews) => {
                 this.reviews = reviews;
-                this.fetchPassengerData(ride);
+                this.fetchPassengerData(this.ride!);
             },
             error: (error) => {
                 console.error(error);

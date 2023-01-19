@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Ride, RideListDTO } from 'src/app/ride/ride.service';
 import { User } from 'src/app/services/register/register.service';
@@ -43,22 +43,15 @@ export class AdminHistoryRideTableComponent implements OnChanges {
     protected isRideSelected(ride: Ride): boolean {
         return this.selectedRide == ride;
     }
-
-    protected onPageChange(page: PageEvent): void {
-
-    }
-
-    protected onSortChange(sort: Sort): void {
-
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
+    
     protected hasRides(): boolean {
         return true;
     }
 
     private fetchUserRides(): void {
+        if (this.user == null) {
+            return;
+        }
         this.userService.getRides(this.user!.id).subscribe({
             next: (rides) => this.onFetchUserRides(rides),
             error: (err) => console.error(err),

@@ -17,12 +17,15 @@ export class AdminHistoryRideDetailsComponent implements OnChanges {
     ) {}
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['ride']) [
+        if (changes['ride']) {
+            if (this.ride == null) {
+                return;
+            }
             this.driverService.get(this.ride!.driver.id).subscribe({
                 next: (driver) => { this.driver = driver; },
                 error: (err) => { console.log(err); },
             })
-        ]
+        }
     }
 
     protected getRideDriverName(): string {

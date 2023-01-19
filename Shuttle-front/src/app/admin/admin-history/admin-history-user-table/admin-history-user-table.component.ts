@@ -15,14 +15,9 @@ export class AdminHistoryUserTableComponent implements OnInit {
     protected userDisplayedColumns = ["id", "name", "role"];
     protected usersTotal: number = 123;
     @Output() protected selectedUserEvent: EventEmitter<User> = new EventEmitter();
-    private selectedUser: User | null = null; // Used internally for isUserSelected().
-
+    private selectedUser: User | null = null;
     protected page: number = 0;
     @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-    protected onPageChange(page: PageEvent): void {
-
-    }
 
     protected onUserSelected(user: User): void {
         this.selectedUserEvent.emit(user);
@@ -33,9 +28,9 @@ export class AdminHistoryUserTableComponent implements OnInit {
         return this.selectedUser == user;
     }
 
-    constructor(
-        private userService: UserService
-    ) {}
+    constructor(private userService: UserService) {
+
+    }
 
     ngOnInit(): void {
         this.userService.get().subscribe({
