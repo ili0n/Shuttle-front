@@ -108,6 +108,23 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
         return this.selectedRide.status;    
     }
 
+    protected selectedRideIsFavorite(): boolean {
+        if (this.selectedRide == null) {
+            return false;
+        }
+
+        // TODO
+        return true;
+    }
+
+    protected toggleSelectedRideIsFavorite(): void {
+        if (this.selectedRide == null) {
+            return;
+        }
+        
+        // TODO
+    }
+
     protected isRideRated(): boolean {
         return false;
     }
@@ -132,25 +149,17 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
     }
     
     private onRidesFetch(rides: RideListDTO) {
-        //this.dataSource.data = rides.results;
         this.dataSource = new MatTableDataSource<Ride>(rides.results);
         this.dataSource.paginator = this.paginator;
-
-        if (this.hasRides()) {
-            this.onRideSelected(this.dataSource.data[0]);
-        } 
     }
 
     protected onPageChange(event: PageEvent) {
-        console.log(event);
-
         const page: number = event.pageIndex;
         const count: number = event.pageSize;
 
         this.passengerService.getRides(this.authService.getUserId(), page, count).subscribe({
             next: (result: RideListDTO) => {
                 this.onRidesFetch(result);
-                console.log(result);
             },
             error: (error) => {
                 console.log(error);
@@ -158,6 +167,13 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
         });
 
         this.page = page;
+        this.selectFirstRideInPage();
+    }
+
+    private selectFirstRideInPage(): void {
+        if (this.hasRides()) {
+            this.onRideSelected(this.dataSource.data[0]);
+        } 
     }
 
     private initMap(id: string): void {
