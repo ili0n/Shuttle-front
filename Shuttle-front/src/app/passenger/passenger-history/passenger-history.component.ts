@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } fr
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import * as L from 'leaflet';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DriverService } from 'src/app/driver/driver.service';
@@ -10,6 +11,14 @@ import { Ride, RideListDTO, RideStatus } from 'src/app/ride/ride.service';
 import { User } from 'src/app/services/register/register.service';
 import { UserService } from 'src/app/user/user.service';
 import { PassengerService } from '../passenger.service';
+
+export interface RideOrderAgain {
+    baby: boolean,
+    pet: boolean,
+    vehicle: String,
+    dep: String,
+    dest: String,
+}
 
 @Component({
   selector: 'app-passenger-history',
@@ -37,6 +46,7 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
         private authService: AuthService,
         private passengerService: PassengerService,
         private driverService: DriverService,
+        private router: Router,
     ) {}
 
     ngOnInit(): void {
@@ -281,6 +291,22 @@ export class PassengerHistoryComponent implements AfterViewInit, OnDestroy, OnIn
     }
 
     protected orderAgain(): void {
-        console.log("orderAgain");
+        if (this.selectedRide == null) {
+            return;
+        }
+        console.log(this.selectedRide);
+
+        const params: RideOrderAgain = {
+            baby: this.selectedRide.babyTransport,
+            pet: this.selectedRide.petTransport,
+            vehicle: this.selectedRide.vehicleType,
+            dep: this.selectedRide.locations[0].departure.address,
+            dest: this.selectedRide.locations.at(-1)!.destination.address
+        }
+
+        this.router.navigate(
+            ['passenger/home'],
+            { queryParams: params }
+        );
     }
 }

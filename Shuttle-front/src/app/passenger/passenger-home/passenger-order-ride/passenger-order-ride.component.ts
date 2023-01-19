@@ -1,11 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors, FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PassengerService } from 'src/app/passenger/passenger.service';
 import { RideRequest } from 'src/app/ride/ride.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { UserIdEmail } from 'src/app/user/user.service';
 import { VehicleService, VehicleType } from 'src/app/vehicle/vehicle.service';
+import { RideOrderAgain } from '../../passenger-history/passenger-history.component';
 
 export interface RecalculateRouteDTO {
     departure: string,
@@ -38,7 +40,8 @@ export class PassengerOrderRideComponent implements OnInit {
                 private vehicleService: VehicleService,
                 private authService: AuthService,
                 private sharedService: SharedService,
-                private passengerService: PassengerService) {
+                private passengerService: PassengerService,
+                private route: ActivatedRoute) {
         this.initMainForm();
         this.initAllowedTime();
     }
@@ -47,6 +50,15 @@ export class PassengerOrderRideComponent implements OnInit {
         this.vehicleService.getTypes().subscribe({
             next: res => {
                 this.vehicleTypes = res;
+            }
+        });
+
+        this.route.queryParams.subscribe({
+            next: (params) => {
+                this.fromRouterParams(params as RideOrderAgain);
+            },
+            error: (error) => {
+                console.error(error);
             }
         });
     }
@@ -88,6 +100,17 @@ export class PassengerOrderRideComponent implements OnInit {
         this.mainForm.get('route_options_form')?.setValidators(
            PassengerOrderRideComponent.goodTimeValidator()
         );
+    }
+    
+    private fromRouterParams(params: RideOrderAgain) {
+        console.log(params);
+
+        this.mainForm.get('route_form.departure')?.setValue(params.dep);
+        this.mainForm.get('route_form.destination')?.setValue(params.dest);
+        this.mainForm.get('route_options_form.vehicle_type')?.setValue(params.vehicle);
+        this.mainForm.get('route_options_form.babies')?.setValue(params.baby);
+        this.mainForm.get('route_options_form.pets')?.setValue(params.pet);
+        this.recalculateRoute();
     }
 
     /**
@@ -229,7 +252,6 @@ export class PassengerOrderRideComponent implements OnInit {
         if (vehicleType) {
             const vehicleTypeCost: number = this.vehicleTypes.filter(t => t.name == vehicleType)[0].pricePerKM;
             const price = (kmInt * (120 + vehicleTypeCost));
-            //console.log(vehicleTypeCost, 120 + vehicleTypeCost, price);
             return price.toString() + " RSD";
         } else {
             return "? RSD";
