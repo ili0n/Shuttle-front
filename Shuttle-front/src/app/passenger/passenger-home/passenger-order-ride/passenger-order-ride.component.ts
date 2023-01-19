@@ -103,13 +103,21 @@ export class PassengerOrderRideComponent implements OnInit {
     }
     
     private fromRouterParams(params: RideOrderAgain) {
-        console.log(params);
-
-        this.mainForm.get('route_form.departure')?.setValue(params.dep);
-        this.mainForm.get('route_form.destination')?.setValue(params.dest);
-        this.mainForm.get('route_options_form.vehicle_type')?.setValue(params.vehicle);
-        this.mainForm.get('route_options_form.babies')?.setValue(params.baby);
-        this.mainForm.get('route_options_form.pets')?.setValue(params.pet);
+        if (params.dep) {
+            this.mainForm.get('route_form.departure')?.setValue(params.dep);
+        }
+        if (params.dest) {
+            this.mainForm.get('route_form.destination')?.setValue(params.dest);
+        }
+        if (params.vehicle) {
+            this.mainForm.get('route_options_form.vehicle_type')?.setValue(params.vehicle);
+        }
+        if (params.baby) {
+            this.mainForm.get('route_options_form.babies')?.setValue(params.baby);
+        }
+        if (params.pet) {
+            this.mainForm.get('route_options_form.pets')?.setValue(params.pet);
+        }
         this.recalculateRoute();
     }
 
