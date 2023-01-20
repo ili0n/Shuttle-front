@@ -32,6 +32,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private rideSub: Stomp.Subscription | null = null;
     private locationSub: Stomp.Subscription | null = null;
+    private activeSub: Stomp.Subscription | null = null;
 
     /****************************************** General ******************************************/
 
@@ -42,23 +43,30 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.ride = null;
-        this.subscribeToSocketSubjects();
-
         this.driverSocketService.onConnectedToSocket().subscribe({
-            next: () => {
-                this.onConnectedToSocket();
+            next: (val: boolean) => {
+                if (val) {
+                    this.onConnectedToSocket();
+                }
             }
         });
 
-        if (this.driverSocketService.isConnectedToSocket()) {
-            this.onConnectedToSocket();
-        }
+        /*
+        When changing components (e.g. through the navbar), the socket connection stays the same,
+        since it's made in DriverSocketService's c-tor. But this component doesn't know that, so
+        it won't do anything (instead of calling onConnectedToSocket() where all subscriptions are
+        made and the backend is pinged to fetch ride data). 
+        UPDATE: No need for this if we're using BehaviourSubject instead of Subject.
+        */
+        // if (this.driverSocketService.isConnectedToSocket()) {
+        //     this.onConnectedToSocket();
+        // }
     }
 
     ngOnDestroy(): void {
         this.rideSub?.unsubscribe();
         this.locationSub?.unsubscribe();
+        this.activeSub?.unsubscribe();
     }
     
     ngAfterViewInit(): void {

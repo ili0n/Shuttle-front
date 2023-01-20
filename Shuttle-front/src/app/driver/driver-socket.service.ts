@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth/auth.service';
 import { VehicleLocationDTO } from '../vehicle/vehicle.service';
@@ -12,7 +12,7 @@ import { Ride } from '../ride/ride.service';
 })
 export class DriverSocketService {
     private stompClient: Stomp.Client | undefined = undefined;
-    private connectedToSocketSubject: Subject<void> = new Subject();
+    private connectedToSocketSubject: BehaviorSubject<boolean> = new BehaviorSubject(false);
     private connectedToSocketObs = this.connectedToSocketSubject.asObservable();
     private isConnected: boolean = false;
 
@@ -20,7 +20,7 @@ export class DriverSocketService {
         return this.isConnected;
     }
 
-    public onConnectedToSocket(): Observable<void> {
+    public onConnectedToSocket(): Observable<boolean> {
         return this.connectedToSocketObs;
     }
 
@@ -61,7 +61,7 @@ export class DriverSocketService {
         this.stompClient.debug = () => {};
         let self = this;
         this.stompClient.connect({}, () => {
-            self.connectedToSocketSubject.next();
+            self.connectedToSocketSubject.next(true);
             this.isConnected = true;
         });
     }
