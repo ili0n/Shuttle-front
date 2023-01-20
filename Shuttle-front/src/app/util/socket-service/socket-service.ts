@@ -1,7 +1,6 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
-import { AuthService } from 'src/app/auth/auth.service';
 import { environment } from 'src/environments/environment';
 
 export class SocketService {
@@ -12,12 +11,6 @@ export class SocketService {
     public onConnectedToSocket(): Observable<boolean> {
         return this.connectedToSocketObs;
     }
-
-    //constructor(private authService: AuthService) { 
-        //this.connectToSocket('socket');
-    //}
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     protected connectToSocket(stompEndpoint: string) {
         let ws = new SockJS(environment.serverOrigin + stompEndpoint);

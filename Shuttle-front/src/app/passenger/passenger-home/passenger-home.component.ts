@@ -2,6 +2,7 @@ import { HttpStatusCode } from "@angular/common/http";
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import * as L from "leaflet";
+import * as Stomp from 'stompjs';
 import { Message, MessageService } from "src/app/message/message.service";
 import { NavbarService } from "src/app/navbar-module/navbar.service";
 import { ReviewService } from "src/app/review/review.service";
@@ -11,6 +12,7 @@ import { MapEstimationService } from "src/app/services/map/map-estimation.servic
 import { RESTError } from "src/app/shared/rest-error/rest-error";
 import { SharedService } from "src/app/shared/shared.service";
 import { VehicleLocationDTO } from "src/app/vehicle/vehicle.service";
+import { PassengerSocketService } from "../passenger-socket.service";
 import { RecalculateRouteDTO } from "./passenger-order-ride/passenger-order-ride.component";
 
 @Component({
@@ -45,6 +47,8 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
 
     protected ride: Ride | null = null;
 
+    private rideSub: Stomp.Subscription | null = null;
+    private vehiclesSub: Stomp.Subscription | null = null;
 
     /************************************ General methods ****************************************/
 
@@ -54,11 +58,18 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
                 private navbarService: NavbarService,
                 private messageService: MessageService,
                 private dialog: MatDialog,
-                private reviewService: ReviewService) {
+                private reviewService: ReviewService,
+                private passengerSocketService: PassengerSocketService) {
     }
 
     ngOnInit(): void {
-        this.subscribeToSocketSubjects();
+        this.passengerSocketService.onConnectedToSocket().subscribe({
+            next: (val: boolean) => {
+                if (val) {
+                    this.onConnectedToSocket();
+                }
+            }
+        });
     }
 
     ngAfterViewInit(): void {
@@ -70,6 +81,25 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
         if (this.map) {
             this.map = this.map.remove();
         }
+
+        this.rideSub?.unsubscribe();
+        this.vehiclesSub?.unsubscribe();
+    }
+
+    private onConnectedToSocket() {
+        if (this.rideSub == null) {
+            this.rideSub = this.passengerSocketService.subToRide((r: Ride) => {
+                this.onFetchRide(r);
+            });
+        }
+
+        if (this.vehiclesSub == null) {
+            this.vehiclesSub = this.passengerSocketService.subToVehicleLocations((l : Array<VehicleLocationDTO>) => {
+                this.onFetchVehicleLocations(l);
+            });
+        }
+
+        this.passengerSocketService.pingRide();
     }
 
     /************************************ Form methods *******************************************/
@@ -222,7 +252,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
         ]
         
         for (let carLocation of locations) {
-            // -1 because IDs go from 1.
+            // - 1 because IDs go from 1.
             const ico = icon_map[carLocation.available ? 0 : 1][carLocation.vehicleTypeId - 1]; 
 
             markers.push(L.marker(
@@ -244,7 +274,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
     protected orderRide(data: RideRequest): void {
         this.rideService.request(data).subscribe({
             next: () => {
-                this.navbarService.passengerRequestToFetchRide();
+                this.passengerSocketService.pingRide();
             },
             error: (err) => {
                 if (err.status == HttpStatusCode.BadRequest) {
@@ -253,27 +283,6 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
                 }
             }
         });
-    }
-
-    private subscribeToSocketSubjects(): void {
-        this.navbarService.getRidePassenger().subscribe({
-            next: (value: Ride) => this.onFetchRide(value),
-            error: (error) => console.log(error)
-        })
-
-        this.navbarService.getVehicleLocations().subscribe({
-            next: (value: Array<VehicleLocationDTO>) => this.onFetchVehicleLocations(value),
-            error: (error) => console.log(error)
-        })
-
-        this.navbarService.getVehicleArrivedSubject().subscribe({
-            next: () => this.onVehicleArrivedAtLocation(),
-            error: (error) => console.log(error)
-        })
-    }
-
-    private onVehicleArrivedAtLocation(): void {
-        this.sharedService.showSnackBar("Vehicle is on location.", 3000);
     }
 
     private onFetchVehicleLocations(locations: Array<VehicleLocationDTO>): void {
