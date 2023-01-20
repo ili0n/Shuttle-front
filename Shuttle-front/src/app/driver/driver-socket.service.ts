@@ -30,10 +30,10 @@ export class DriverSocketService {
 
     ///////////////////////////////////////  API  /////////////////////////////////////////////////
 
-    public subToVehicleLocation(callback: (loc: VehicleLocationDTO) => void): void {
+    public subToVehicleLocation(callback: (loc: VehicleLocationDTO) => void): Stomp.Subscription | null {
         const driverId = this.authService.getUserId();
 
-        this.subscribeToWebSocketTopic(`vehicle/locations/${driverId}`, message => {
+        return this.subscribeToWebSocketTopic(`vehicle/locations/${driverId}`, message => {
             const location: VehicleLocationDTO = JSON.parse(message.body);
             callback(location);
         });

@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as L from 'leaflet';
 import * as Stomp from 'stompjs';
-import * as SockJS from 'sockjs-client';
 import 'leaflet-routing-machine';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
 import { PanicDTO, Ride, RideService, RideStatus } from 'src/app/ride/ride.service';
@@ -27,11 +26,12 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
     private carLayer!: L.LayerGroup;
-    private isActive: boolean = false;
+    private isActive: boolean = true;
 
     protected ride: Ride | null = null;
 
     private rideSub: Stomp.Subscription | null = null;
+    private locationSub: Stomp.Subscription | null = null;
 
     /****************************************** General ******************************************/
 
@@ -57,9 +57,8 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        if (this.rideSub) {
-            this.rideSub.unsubscribe();
-        }
+        this.rideSub?.unsubscribe();
+        this.locationSub?.unsubscribe();
     }
     
     ngAfterViewInit(): void {
@@ -70,9 +69,13 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private onConnectedToSocket(): void {
         if (this.rideSub == null) {
             this.rideSub = this.driverSocketService.subToRide((r: Ride) => {
-                //console.log(r);
-                //this.onFetchRide(r);
-                this.ride = r;
+                this.onFetchRide(r);
+            });
+        }
+
+        if (this.locationSub == null) {
+            this.locationSub = this.driverSocketService.subToVehicleLocation((l : VehicleLocationDTO) => {
+                this.onFetchCurrentLocation(l);
             });
         }
 
@@ -90,15 +93,15 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         //     error: (error) => console.log(error)          
         // });
 
-        this.navbarService.getDriverActiveFromOutsideState().subscribe({
-            next: (value: boolean) => {
-                //console.log("driver-home-component :: ", value);
-                this.isActive = value;
-                if (this.isActive) {
-                    this.navbarService.driverRequestToFetchRide();
-                }
-            }
-        });
+        // this.navbarService.getDriverActiveFromOutsideState().subscribe({
+        //     next: (value: boolean) => {
+        //         //console.log("driver-home-component :: ", value);
+        //         this.isActive = value;
+        //         if (this.isActive) {
+        //             this.navbarService.driverRequestToFetchRide();
+        //         }
+        //     }
+        // });
     }
 
     /******************************************** Map ********************************************/
@@ -235,7 +238,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             m[RideStatus.Accepted] = 1;
             m[RideStatus.Started] = 2;
 
-            if (this.ride != null && m[ride.status] < m[this.ride.status]) {
+            if (this.ride != null && m[ride.status] <= m[this.ride.status]) {
                 // Ignore.
             } else {
                 this.ride = ride;
