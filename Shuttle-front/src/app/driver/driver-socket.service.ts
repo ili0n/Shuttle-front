@@ -53,6 +53,20 @@ export class DriverSocketService {
         this.sendMessageToSocket("", `ride/driver/${driverId}`);    
     }
 
+    public subToIsActive(callback: (isActive: boolean) => void): Stomp.Subscription | null {
+        const driverId = this.authService.getUserId();
+
+        return this.subscribeToWebSocketTopic(`driver/active/${driverId}`, message => {
+            const isActive: boolean = JSON.parse(message.body);
+            callback(isActive);
+        });
+    }
+
+    public pingIsActive(): void {
+        const driverId = this.authService.getUserId();
+        this.sendMessageToSocket("", `driver/active/${driverId}`);   
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private connectToSocket(stompEndpoint: string) {

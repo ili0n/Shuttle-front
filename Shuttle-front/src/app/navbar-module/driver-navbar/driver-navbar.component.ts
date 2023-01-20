@@ -42,6 +42,13 @@ export class DriverNavbarComponent implements OnInit {
             }
         });
 
+        const id: number = this.authService.getUserId();
+        this.userService.getActive(id).subscribe({
+            next: (isActive: boolean) => {
+                this.setIsActive(isActive);
+            }
+        });
+
         // this.navbarService.getCanChangeActiveState().subscribe({
         //     next: (canChange: boolean) => this.setActiveStateSliderEnabled(canChange),
         // });
@@ -73,30 +80,53 @@ export class DriverNavbarComponent implements OnInit {
     private onFetchRide(ride: Ride) {
         if ((this.ride == null || this.ride.id != ride.id) && ride.status == RideStatus.Pending) {
             this.sharedService.showSnackBar("You have a new ride!", 3000);
+        }
+
+        const alreadyHasActiveRideAndThisOneIsPending = (
+            this.ride != null &&
+            [RideStatus.Accepted, RideStatus.Started].includes(this.ride.status) &&
+            ride.status == RideStatus.Pending
+        );
+        if (this.ride == null || !alreadyHasActiveRideAndThisOneIsPending) {
             this.ride = ride;
         }
+
+        if (this.ride.status == RideStatus.Started) { 
+            this.formGroupIsActive.disable();
+            this.setIsActive(true);
+        } else {
+            this.formGroupIsActive.enable();
+        }
+    }
+
+    private setIsActive(isActive: boolean): void {
+        this.formGroupIsActive.setValue({
+            isActive: isActive
+        });
+
+        this.sendActiveStateToUserService(isActive);
     }
 
     // Toggled from the UI.
     protected onToggleIsActive(): void {
-        const active: boolean = this.formGroupIsActive.getRawValue()['isActive'];
-        //this.sendActiveStateToUserService(active);
+        const isActive: boolean = this.formGroupIsActive.getRawValue()['isActive'];
+        this.setIsActive(isActive);
     }
 
-    // private sendActiveStateToUserService(active: boolean): void {
-    //     const id: number = this.authService.getUserId();
-    //     if (!active) {
-    //         this.userService.setInactive(id).subscribe({
-    //             next: (value) => this.getDriverActiveStateFromUserService(value),
-    //             error: (error) => console.error("NO:" + error)
-    //         });
-    //     } else {
-    //         this.userService.setActive(id).subscribe({
-    //             next: (value) => this.getDriverActiveStateFromUserService(value),
-    //             error: (error) => console.error("NO:" + error)
-    //         });
-    //     }
-    // }
+    private sendActiveStateToUserService(active: boolean): void {
+        const id: number = this.authService.getUserId();
+        if (!active) {
+            this.userService.setInactive(id).subscribe({
+                next: (value) => /*this.getDriverActiveStateFromUserService(value)*/{},
+                error: (error) => console.error("NO:" + error)
+            });
+        } else {
+            this.userService.setActive(id).subscribe({
+                next: (value) => /*this.getDriverActiveStateFromUserService(value)*/{},
+                error: (error) => console.error("NO:" + error)
+            });
+        }
+    }
 
     // private getDriverActiveStateFromUserService(isActive: boolean): void {
     //     this.navbarService.setDriverActiveFromOutsideState(isActive);

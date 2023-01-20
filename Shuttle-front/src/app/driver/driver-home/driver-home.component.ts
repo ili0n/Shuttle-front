@@ -50,17 +50,6 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         });
-
-        /*
-        When changing components (e.g. through the navbar), the socket connection stays the same,
-        since it's made in DriverSocketService's c-tor. But this component doesn't know that, so
-        it won't do anything (instead of calling onConnectedToSocket() where all subscriptions are
-        made and the backend is pinged to fetch ride data). 
-        UPDATE: No need for this if we're using BehaviourSubject instead of Subject.
-        */
-        // if (this.driverSocketService.isConnectedToSocket()) {
-        //     this.onConnectedToSocket();
-        // }
     }
 
     ngOnDestroy(): void {
@@ -309,7 +298,8 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.rideService.start(this.ride.id).subscribe({
             next: (ride: Ride) => {
                 this.sharedService.showSnackBar("Ride started.", 3000);
-                this.onFetchRide(ride);
+                this.driverSocketService.pingRide();
+                //this.onFetchRide(ride);
             },
             error: (error) => this.sharedService.showSnackBar("Cannot start ride.", 3000)
         });
