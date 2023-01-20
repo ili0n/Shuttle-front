@@ -2,9 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Passenger } from '../passenger/passenger.service';
-import { Ride } from '../ride/ride.service';
 import { UserIdEmail } from '../user/user.service';
+
+export interface ReviewSendDTO {
+    rating: number,
+    comment: string,
+}
 
 export interface ReviewDTO {
     id: number,
@@ -16,7 +19,7 @@ export interface ReviewDTO {
 
 export interface ReviewPairDTO {
     vehicleReview: ReviewDTO,
-    rideReview: ReviewDTO,
+    driverReview: ReviewDTO,
 }
 
 @Injectable({
@@ -31,5 +34,19 @@ export class ReviewService {
             observe: "body",
             responseType: "json",
         });    
+    }
+
+    public leaveReviewDriver(rideId: number, review: ReviewSendDTO): Observable<ReviewDTO> {
+        return this.httpClient.post<ReviewDTO>(`${this.url}/${rideId}/driver`, review, {
+            observe: "body",
+            responseType: "json",
+        }); 
+    }
+
+    public leaveReviewVehicle(rideId: number, review: ReviewSendDTO): Observable<ReviewDTO> {
+        return this.httpClient.post<ReviewDTO>(`${this.url}/${rideId}/vehicle`, review, {
+            observe: "body",
+            responseType: "json",
+        }); 
     }
 }

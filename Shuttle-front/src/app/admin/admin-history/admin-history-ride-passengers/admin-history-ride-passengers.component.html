@@ -7,9 +7,18 @@
             <mat-panel-description>{{p.passenger.email}}</mat-panel-description>
         </mat-expansion-panel-header>
         <div *ngIf="p.reviews != undefined">
-            {{ p.reviews.vehicleReview }}
-
-            {{ p.reviews.rideReview }}
+            <div *ngIf="p.reviews.vehicleReview" class="text-regular">
+                <h2>Vehicle Review</h2>  
+                <span class="text-thin">Rating: </span>{{ p.reviews.vehicleReview.rating }}/5
+                <br />
+                <span class="text-thin">Comment: </span>{{ p.reviews.vehicleReview.comment }}
+            </div>
+            <div *ngIf="p.reviews.driverReview" class="text-regular">
+                <h2>Driver Review</h2>
+                <span class="text-thin">Rating: </span>{{ p.reviews.driverReview.rating }}/5
+                <br />
+                <span class="text-thin">Comment: </span>{{ p.reviews.driverReview.comment }}
+            </div>
         </div>
         <div *ngIf="p.reviews == undefined">
             {{p.passenger.name}} did not leave a review.

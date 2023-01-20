@@ -1,0 +1,20 @@
+#mat-dialog-box {
+    padding: 8px;
+    width: 480px;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+form {
+    width: 100%;
+}
+
+input {
+    width: 100%;
+}
+
+button {
+    margin-left: 16px;
+}
