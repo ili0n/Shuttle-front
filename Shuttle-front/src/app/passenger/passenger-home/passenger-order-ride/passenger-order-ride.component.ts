@@ -109,15 +109,6 @@ export class PassengerOrderRideComponent implements OnInit {
         if (params.dest) {
             this.mainForm.get('route_form.destination')?.setValue(params.dest);
         }
-        // if (params.vehicle) {
-        //     this.mainForm.get('route_options_form.vehicle_type')?.setValue(params.vehicle);
-        // }
-        // if (params.baby) {
-        //     this.mainForm.get('route_options_form.babies')?.setValue(params.baby);      
-        // }
-        // if (params.pet) {
-        //     this.mainForm.get('route_options_form.pets')?.setValue(params.pet);
-        // }
         this.recalculateRoute();
     }
 

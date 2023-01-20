@@ -3,7 +3,10 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router } from "@angular/router";
 import { Observable, Subject } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
+import { DriverSocketService } from 'src/app/driver/driver-socket.service';
+import { Ride } from 'src/app/ride/ride.service';
 import { UserService } from 'src/app/user/user.service';
+import { VehicleLocationDTO } from 'src/app/vehicle/vehicle.service';
 import { __values } from 'tslib';
 import { NavbarService } from '../navbar.service';
 
@@ -15,9 +18,26 @@ import { NavbarService } from '../navbar.service';
 export class DriverNavbarComponent implements OnInit {
     formGroupIsActive: FormGroup;
 
-    constructor(private readonly formBuilder: FormBuilder, private authService: AuthService, private router: Router, private userService: UserService, private navbarService: NavbarService) {
+    constructor(
+        private readonly formBuilder: FormBuilder, 
+        private authService: AuthService, 
+        private router: Router, 
+        private userService: UserService, 
+        private navbarService: NavbarService,
+        private driverSocketService: DriverSocketService) 
+    {
         this.formGroupIsActive = formBuilder.group({
             isActive: [true],
+        });
+
+        this.driverSocketService.onConnectedToSocket().subscribe({
+            next: () => this.onConnectedToSocket()
+        });
+    }
+
+    private onConnectedToSocket(): void {
+        this.driverSocketService.subToRide((ride: Ride) => {
+            // TODO: If new ride, send snack bar.
         });
     }
 

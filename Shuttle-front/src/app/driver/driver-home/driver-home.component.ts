@@ -1,17 +1,20 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as L from 'leaflet';
+import * as Stomp from 'stompjs';
+import * as SockJS from 'sockjs-client';
 import 'leaflet-routing-machine';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
 import { PanicDTO, Ride, RideService, RideStatus } from 'src/app/ride/ride.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { VehicleLocationDTO } from 'src/app/vehicle/vehicle.service';
+import { DriverSocketService } from '../driver-socket.service';
 
 @Component({
     selector: 'app-driver-home',
     templateUrl: './driver-home.component.html',
     styleUrls: ['./driver-home.component.css']
 })
-export class DriverHomeComponent implements OnInit, AfterViewInit {
+export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private iconCarAvailable!: L.Icon;
     private iconCarBusy!: L.Icon;
     private iconLuxAvailable!: L.Icon;
@@ -28,15 +31,35 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
 
     protected ride: Ride | null = null;
 
+    private rideSub: Stomp.Subscription | null = null;
+
     /****************************************** General ******************************************/
 
     constructor(private navbarService: NavbarService,
                 private sharedService: SharedService,
-                private rideService: RideService) {
+                private rideService: RideService,
+                private driverSocketService: DriverSocketService) {                     
     }
 
     ngOnInit(): void {
+        this.ride = null;
         this.subscribeToSocketSubjects();
+
+        this.driverSocketService.onConnectedToSocket().subscribe({
+            next: () => {
+                this.onConnectedToSocket();
+            }
+        });
+
+        if (this.driverSocketService.isConnectedToSocket()) {
+            this.onConnectedToSocket();
+        }
+    }
+
+    ngOnDestroy(): void {
+        if (this.rideSub) {
+            this.rideSub.unsubscribe();
+        }
     }
     
     ngAfterViewInit(): void {
@@ -44,16 +67,28 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
         this.initMapIcons();
     }
 
-    private subscribeToSocketSubjects(): void {
-        this.navbarService.getVehicleLocation().subscribe({
-            next: (value: VehicleLocationDTO) => this.onFetchCurrentLocation(value),
-            error: (error) => console.log(error)
-        });
+    private onConnectedToSocket(): void {
+        if (this.rideSub == null) {
+            this.rideSub = this.driverSocketService.subToRide((r: Ride) => {
+                //console.log(r);
+                //this.onFetchRide(r);
+                this.ride = r;
+            });
+        }
 
-        this.navbarService.getRideDriver().subscribe({
-            next: (value: Ride) => this.onFetchRide(value),
-            error: (error) => console.log(error)          
-        });
+        this.driverSocketService.pingRide();
+    }
+
+    private subscribeToSocketSubjects(): void {
+        // this.navbarService.getVehicleLocation().subscribe({
+        //     next: (value: VehicleLocationDTO) => this.onFetchCurrentLocation(value),
+        //     error: (error) => console.log(error)
+        // });
+
+        // this.navbarService.getRideDriver().subscribe({
+        //     next: (value: Ride) => this.onFetchRide(value),
+        //     error: (error) => console.log(error)          
+        // });
 
         this.navbarService.getDriverActiveFromOutsideState().subscribe({
             next: (value: boolean) => {
@@ -233,7 +268,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
             this.navbarService.setDriverActiveFromDriverState(true);
         } else {
             this.navbarService.setCanDriverChangeActiveState(true);
-            this.navbarService.driverRequestToFetchRide();
+            //this.navbarService.driverRequestToFetchRide();
         }
     }
 

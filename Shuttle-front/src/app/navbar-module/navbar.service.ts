@@ -188,7 +188,7 @@ export class NavbarService {
 
         // Ask the backend to fetch the latest ride.
 
-        this.driverRequestToFetchRide();
+        //this.driverRequestToFetchRide();
     }
 
     private onConnectToWebSocketAdmin() {
