@@ -1,0 +1,14 @@
+<div class="text-regular"><span class="text-thin">Status: </span>{{ getRideStatus() }}</div>
+<div class="text-regular"><span class="text-thin">From: </span>{{ getRideDeparture() }}</div>
+<div class="text-regular"><span class="text-thin">To: </span>{{ getRideDestination() }}</div>
+<div class="text-regular"><span class="text-thin">Vehicle type: </span>{{ getRideVehicleType() }}
+</div>
+
+<span class="text-regular text-thin">Baby: </span>
+<span *ngIf="getRideBaby(); else elseBlock"><mat-icon>check</mat-icon></span>
+<ng-template #elseBlock><mat-icon>close</mat-icon></ng-template>
+<br />
+
+<span class="text-regular text-thin">Pet: </span>
+<span *ngIf="getRidePet(); else elseBlock"><mat-icon>check</mat-icon></span>
+<ng-template #elseBlock><mat-icon>close</mat-icon></ng-template>

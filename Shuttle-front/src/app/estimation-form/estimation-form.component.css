@@ -1,0 +1,47 @@
+#form-container{
+    float: right;
+    width: 40%;
+    padding: 30px;
+    margin: 10px;
+    text-align: center;
+}
+
+mat-form-field{
+    display: block;
+}
+
+.icon{
+    width: 42px;
+    height: 42px;;
+}
+
+.flexCenter{
+    display: flex;
+    justify-content: center;
+}
+
+#babyContainer{
+    margin-right: 50px;
+}
+
+#checkboxesContainer{
+    padding: 20px;
+}
+
+.mat-checkbox .mat-checkbox-frame {
+    transform: scale(2);
+}
+
+.mat-checkbox-checked .mat-checkbox-background {
+    transform: scale(2);
+}
+
+mat-option:nth-child(1){
+    display: none;
+}
+
+#estimation{
+    font-size: 32px;
+    padding: 140px 20px;
+    line-height: normal;
+}

@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { ViewChild } from '@angular/core';
+import { Component,ElementRef } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-root',
@@ -8,10 +10,12 @@ import { Observable } from 'rxjs';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
     constructor(private httpClient: HttpClient) { }
 
+    
     helloBackend() {
-        const obs: Observable<Object> = this.httpClient.get("http://localhost:8080/hello", {
+        const obs: Observable<Object> = this.httpClient.get(environment.serverOrigin + "hello", {
             observe: "body",
             responseType: "text",
         });

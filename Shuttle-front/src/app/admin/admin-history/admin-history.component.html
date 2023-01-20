@@ -1,0 +1,32 @@
+<div class="row">
+    <div class="column left flex-vertical">
+        <app-admin-history-user-table
+            class="flex-1"
+            (selectedUserEvent)="onChangeSelectedUser($event)">
+        </app-admin-history-user-table>
+
+        <app-admin-history-ride-table
+            class="flex-1"
+            [user]="selectedUser"
+            (selectedRideEvent)="onChangeSelectedRide($event)">
+        </app-admin-history-ride-table>
+    </div>
+    <div class="column right">
+        <div class="height-70">
+            <div id="map" class="mat-elevation-z3" #leafletMap></div>
+        </div>
+        <div class="height-30 flex">
+            <div class="pad mat-elevation-z3 flex-hor margin">
+                <app-admin-history-ride-details
+                    [ride]="selectedRide">
+                </app-admin-history-ride-details>
+            </div>
+        </div>
+    </div>
+
+    <div class="column right-narrow scrollable passengers-card">
+        <app-admin-history-ride-passengers
+            [ride]="selectedRide">
+        </app-admin-history-ride-passengers>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="row">
+    <div class="column left">
+        <div id="map" class="mat-elevation-z3" #leafletMap></div>
+    </div>
+    <div class="column right">
+        <app-passenger-order-ride 
+            *ngIf="canOrderRide()"
+            [isRouteRecalculating]="isRouteRecalculating()"
+            [isRouteFound]="isRouteFound()"
+            [routeDistance]="this.routeDistance"
+            [depPos]="depPos"
+            [destPos]="destPos"
+            (recalculateRouteEvent)="recalculateRoute($event)"
+            (orderRideEvent)="orderRide($event)"
+            >
+        </app-passenger-order-ride>
+        <app-passenger-current-ride
+            *ngIf="hasCurrentRide()"
+            [ride]="ride!"
+            [isRouteFound]="isRouteFound()"
+            [routeDistance]="this.routeDistance"
+            [otherPassengers]="this.ride!.passengers"
+            (panicEvent)="panicClick($event)"
+            (cancelEvent)="cancelPendingRide()"
+            (inconsistencyEvent)="reportDriverInconsistency()"
+            >
+        </app-passenger-current-ride>
+    </div>
+</div>
