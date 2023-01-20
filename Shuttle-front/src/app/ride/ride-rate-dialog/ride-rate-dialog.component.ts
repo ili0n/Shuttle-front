@@ -29,8 +29,8 @@ export class RideRateDialogComponent implements OnInit {
     constructor(public dialogRef: MatDialogRef<RideRateDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: ReviewDialogParams, private readonly formBuilder: FormBuilder) {
         this.formGroup = this.formBuilder.group({
             commentVehicle: [''],
-            commentDriver: [''],
             ratingVehicle: [],
+            commentDriver: [''],
             ratingDriver: [],
         });
 
@@ -43,10 +43,10 @@ export class RideRateDialogComponent implements OnInit {
             console.log(this.currentRating);
 
             this.formGroup.patchValue({
-                commentVehicle: this.currentRating.vehicleReview.rating,
-                commentDriver: this.currentRating.vehicleReview.comment,
-                ratingVehicle: this.currentRating.driverReview.rating,
-                ratingDriver: this.currentRating.driverReview.comment,
+                commentVehicle: this.currentRating.vehicleReview.comment,
+                ratingVehicle: String(this.currentRating.vehicleReview.rating),
+                commentDriver: this.currentRating.driverReview.comment,
+                ratingDriver: String(this.currentRating.driverReview.rating),
             });
         }
 

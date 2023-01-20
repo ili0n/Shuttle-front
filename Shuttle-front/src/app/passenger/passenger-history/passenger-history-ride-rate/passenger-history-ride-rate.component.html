@@ -1,18 +1,3 @@
-<span *ngIf="tooLateToRateRide()">
-    You cannot rate this ride.
-</span>
-<span *ngIf="!tooLateToRateRide()">
-    <div class="text-regular text-thin">Vehicle rating:</div>
-    <div class="text-regular text-thin">Driver rating:</div>
-    <br/>
-    <span *ngIf="isRideRated()">
-        <button mat-raised-button color="primary" (click)="viewRating()">View your rating</button>
-    </span>
-    <span *ngIf="canRateRide()">
-        <button mat-raised-button color="primary" (click)="leaveRating()">Leave a rating</button>
-    </span>
-</span>
-<hr/>
 <div class="flex">
     <span class="left">
         <button class="align-right" mat-fab color="warn" aria-label="Example icon button with a home icon" (click)="toggleRideIsFavorite()">
@@ -21,6 +6,20 @@
         </button>
     </span>
     <span class="right">
-        <button class="align-right" mat-raised-button color="primary" (click)="orderAgain()">Order again</button>
+        <span *ngIf="tooLateToRateRide()">
+            You cannot rate this ride.
+        </span>    
+        <span *ngIf="!tooLateToRateRide()">
+            <span *ngIf="isRideRated()">
+                <button mat-raised-button color="primary" (click)="viewRating()">View your rating</button>
+            </span>
+            <span *ngIf="canRateRide()">
+                <button mat-raised-button color="primary" (click)="leaveRating()">Leave a rating</button>
+            </span>
+        </span>
     </span>
+</div>
+<br/>
+<div>
+    <button class="align-right" mat-raised-button color="primary" (click)="orderAgain()">Order again</button>
 </div>
