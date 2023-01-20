@@ -43,13 +43,6 @@ export class DriverNavbarComponent implements OnInit {
                 }
             }
         });
-
-        const id: number = this.authService.getUserId();
-        this.userService.getActive(id).subscribe({
-            next: (isActive: boolean) => {
-                this.setIsActive(isActive);
-            }
-        });
     }
 
     private onConnectedToSocket(): void {
@@ -58,6 +51,16 @@ export class DriverNavbarComponent implements OnInit {
         });
 
         this.driverSocketService.pingRide();
+
+        // This is put here because setIsActive pings for a ride which uses the socket.
+        // In reality, it'll only show an error in the console the first time, so it's
+        // a big deal but it's okay.
+        const id: number = this.authService.getUserId();
+        this.userService.getActive(id).subscribe({
+            next: (isActive: boolean) => {
+                this.setIsActive(isActive);
+            }
+        });
     }
 
     private onFetchRide(ride: Ride) {
