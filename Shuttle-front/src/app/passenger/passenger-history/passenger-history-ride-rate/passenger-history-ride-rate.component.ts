@@ -37,7 +37,7 @@ export class PassengerHistoryRideRateComponent implements OnInit, OnChanges {
         this.reviewService.findByRide(this.ride!.id).subscribe({
             next: (allReviews) => {
                 const review: ReviewPairDTO | undefined = allReviews.find(
-                    rr => rr.driverReview.passenger.id == myId || rr.vehicleReview.passenger.id == myId
+                    rr => rr.driverReview.passenger?.id == myId || rr.vehicleReview.passenger?.id == myId
                 );
                 if (review) {
                     this.rideReview = review;
@@ -87,7 +87,7 @@ export class PassengerHistoryRideRateComponent implements OnInit, OnChanges {
     }
 
     protected leaveRating(): void {
-        const dialogRef = this.dialog.open(RideRateDialogComponent);
+        const dialogRef = this.dialog.open(RideRateDialogComponent, { data: "" });
         dialogRef.afterClosed().subscribe(result => {
             if (result == undefined) {
                 return;
@@ -95,21 +95,28 @@ export class PassengerHistoryRideRateComponent implements OnInit, OnChanges {
             const reviews: ReviewDialogResult = result;
 
             const reviewVehicle = reviews.vehicle;
-            if (reviewVehicle.rating != 0) {
+            const reviewDriver = reviews.driver;
+
+            if (reviewVehicle.rating != 0 && reviewDriver.rating != 0) {
                 this.reviewService.leaveReviewVehicle(this.ride!.id, reviewVehicle).subscribe({
-                    next: (result) => {
-                        const reviewDriver = reviews.driver;
-                        if (reviewDriver.rating != 0) {
-                            this.reviewService.leaveReviewDriver(this.ride!.id, reviewDriver).subscribe({
-                                next: (result2) => {
-                                    // There's a review now, so fetch it which'll hide the 'Leave a
-                                    // review' button.
-                                    this.fetchMyReview();
-                                },
-                            });
-                        }
+                    next: () => { 
+                        this.reviewService.leaveReviewDriver(this.ride!.id, reviewDriver).subscribe({
+                            next: () => { this.fetchMyReview(); }
+                        }); 
                     }
                 });
+            } else {
+                if (reviewVehicle.rating != 0) {
+                    this.reviewService.leaveReviewVehicle(this.ride!.id, reviewVehicle).subscribe({
+                        next: () => { this.fetchMyReview(); }
+                    });
+                }
+    
+                if (reviewDriver.rating != 0) {
+                    this.reviewService.leaveReviewDriver(this.ride!.id, reviewDriver).subscribe({
+                        next: () => { this.fetchMyReview(); }
+                    });
+                }
             }
         });
     }

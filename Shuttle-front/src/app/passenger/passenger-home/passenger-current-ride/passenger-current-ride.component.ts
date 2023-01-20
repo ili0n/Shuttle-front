@@ -1,12 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/auth/auth.service';
+import * as Stomp from 'stompjs';
 import { DriverService } from 'src/app/driver/driver.service';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
 import { RidePanicDialogComponent } from 'src/app/ride/ride-panic-dialog/ride-panic-dialog.component';
 import { Ride, RideStatus } from 'src/app/ride/ride.service';
 import { UserIdEmail } from 'src/app/user/user.service';
 import { Location, Vehicle, VehicleLocationDTO } from 'src/app/vehicle/vehicle.service';
+import { PassengerSocketService } from '../../passenger-socket.service';
 
 @Component({
   selector: 'app-passenger-current-ride',
@@ -27,6 +29,7 @@ export class PassengerCurrentRideComponent implements OnInit {
     protected myEmail!: string;
     private vehicleID: number = -1;
     private timer: NodeJS.Timer | null = null;
+    private vehiclesSub: Stomp.Subscription | null = null;
 
     protected getDriverEmail(): string {
         if (this.ride.driver.email != null) {
@@ -39,13 +42,21 @@ export class PassengerCurrentRideComponent implements OnInit {
     constructor(private authService: AuthService,
                 private driverService: DriverService,
                 private navbarService: NavbarService,
-                private dialog: MatDialog) {
+                private dialog: MatDialog,
+                private passengerSocketService: PassengerSocketService,) {
         this.startElapsedTimeTimer();
     }
 
     ngOnInit(): void {
         this.myEmail = this.authService.getUserEmail();
-        this.subscribeToSocketSubjects();
+
+        this.passengerSocketService.onConnectedToSocket().subscribe({
+            next: (val: boolean) => {
+                if (val) {
+                    this.onConnectedToSocket();
+                }
+            }
+        });
 
         this.driverService.getVehicle(this.ride.driver.id).subscribe({
             next: (vehicle: Vehicle) => {
@@ -56,6 +67,16 @@ export class PassengerCurrentRideComponent implements OnInit {
                 console.error("WHAT", error);
             }
         });
+    }
+
+    private onConnectedToSocket(): void {
+        if (this.vehiclesSub == null) {
+            this.vehiclesSub = this.passengerSocketService.subToVehicleLocations((l : Array<VehicleLocationDTO>) => {
+                this.onFetchVehicleLocations(l);
+            });
+        }
+
+        this.passengerSocketService.pingRide();
     }
 
     protected getAddressList(): Array<string> {
@@ -92,12 +113,12 @@ export class PassengerCurrentRideComponent implements OnInit {
         this.panicEvent.emit(reason);
     }
 
-    private subscribeToSocketSubjects(): void {
-        this.navbarService.getVehicleLocations().subscribe({
-            next: (value: Array<VehicleLocationDTO>) => this.onFetchVehicleLocations(value),
-            error: (error) => console.log(error)
-        })
-    }
+    // private subscribeToSocketSubjects(): void {
+    //     this.navbarService.getVehicleLocations().subscribe({
+    //         next: (value: Array<VehicleLocationDTO>) => this.onFetchVehicleLocations(value),
+    //         error: (error) => console.log(error)
+    //     })
+    // }
 
     private onFetchVehicleLocations(value: Array<VehicleLocationDTO>): void {
         for (let v of value) {

@@ -2,9 +2,9 @@
 <span class="label">Passengers:</span>
 <br/>
 
-<span *ngFor="let passenger of ride.passengers">
-    <span class="value" matListItemTitle>{{ passenger.email }}</span>
-</span>
+<div *ngFor="let passenger of ride.passengers">
+    <mat-label class="value" matListItemTitle>{{passenger.email}}</mat-label>
+</div>
 <hr/>
 
 <!-- Location list -->
