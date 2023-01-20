@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router } from "@angular/router";
-import { Observable, Subject } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DriverSocketService } from 'src/app/driver/driver-socket.service';
 import { Ride, RideStatus } from 'src/app/ride/ride.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { UserService } from 'src/app/user/user.service';
-import { VehicleLocationDTO } from 'src/app/vehicle/vehicle.service';
 import { __values } from 'tslib';
 import { NavbarService } from '../navbar.service';
 
@@ -19,6 +17,10 @@ import { NavbarService } from '../navbar.service';
 export class DriverNavbarComponent implements OnInit {
     formGroupIsActive: FormGroup;
     private ride: Ride | null = null; // Last saved ride.
+
+    protected shouldShowRideBadge(): boolean {
+        return this.ride?.status == RideStatus.Pending;
+    }
 
     constructor(
         private readonly formBuilder: FormBuilder, 

@@ -4,7 +4,7 @@
     </a>
     <div id="buttons">
         <button mat-icon-button (click)="home()">
-            <mat-icon>home</mat-icon>
+            <mat-icon matBadge="1" matBadgeColor="warn" [matBadgeHidden]="!shouldShowRideBadge()">home</mat-icon>
         </button>
         <button mat-icon-button (click)="history()">
             <mat-icon>history</mat-icon>
