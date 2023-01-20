@@ -11,13 +11,27 @@
                 <h2>Vehicle Review</h2>  
                 <span class="text-thin">Rating: </span>{{ p.reviews.vehicleReview.rating }}/5
                 <br />
-                <span class="text-thin">Comment: </span>{{ p.reviews.vehicleReview.comment }}
+
+                <span *ngIf="p.reviews.vehicleReview.comment == ''">
+                    <span class="text-thin">No comment</span>
+                </span>
+                <span *ngIf="p.reviews.vehicleReview.comment != ''">
+                    <span class="text-thin">Comment: </span>{{ p.reviews.vehicleReview.comment }}
+                </span>
             </div>
             <div *ngIf="p.reviews.driverReview.rating != null" class="text-regular">
                 <h2>Driver Review</h2>
                 <span class="text-thin">Rating: </span>{{ p.reviews.driverReview.rating }}/5
                 <br />
-                <span class="text-thin">Comment: </span>{{ p.reviews.driverReview.comment }}
+                
+                <span *ngIf="p.reviews.driverReview.comment == ''">
+                    <span class="text-thin">No comment</span>
+                </span>
+                <span *ngIf="p.reviews.driverReview.comment != ''">
+                    <span class="text-thin">Comment: </span>{{ p.reviews.driverReview.comment }}
+                </span>
+
+                
             </div>
         </div>
         <div *ngIf="p.reviews == undefined">
