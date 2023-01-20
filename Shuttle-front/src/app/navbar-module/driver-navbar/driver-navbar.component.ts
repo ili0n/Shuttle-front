@@ -48,25 +48,6 @@ export class DriverNavbarComponent implements OnInit {
                 this.setIsActive(isActive);
             }
         });
-
-        // this.navbarService.getCanChangeActiveState().subscribe({
-        //     next: (canChange: boolean) => this.setActiveStateSliderEnabled(canChange),
-        // });
-
-        // // driver-home ---> navbar ---> [here]
-        // this.navbarService.getDriverActiveFromDriverState().subscribe({
-        //     next: (isActive: boolean) => {
-        //         this.sendActiveStateToUserService(isActive);
-        //         this.formGroupIsActive.setValue({ 'isActive': isActive });
-        //     },
-        // });
-
-        // // backend ---> [here] ---> navbar ---> driver-home
-        // this.userService.getActive(this.authService.getUserId()).subscribe({
-        //     next: (isActive: boolean) => {
-        //         this.getDriverActiveStateFromUserService(isActive);
-        //     }
-        // })
     }
 
     private onConnectedToSocket(): void {
@@ -105,6 +86,10 @@ export class DriverNavbarComponent implements OnInit {
         });
 
         this.sendActiveStateToUserService(isActive);
+
+        if (isActive) {
+            this.driverSocketService.pingRide();
+        }
     }
 
     // Toggled from the UI.
@@ -127,19 +112,6 @@ export class DriverNavbarComponent implements OnInit {
             });
         }
     }
-
-    // private getDriverActiveStateFromUserService(isActive: boolean): void {
-    //     this.navbarService.setDriverActiveFromOutsideState(isActive);
-    //     this.formGroupIsActive.setValue({ 'isActive': isActive });
-    // }
-
-    // private setActiveStateSliderEnabled(canChange: boolean): void {
-    //     if (canChange) {
-    //         this.formGroupIsActive.controls['isActive'].enable();
-    //     } else {
-    //         this.formGroupIsActive.controls['isActive'].disable();
-    //     }
-    // }
 
     /*********************************************************************************************/
 

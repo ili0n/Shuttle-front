@@ -79,28 +79,6 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.driverSocketService.pingRide();
     }
 
-    private subscribeToSocketSubjects(): void {
-        // this.navbarService.getVehicleLocation().subscribe({
-        //     next: (value: VehicleLocationDTO) => this.onFetchCurrentLocation(value),
-        //     error: (error) => console.log(error)
-        // });
-
-        // this.navbarService.getRideDriver().subscribe({
-        //     next: (value: Ride) => this.onFetchRide(value),
-        //     error: (error) => console.log(error)          
-        // });
-
-        // this.navbarService.getDriverActiveFromOutsideState().subscribe({
-        //     next: (value: boolean) => {
-        //         //console.log("driver-home-component :: ", value);
-        //         this.isActive = value;
-        //         if (this.isActive) {
-        //             this.navbarService.driverRequestToFetchRide();
-        //         }
-        //     }
-        // });
-    }
-
     /******************************************** Map ********************************************/
 
     private initMap(id: string): void {
@@ -205,9 +183,10 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     /******************************************** Ride********************************************/
 
     private onFetchRide(ride: Ride): void {
-        // If you're not active, ignore the ride. Once you become active, driverRequestToFetchRide()
-        // will be fired.
+        // If not active, ignore the ride. Once active again, the navbar will ping for a new ride.
 
+        // TODO: This isn't changed anywhere but since the fetch ride endpoint always gives started
+        // and accepted rides priority, it doesn't matter so this block of code is redundant.
         if (!this.isActive) {
             this.ride = null;
             this.clearRoute();
@@ -251,24 +230,6 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.drawRoute(pointA, pointB);
                 }
             }
-        }
-
-        this.afterFetchRide();
-    }
-
-    private afterFetchRide(): void {
-        if (this.ride == null) {
-            this.navbarService.setCanDriverChangeActiveState(true);
-            return;
-        }
-
-        if (/*this.ride.status == RideStatus.Accepted || When he accepts, it doesn't matter what the status is.*/
-            this.ride.status == RideStatus.Started) {
-            this.navbarService.setCanDriverChangeActiveState(false);
-            this.navbarService.setDriverActiveFromDriverState(true);
-        } else {
-            this.navbarService.setCanDriverChangeActiveState(true);
-            //this.navbarService.driverRequestToFetchRide();
         }
     }
 

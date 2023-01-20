@@ -170,25 +170,6 @@ export class NavbarService {
     }
 
     private onConnectToWebSocketDriver() {
-        const driverId: number = this.authService.getUserId();
-
-        // Whenever the backend has a new ride for me.
-
-        this.subscribeToWebSocketTopic(`ride/driver/${driverId}`, (message) => {
-            let r: Ride = JSON.parse(message.body);
-            this.driverRideSubject.next(r);
-        });
-
-        // Whenever the backend sends me my vehicle location.
-
-        this.subscribeToWebSocketTopic(`vehicle/locations/${driverId}`, (message) => {
-            const location = JSON.parse(message.body);
-            this.vehicleLocationSubject.next(location);
-        });
-
-        // Ask the backend to fetch the latest ride.
-
-        //this.driverRequestToFetchRide();
     }
 
     private onConnectToWebSocketAdmin() {
