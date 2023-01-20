@@ -1,11 +1,16 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ReviewSendDTO } from 'src/app/review/review.service';
+import { ReviewPairDTO, ReviewSendDTO } from 'src/app/review/review.service';
 
 export interface ReviewDialogResult {
     vehicle: ReviewSendDTO,
     driver: ReviewSendDTO,
+}
+
+export interface ReviewDialogParams {
+    currentReview: ReviewPairDTO,
+    readonly: boolean
 }
 
 
@@ -14,12 +19,14 @@ export interface ReviewDialogResult {
   templateUrl: './ride-rate-dialog.component.html',
   styleUrls: ['./ride-rate-dialog.component.css']
 })
-export class RideRateDialogComponent {
+export class RideRateDialogComponent implements OnInit {
     formGroup: FormGroup;
     protected possibleRatings = ['', '1', '2', '3', '4', '5'];
+    private readonly: boolean = false;
+    private currentRating: ReviewPairDTO | null = null;
 
 
-    constructor(public dialogRef: MatDialogRef<RideRateDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: string, private readonly formBuilder: FormBuilder) {
+    constructor(public dialogRef: MatDialogRef<RideRateDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: ReviewDialogParams, private readonly formBuilder: FormBuilder) {
         this.formGroup = this.formBuilder.group({
             commentVehicle: [''],
             commentDriver: [''],
@@ -27,8 +34,24 @@ export class RideRateDialogComponent {
             ratingDriver: [],
         });
 
+        this.readonly = data.readonly;
+        this.currentRating = data.currentReview;
+    }
+
+    ngOnInit(): void {
+        if (this.currentRating != null && this.currentRating != undefined) {
+            console.log(this.currentRating);
+
+            this.formGroup.patchValue({
+                commentVehicle: this.currentRating.vehicleReview.rating,
+                commentDriver: this.currentRating.vehicleReview.comment,
+                ratingVehicle: this.currentRating.driverReview.rating,
+                ratingDriver: this.currentRating.driverReview.comment,
+            });
+        }
+
         this.onChangeDriverRating();
-        this.onChangeDriverRating();
+        this.onChangeVehicleRating();
     }
 
     onCancel(): void {
@@ -61,6 +84,12 @@ export class RideRateDialogComponent {
     }
 
     protected onChangeDriverRating(): void {
+        if (this.readonly) {
+            this.formGroup.get('ratingDriver')?.disable();
+            this.formGroup.get('commentDriver')?.disable();
+            return;
+        }
+
         if (!this.hasRatedDriver()) {
             this.formGroup.get('commentDriver')?.disable();
         } else {
@@ -69,6 +98,12 @@ export class RideRateDialogComponent {
     }
 
     protected onChangeVehicleRating(): void {
+        if (this.readonly) {
+            this.formGroup.get('ratingVehicle')?.disable();
+            this.formGroup.get('commentVehicle')?.disable();
+            return;
+        }
+
         if (!this.hasRatedVehicle()) {
             this.formGroup.get('commentVehicle')?.disable();
         } else {
