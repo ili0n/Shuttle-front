@@ -9,7 +9,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
-import { RegisterComponent } from './register/register.component'
 
 import { LoginComponent } from './auth/login/component/login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -37,12 +36,11 @@ import { DriverHistoryComponent } from './driver/driver-history/driver-history.c
 import { DriverHistoryRideTableComponent } from './driver/driver-history/driver-history-ride-table/driver-history-ride-table.component';
 import { DriverHistoryRideDetailsComponent } from './driver/driver-history/driver-history-ride-details/driver-history-ride-details.component';
 import { DriverHistoryRidePassengersComponent } from './driver/driver-history/driver-history-ride-passengers/driver-history-ride-passengers.component';
+import { AuthModule } from './auth/auth.module';
 
 @NgModule({
     declarations: [
         AppComponent,
-        RegisterComponent,
-        LoginComponent,
         ForgotPasswordComponent,
         ResetPasswordComponent,
         DriverProfileComponent,
@@ -51,7 +49,6 @@ import { DriverHistoryRidePassengersComponent } from './driver/driver-history/dr
         EstimationFormComponent,
         DriverHomeComponent,
         RejectRideDialogComponent,
-        LoginComponent,
         SnackbarComponent,
         DriverHomeCurrentRideComponent,
         DriverHistoryComponent,
@@ -76,6 +73,7 @@ import { DriverHistoryRidePassengersComponent } from './driver/driver-history/dr
         PassengerModule,
         DriverModule,
         RideModule,
+        AuthModule,
     ],
     providers: [{
         provide: HTTP_INTERCEPTORS,

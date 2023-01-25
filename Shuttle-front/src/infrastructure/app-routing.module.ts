@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CreateDriverComponent } from 'src/app/admin/create-driver/create-driver.component';
 import { LoginComponent } from 'src/app/auth/login/component/login/login.component';
 import { ForgotPasswordComponent } from 'src/app/auth/login/component/forgot-password/forgot-password.component';
-import { RegisterComponent } from 'src/app/register/register.component';
+import { RegisterComponent } from 'src/app/auth/register/register.component';
 import { ResetPasswordComponent } from 'src/app/auth/login/component/reset-password/reset-password.component';
 import { DriverProfileComponent } from 'src/app/driver-profile/driver-profile.component';
 import { EstimationMapComponent } from '../app/estimation-map/estimation-map.component';

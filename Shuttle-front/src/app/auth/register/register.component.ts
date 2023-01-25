@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, Validators } from "@angular/forms";
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
-import { RegisterService } from '../services/register/register.service';
-import { SnackbarComponent } from '../util/snackbar/snackbar/snackbar.component';
+import { RegisterService } from '../../services/register/register.service';
+import { SnackbarComponent } from '../../util/snackbar/snackbar/snackbar.component';
 import {CustomValidators} from "./confirm.validator"
 
 
