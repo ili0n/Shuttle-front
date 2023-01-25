@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DriverHomeComponent } from '../driver-home/driver-home.component';
 import { DriverHistoryComponent } from '../driver-history/driver-history.component';
-import { DriverProfileComponent } from 'src/app/driver-profile/driver-profile.component';
+import { DriverProfileComponent } from 'src/app/driver/driver-profile/driver-profile.component';
 import { DriverHomeCurrentRideComponent } from '../driver-home/driver-home-current-ride/driver-home-current-ride.component';
 import { DriverHistoryRideTableComponent } from '../driver-history/driver-history-ride-table/driver-history-ride-table.component';
 import { DriverHistoryRideDetailsComponent } from '../driver-history/driver-history-ride-details/driver-history-ride-details.component';
@@ -21,6 +21,7 @@ import { DriverHistoryRidePassengersComponent } from '../driver-history/driver-h
         DriverHistoryRideDetailsComponent,
         DriverHistoryRidePassengersComponent,
         RejectRideDialogComponent,
+        DriverProfileComponent,
     ],
     imports: [
         CommonModule,
@@ -34,6 +35,7 @@ import { DriverHistoryRidePassengersComponent } from '../driver-history/driver-h
         DriverHistoryRideDetailsComponent,
         DriverHistoryRidePassengersComponent,
         RejectRideDialogComponent,
+        DriverProfileComponent,
     ]
 })
 export class DriverModule { }
