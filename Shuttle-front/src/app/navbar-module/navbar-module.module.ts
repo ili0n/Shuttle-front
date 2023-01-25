@@ -6,6 +6,7 @@ import { PassengerNavbarComponent } from './passenger-navbar/passenger-navbar.co
 import { NavbarComponent } from './navbar/navbar.component';
 import { MaterialModule } from 'src/infrastructure/material.module';
 import { UnregisteredNavbarComponent } from './unregistered-navbar/unregistered-navbar.component';
+import { MatSliderModule } from '@angular/material/slider';
 
 
 
@@ -26,7 +27,8 @@ import { UnregisteredNavbarComponent } from './unregistered-navbar/unregistered-
   ],
   imports: [
     CommonModule,
-    MaterialModule
+    MaterialModule,
+    MatSliderModule,
   ]
 })
 export class NavbarModuleModule { }

@@ -7,6 +7,7 @@ import { LoginInterceptor } from './interceptor/login.interceptor';
 import { LoginGuard } from './guard/login.guard';
 import { ForgotPasswordComponent } from './login/component/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './login/component/reset-password/reset-password.component';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -20,6 +21,7 @@ import { ResetPasswordComponent } from './login/component/reset-password/reset-p
   imports: [
     CommonModule,
     MaterialModule,
+    RouterModule,
   ],
   exports: [
     RegisterComponent,

@@ -21,6 +21,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 
 @NgModule({
     imports: [
@@ -47,6 +48,7 @@ import { MatBadgeModule } from '@angular/material/badge';
         MatSortModule,
         MatExpansionModule,
         MatBadgeModule,
+        MatSlideToggleModule,
     ],
     exports: [
         MatToolbarModule,
@@ -72,6 +74,7 @@ import { MatBadgeModule } from '@angular/material/badge';
         MatSortModule,
         MatExpansionModule,
         MatBadgeModule,
+        MatSlideToggleModule
     ],
 })
 export class MaterialModule { }
