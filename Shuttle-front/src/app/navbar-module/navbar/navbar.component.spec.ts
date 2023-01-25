@@ -1,4 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { AdminNavbarComponent } from '../admin-navbar/admin-navbar.component';
+import { DriverNavbarComponent } from '../driver-navbar/driver-navbar.component';
+import { PassengerNavbarComponent } from '../passenger-navbar/passenger-navbar.component';
+import { UnregisteredNavbarComponent } from '../unregistered-navbar/unregistered-navbar.component';
 
 import { NavbarComponent } from './navbar.component';
 
@@ -8,7 +12,14 @@ describe('NavbarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NavbarComponent ]
+      declarations: [ 
+        NavbarComponent,
+        // You'd mock these
+        AdminNavbarComponent,
+        PassengerNavbarComponent,
+        DriverNavbarComponent,
+        UnregisteredNavbarComponent,
+    ]
     })
     .compileComponents();
 

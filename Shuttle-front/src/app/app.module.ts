@@ -30,15 +30,13 @@ import { AuthModule } from './auth/auth.module';
 @NgModule({
     declarations: [
         AppComponent,
-        ForgotPasswordComponent,
-        ResetPasswordComponent,
         //DriverProfileComponent,
         EstimationMapComponent,
         UnregisteredPageComponent,
         EstimationFormComponent,
         // DriverHomeComponent,
         //RejectRideDialogComponent,
-        SnackbarComponent,
+        //SnackbarComponent,
         // DriverHomeCurrentRideComponent,
         // DriverHistoryComponent,
         // DriverHistoryRideTableComponent,

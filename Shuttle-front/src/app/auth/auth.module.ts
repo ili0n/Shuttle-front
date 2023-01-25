@@ -5,6 +5,8 @@ import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/component/login/login.component';
 import { LoginInterceptor } from './interceptor/login.interceptor';
 import { LoginGuard } from './guard/login.guard';
+import { ForgotPasswordComponent } from './login/component/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './login/component/reset-password/reset-password.component';
 
 
 
@@ -12,6 +14,8 @@ import { LoginGuard } from './guard/login.guard';
   declarations: [
     RegisterComponent,
     LoginComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
   ],
   imports: [
     CommonModule,
@@ -20,6 +24,8 @@ import { LoginGuard } from './guard/login.guard';
   exports: [
     RegisterComponent,
     LoginComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
   ]
 })
 export class AuthModule { }

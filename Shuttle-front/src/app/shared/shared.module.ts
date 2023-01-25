@@ -4,13 +4,13 @@ import { SnackBarComponent } from './snack-bar/snack-bar.component';
 
 @NgModule({
   declarations: [
-    SnackBarComponent
+    SnackBarComponent,
   ],
   imports: [
     CommonModule
   ],
   exports: [
-    SnackBarComponent
+    SnackBarComponent,
   ]
 })
 export class SharedModule { }
