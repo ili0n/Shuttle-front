@@ -23,8 +23,7 @@ describe('LoginComponent', () => {
                 MaterialModule,
                 BrowserAnimationsModule,
             ]
-        })
-            .compileComponents();
+        }).compileComponents();
 
         fixture = TestBed.createComponent(LoginComponent);
         component = fixture.componentInstance;
