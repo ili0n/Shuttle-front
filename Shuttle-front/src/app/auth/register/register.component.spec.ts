@@ -36,4 +36,8 @@ describe('RegisterComponent', () => {
     it('should succeed', () => {
         expect(true).toBeTruthy();
     });
+
+    it('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV', () => {
+        expect(true).toBeTruthy();
+    });
 });

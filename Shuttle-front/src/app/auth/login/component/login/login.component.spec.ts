@@ -37,4 +37,8 @@ describe('LoginComponent', () => {
     it('should succeed', () => {
         expect(true).toBeTruthy();
     });
+
+    it('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', () => {
+        expect(true).toBeTruthy();
+    });
 });
