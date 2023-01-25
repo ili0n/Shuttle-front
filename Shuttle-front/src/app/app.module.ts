@@ -32,7 +32,7 @@ import { DriverModule } from './driver/driver/driver.module';
 import { RideModule } from './ride/ride.module';
 import { RidePanicDialogComponent } from './ride/ride-panic-dialog/ride-panic-dialog.component';
 import { DriverHomeCurrentRideComponent } from './driver/driver-home/driver-home-current-ride/driver-home-current-ride.component';
-import { Interceptor } from './auth/interceptor/login.interceptor';
+import { LoginInterceptor } from './auth/interceptor/login.interceptor';
 import { DriverHistoryComponent } from './driver/driver-history/driver-history.component';
 import { DriverHistoryRideTableComponent } from './driver/driver-history/driver-history-ride-table/driver-history-ride-table.component';
 import { DriverHistoryRideDetailsComponent } from './driver/driver-history/driver-history-ride-details/driver-history-ride-details.component';
@@ -79,7 +79,7 @@ import { DriverHistoryRidePassengersComponent } from './driver/driver-history/dr
     ],
     providers: [{
         provide: HTTP_INTERCEPTORS,
-        useClass: Interceptor,
+        useClass: LoginInterceptor,
         multi: true
         },
     ],
