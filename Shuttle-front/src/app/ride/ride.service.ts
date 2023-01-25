@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Route } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Driver } from '../driver/driver.service';
@@ -36,6 +37,35 @@ export interface RideListDTO {
     totalCount: number,
     results: Array<Ride>
 }
+
+export interface RouteDTO {
+	departure: LocationDTO,
+	destination: LocationDTO
+}
+
+export interface LocationDTO {
+	address: String,
+	latitude: number,
+	longitude: number
+}
+
+export interface BasicUserInfoDTO {
+	id: number;
+	email: String;
+}
+
+export interface FavoriteRouteDTO {
+    id: number,
+    favoriteName: String,
+    locations: Array<RouteDTO>,
+    passengers: Array<BasicUserInfoDTO>,
+    vehicleType: String,
+    babyTransport: boolean,
+    petTransport: boolean,
+    scheduledTime: String
+}
+
+
 
 export enum RideStatus {
     Pending = "PENDING", Accepted = "ACCEPTED", Rejected = "REJECTED", Canceled = "CANCELED", Finished = "FINISHED", Started = "STARTED"
@@ -78,6 +108,7 @@ export interface RideRequest {
     providedIn: 'root'
 })
 export class RideService {
+
     constructor(private httpClient: HttpClient) { }
     readonly url: string = environment.serverOrigin + 'api/ride'
 
@@ -139,4 +170,11 @@ export class RideService {
             responseType: 'json'
         });
     }
+
+
+    public getFavoriteRides(passengerId: number): Observable<Array<FavoriteRouteDTO>> {
+        return this.httpClient.get<Array<FavoriteRouteDTO>>(`${this.url}/favorites/passenger/${passengerId}`, {
+            responseType: 'json'
+        });
+      }
 }
