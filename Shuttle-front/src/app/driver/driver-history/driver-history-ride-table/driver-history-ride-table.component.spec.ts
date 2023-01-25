@@ -4,6 +4,8 @@ import { DriverHistoryRideTableComponent } from './driver-history-ride-table.com
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MaterialModule } from 'src/infrastructure/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('DriverHistoryRideTableComponent', () => {
   let component: DriverHistoryRideTableComponent;
@@ -12,7 +14,14 @@ describe('DriverHistoryRideTableComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ DriverHistoryRideTableComponent ],
-      imports: [ HttpClientTestingModule, MaterialModule, BrowserAnimationsModule ]
+      imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientTestingModule,
+        RouterTestingModule,
+        MaterialModule,
+        BrowserAnimationsModule,
+    ]
     })
     .compileComponents();
 
