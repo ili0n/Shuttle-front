@@ -4,7 +4,9 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ReviewPairDTO, ReviewService } from 'src/app/review/review.service';
 import { RideRateDialogComponent, ReviewDialogResult } from 'src/app/ride/ride-rate-dialog/ride-rate-dialog.component';
-import { Ride, RideStatus } from 'src/app/ride/ride.service';
+import { FavoriteRouteDTO, Ride, RideService, RideStatus } from 'src/app/ride/ride.service';
+import { SharedService } from 'src/app/shared/shared.service';
+import { PassengerFavoriteNameDialogComponent } from '../passenger-favorite-name-dialog/passenger-favorite-name-dialog/passenger-favorite-name-dialog.component';
 import { RideOrderAgain } from '../passenger-history.component';
 
 @Component({
@@ -21,6 +23,8 @@ export class PassengerHistoryRideRateComponent implements OnInit, OnChanges {
         private reviewService: ReviewService,
         private authService: AuthService,
         private dialog: MatDialog,
+        private rideService: RideService,
+        private sharedService: SharedService
     ) {}
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -141,7 +145,22 @@ export class PassengerHistoryRideRateComponent implements OnInit, OnChanges {
         return false;
     }
 
-    protected toggleRideIsFavorite(): void {
+    protected addFavoriteRide(): void {
+        const dialogRef = this.dialog.open(PassengerFavoriteNameDialogComponent, { width: '450px' });
 
+        dialogRef.afterClosed().subscribe(result =>{
+            if(result === null || result === undefined){
+                return;
+            }
+            if(this.ride === null || this.ride === undefined){
+                this.sharedService.showSnackBar("You haven't selected any rides", 3000);
+                return;
+            }
+            let favoriteRide: FavoriteRouteDTO = this.rideService.rideToFavoriteRoute(this.ride!, result.name);
+            this.rideService.favoriteRouteCreate(favoriteRide).subscribe({
+                next: result =>  this.sharedService.showSnackBar("Successfuly added favorite ride", 3000),
+                error: err =>  this.sharedService.showSnackBar("Failed to add favorite route", 3000)
+            });
+        });
     }
 }

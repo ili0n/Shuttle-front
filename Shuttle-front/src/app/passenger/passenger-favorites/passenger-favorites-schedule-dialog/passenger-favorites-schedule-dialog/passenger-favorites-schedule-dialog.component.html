@@ -1,0 +1,36 @@
+<h1 mat-dialog-title>Schedule time</h1>
+<div mat-dialog-content>
+    <form [formGroup]="scheduleForm">
+        <mat-checkbox formControlName="is_later" [(ngModel)]="isLater" class="value">Schedule later</mat-checkbox>
+        <ng-container *ngIf="isLater">
+            <br />
+            <div formGroupName="later">
+                <mat-form-field appearance="fill" class="shortInput">
+                    <mat-label>Hour</mat-label>
+                    <mat-select formControlName="at_hour">
+                        <mat-option *ngFor="let hour of allowedHours" value="{{hour}}">{{hour}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <span class="space"></span>
+
+                <mat-form-field appearance="fill" class="shortInput">
+                    <mat-label>Minute</mat-label>
+                    <mat-select formControlName="at_minute">
+                        <mat-option *ngFor="let minute of allowedMinutes" value="{{minute}}">{{minute}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <br/>
+            
+            </div>
+        </ng-container>
+    </form>
+</div>
+<mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="submit()">
+        Submit
+    </button>
+    <button mat-raised-button (click)="dialogRef.close(null)" color="primary">
+        Cancel
+    </button>
+</mat-dialog-actions>

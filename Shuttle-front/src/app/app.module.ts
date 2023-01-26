@@ -37,6 +37,7 @@ import { DriverHistoryComponent } from './driver/driver-history/driver-history.c
 import { DriverHistoryRideTableComponent } from './driver/driver-history/driver-history-ride-table/driver-history-ride-table.component';
 import { DriverHistoryRideDetailsComponent } from './driver/driver-history/driver-history-ride-details/driver-history-ride-details.component';
 import { DriverHistoryRidePassengersComponent } from './driver/driver-history/driver-history-ride-passengers/driver-history-ride-passengers.component';
+import { PassengerDialog } from './passenger/passenger-favorites/passenger-favorites.component';
 
 @NgModule({
     declarations: [
@@ -58,6 +59,7 @@ import { DriverHistoryRidePassengersComponent } from './driver/driver-history/dr
         DriverHistoryRideTableComponent,
         DriverHistoryRideDetailsComponent,
         DriverHistoryRidePassengersComponent,
+        PassengerDialog
     ],
     imports: [
         BrowserModule,

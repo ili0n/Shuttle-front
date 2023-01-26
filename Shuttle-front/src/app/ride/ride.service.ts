@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Route } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Driver } from '../driver/driver.service';
@@ -37,6 +38,24 @@ export interface RideListDTO {
     results: Array<Ride>
 }
 
+export interface FavoriteRouteDTO {
+    id?: number,
+    favoriteName: string,
+    locations: Array<RideRequestLocation>,
+    passengers: Array<RideRequestPassenger>,
+    vehicleType: string,
+    babyTransport: boolean,
+    petTransport: boolean,
+    scheduledTime: string | null,
+    distance?: number,
+}
+
+export interface Message {
+    message: string
+}
+
+
+
 export enum RideStatus {
     Pending = "PENDING", Accepted = "ACCEPTED", Rejected = "REJECTED", Canceled = "CANCELED", Finished = "FINISHED", Started = "STARTED"
 }
@@ -60,6 +79,7 @@ export interface Ride {
     endTime: string,
     vehicleType: string,
     rejection: RejectionTimeDTO,
+    totalLength?: number,
     driver: UserIdEmail,
     scheduledTime: string,
 }
@@ -78,8 +98,35 @@ export interface RideRequest {
     providedIn: 'root'
 })
 export class RideService {
+
+
     constructor(private httpClient: HttpClient) { }
     readonly url: string = environment.serverOrigin + 'api/ride'
+
+    public favoriteRouteToRideRequest(favoriteRide: FavoriteRouteDTO): RideRequest{
+        return {
+            "babyTransport": favoriteRide.babyTransport,
+            "distance": favoriteRide.distance!,
+            "locations": favoriteRide.locations,
+            "passengers": favoriteRide.passengers,
+            "petTransport": favoriteRide.petTransport,
+            "scheduledTime": favoriteRide.scheduledTime,
+            "vehicleType": favoriteRide.vehicleType,
+        }
+    }
+
+    public rideToFavoriteRoute(ride: Ride, favoriteName: string): FavoriteRouteDTO{
+        return {
+            "babyTransport": ride.babyTransport,
+            "distance": ride.totalLength!,
+            "locations": ride.locations,
+            "passengers": ride.passengers,
+            "petTransport": ride.petTransport,
+            "scheduledTime": ride.scheduledTime,
+            "vehicleType": ride.vehicleType,
+            "favoriteName": favoriteName,
+        }
+    }
 
     public request(payload: RideRequest): Observable<RideRequest> {
         return this.httpClient.post<RideRequest>(`${this.url}`, payload, {
@@ -136,6 +183,26 @@ export class RideService {
 
     public withdraw(rideId: number): Observable<Ride> {
         return this.httpClient.put<Ride>(`${this.url}/${rideId}/withdraw`, {
+            responseType: 'json'
+        });
+    }
+
+    public favoriteRouteCreate(payload: FavoriteRouteDTO): Observable<FavoriteRouteDTO> {
+        return this.httpClient.post<FavoriteRouteDTO>(`${this.url}/favorites`, payload, {
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
+
+
+    public getFavoriteRides(passengerId: number): Observable<Array<FavoriteRouteDTO>> {
+        return this.httpClient.get<Array<FavoriteRouteDTO>>(`${this.url}/favorites/passenger/${passengerId}`, {
+            responseType: 'json'
+        });
+    }
+
+    public deleteFavorite(routeToRemove: FavoriteRouteDTO): Observable<Message> {
+        return this.httpClient.delete<Message>(`${this.url}/favorites/${routeToRemove.id}`, {
             responseType: 'json'
         });
     }

@@ -26,4 +26,8 @@ export class PassengerNavbarComponent implements OnInit {
     history() {
         this.router.navigate(["passenger/history"]);
     }
+
+    favorite() {
+        this.router.navigate(["passenger/favorites"]);
+    }
 }
