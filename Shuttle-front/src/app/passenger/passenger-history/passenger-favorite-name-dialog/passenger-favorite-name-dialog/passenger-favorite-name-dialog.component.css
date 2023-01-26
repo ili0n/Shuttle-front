@@ -1,0 +1,12 @@
+#favoriteNameDialog{
+    padding: 20px;;
+}
+
+#favoriteNameDialog mat-form-field{
+    width: 100%;
+}
+
+.buttonContainer{
+    justify-content: space-between;
+    display: flex;
+}

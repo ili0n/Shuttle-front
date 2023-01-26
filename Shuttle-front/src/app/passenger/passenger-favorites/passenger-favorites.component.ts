@@ -25,8 +25,6 @@ export class PassengerFavoritesComponent implements AfterViewInit, OnDestroy{
 
   private routesToRemove: Array<FavoriteRouteDTO> = [];
 
-  // TODO passenger history favorites adding and removing favorites
-
   constructor(
       private rideService: RideService,
       private authService: AuthService,

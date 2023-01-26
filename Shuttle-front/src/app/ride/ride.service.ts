@@ -39,14 +39,14 @@ export interface RideListDTO {
 }
 
 export interface FavoriteRouteDTO {
-    id: number,
+    id?: number,
     favoriteName: string,
     locations: Array<RideRequestLocation>,
     passengers: Array<RideRequestPassenger>,
     vehicleType: string,
     babyTransport: boolean,
     petTransport: boolean,
-    scheduledTime: string,
+    scheduledTime: string | null,
     distance?: number,
 }
 
@@ -79,6 +79,7 @@ export interface Ride {
     endTime: string,
     vehicleType: string,
     rejection: RejectionTimeDTO,
+    totalLength?: number,
     driver: UserIdEmail,
     scheduledTime: string,
 }
@@ -102,7 +103,7 @@ export class RideService {
     constructor(private httpClient: HttpClient) { }
     readonly url: string = environment.serverOrigin + 'api/ride'
 
-    public favoriteRouteToRideRequest(favoriteRide: FavoriteRouteDTO){
+    public favoriteRouteToRideRequest(favoriteRide: FavoriteRouteDTO): RideRequest{
         return {
             "babyTransport": favoriteRide.babyTransport,
             "distance": favoriteRide.distance!,
@@ -111,6 +112,19 @@ export class RideService {
             "petTransport": favoriteRide.petTransport,
             "scheduledTime": favoriteRide.scheduledTime,
             "vehicleType": favoriteRide.vehicleType,
+        }
+    }
+
+    public rideToFavoriteRoute(ride: Ride, favoriteName: string): FavoriteRouteDTO{
+        return {
+            "babyTransport": ride.babyTransport,
+            "distance": ride.totalLength!,
+            "locations": ride.locations,
+            "passengers": ride.passengers,
+            "petTransport": ride.petTransport,
+            "scheduledTime": ride.scheduledTime,
+            "vehicleType": ride.vehicleType,
+            "favoriteName": favoriteName,
         }
     }
 
@@ -169,6 +183,13 @@ export class RideService {
 
     public withdraw(rideId: number): Observable<Ride> {
         return this.httpClient.put<Ride>(`${this.url}/${rideId}/withdraw`, {
+            responseType: 'json'
+        });
+    }
+
+    public favoriteRouteCreate(payload: FavoriteRouteDTO): Observable<FavoriteRouteDTO> {
+        return this.httpClient.post<FavoriteRouteDTO>(`${this.url}/favorites`, payload, {
+            observe: 'body',
             responseType: 'json'
         });
     }
