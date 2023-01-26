@@ -64,8 +64,8 @@
             <ng-container matColumnDef="order again">
                 <th mat-header-cell *matHeaderCellDef> Order again </th>
                 <td mat-cell *matCellDef="let element"> 
-                    <button mat-raised-button color="primary" aria-label="Order again" (click)="orderAgain(element)">
-                        Order again
+                    <button mat-raised-button color="primary" aria-label="Order again" (click)="showScheduleDialog(element)">
+                        Reorder
                     </button>
                 </td>
             </ng-container>

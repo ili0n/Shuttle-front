@@ -10,6 +10,7 @@ import { PassengerHistoryRideTableComponent } from './passenger-history/passenge
 import { PassengerHistoryRideDetailsComponent } from './passenger-history/passenger-history-ride-details/passenger-history-ride-details.component';
 import { PassengerHistoryRideRateComponent } from './passenger-history/passenger-history-ride-rate/passenger-history-ride-rate.component';
 import { PassengerFavoritesComponent } from './passenger-favorites/passenger-favorites.component';
+import { PassengerFavoritesScheduleDialogComponent } from './passenger-favorites/passenger-favorites-schedule-dialog/passenger-favorites-schedule-dialog/passenger-favorites-schedule-dialog.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { PassengerFavoritesComponent } from './passenger-favorites/passenger-fav
     PassengerHistoryRideDetailsComponent,
     PassengerHistoryRideRateComponent,
     PassengerFavoritesComponent,
+    PassengerFavoritesScheduleDialogComponent,
   ],
   imports: [
     CommonModule,

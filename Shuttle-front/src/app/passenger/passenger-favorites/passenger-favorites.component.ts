@@ -8,6 +8,7 @@ import 'leaflet-routing-machine';
 import { Router } from '@angular/router';
 import { SharedService } from 'src/app/shared/shared.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { PassengerFavoritesScheduleDialogComponent } from './passenger-favorites-schedule-dialog/passenger-favorites-schedule-dialog/passenger-favorites-schedule-dialog.component';
 
 @Component({
   selector: 'app-passenger-favorites',
@@ -24,24 +25,15 @@ export class PassengerFavoritesComponent implements AfterViewInit, OnDestroy{
 
   private routesToRemove: Array<FavoriteRouteDTO> = [];
 
+  // TODO passenger history favorites adding and removing favorites
 
   constructor(
       private rideService: RideService,
       private authService: AuthService,
-      private passengerDialog: MatDialog,
+      private dialog: MatDialog,
       private router: Router,
       private sharedService: SharedService,
   ) {}
-
-
-  ngOnDestroy(): void {
-    for(let routeToRemove of this.routesToRemove){
-      this.rideService.deleteFavorite(routeToRemove).subscribe({
-        next: result => console.log(result),
-        error: err => this.sharedService.showSnackBar("Failed to remove favorite ride", 3000)
-      });
-    }
-  }
 
   ngOnInit() {
       this.fetchUserFavoriteRides();
@@ -85,7 +77,7 @@ export class PassengerFavoritesComponent implements AfterViewInit, OnDestroy{
   }
 
   public showPassengers(favoriteRoute: FavoriteRouteDTO){
-    this.passengerDialog.open(PassengerDialog, {
+    this.dialog.open(PassengerDialog, {
       data: {
         emails: [favoriteRoute.passengers.map(passenger => passenger.email)]
       },
@@ -93,7 +85,8 @@ export class PassengerFavoritesComponent implements AfterViewInit, OnDestroy{
 
   }
 
-  public orderAgain(favoriteRoute: FavoriteRouteDTO){    
+  private reorder(favoriteRoute: FavoriteRouteDTO){  
+    console.log(favoriteRoute); 
     let that = this;
     this.constructRouteControl(favoriteRoute);
     this.route!.on("routesfound", function(e){
@@ -145,6 +138,38 @@ export class PassengerFavoritesComponent implements AfterViewInit, OnDestroy{
       },
     })
   }
+
+  public showScheduleDialog(favoriteRoute: FavoriteRouteDTO) {
+
+    const dialogRef = this.dialog.open(PassengerFavoritesScheduleDialogComponent, { width: '450px' });
+
+    dialogRef.afterClosed().subscribe(result =>{
+      console.log(result);
+      if(result === null || result === undefined)
+        return;
+      if(result.data.is_later){
+        let scheduledTimeStr: string | null = null;
+        let now: Date = new Date();
+        now.setHours(result.data.later.at_hour);
+        now.setMinutes(result.data.later.at_minute);
+        now.setSeconds(0);   
+
+        favoriteRoute.scheduledTime = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString();
+      }
+      this.reorder(favoriteRoute);
+    })
+  }
+  
+
+  ngOnDestroy(): void {
+    for(let routeToRemove of this.routesToRemove){
+      this.rideService.deleteFavorite(routeToRemove).subscribe({
+        next: result => console.log(result),
+        error: err => this.sharedService.showSnackBar("Failed to remove favorite ride", 3000)
+      });
+    }
+  }
+
 
   public removeFromFavorites(favoriteRoute: FavoriteRouteDTO, i: number){
     if(this.routesToRemove.includes(favoriteRoute)){
