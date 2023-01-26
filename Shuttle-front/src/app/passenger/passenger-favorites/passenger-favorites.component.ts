@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnDestroy } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -14,13 +14,15 @@ import { HttpErrorResponse } from '@angular/common/http';
   templateUrl: './passenger-favorites.component.html',
   styleUrls: ['./passenger-favorites.component.css']
 })
-export class PassengerFavoritesComponent implements AfterViewInit{
+export class PassengerFavoritesComponent implements AfterViewInit, OnDestroy{
   protected favoriteRideDataSource: MatTableDataSource<FavoriteRouteDTO> = new MatTableDataSource();
   protected favoriteRideDisplayedColumns = ["favorite", "name", "route", "passengers", "vehicle type", "baby", "pet", "order again"];
   protected favoriteRides?: Array<FavoriteRouteDTO>;
 
   private map!: L.Map;
   private route?: L.Routing.Control;
+
+  private routesToRemove: Array<FavoriteRouteDTO> = [];
 
 
   constructor(
@@ -30,6 +32,16 @@ export class PassengerFavoritesComponent implements AfterViewInit{
       private router: Router,
       private sharedService: SharedService,
   ) {}
+
+
+  ngOnDestroy(): void {
+    for(let routeToRemove of this.routesToRemove){
+      this.rideService.deleteFavorite(routeToRemove).subscribe({
+        next: result => console.log(result),
+        error: err => this.sharedService.showSnackBar("Failed to remove favorite ride", 3000)
+      });
+    }
+  }
 
   ngOnInit() {
       this.fetchUserFavoriteRides();
@@ -62,7 +74,6 @@ export class PassengerFavoritesComponent implements AfterViewInit{
   }
 
   private onFetchUserFavoriteRides(favoriteRides: Array<FavoriteRouteDTO>): void {
-      console.log(favoriteRides);
       this.favoriteRides = favoriteRides;
       this.favoriteRideDataSource = new MatTableDataSource(favoriteRides);
   }
@@ -133,6 +144,24 @@ export class PassengerFavoritesComponent implements AfterViewInit{
           addWaypoints: false
       },
     })
+  }
+
+  public removeFromFavorites(favoriteRoute: FavoriteRouteDTO, i: number){
+    if(this.routesToRemove.includes(favoriteRoute)){
+      this.removeFromArray(favoriteRoute, this.routesToRemove);
+      document.getElementsByClassName("icon")[i].setAttribute("src", "assets/heart_active.png");
+    }
+    else{
+      this.routesToRemove.push(favoriteRoute);
+      document.getElementsByClassName("icon")[i].setAttribute("src", "assets/heart-deactivated.png");
+    }
+  }
+
+  private removeFromArray<T>(element: T, array: Array<T>){
+    const index = array.indexOf(element, 0);
+    if (index > -1) {
+      array.splice(index, 1);
+    }
   }
 
 }

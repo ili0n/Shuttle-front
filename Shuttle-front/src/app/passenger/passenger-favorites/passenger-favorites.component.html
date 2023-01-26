@@ -10,9 +10,12 @@
 
             <ng-container matColumnDef="favorite">
                 <th mat-header-cell *matHeaderCellDef> Favorite </th>
-                <td mat-cell *matCellDef="let element"> 
-                    <button mat-icon-button color="warn" aria-label="Heart icon">
-                        <mat-icon>favorite</mat-icon>
+                <td mat-cell *matCellDef="let element; let i = index"> 
+                    <button mat-icon-button class="heart-active" (click)="removeFromFavorites(element, i)">
+                        <img
+                            class="icon"
+                            src="assets/heart_active.png"
+                        />
                     </button>
                 </td>
             </ng-container>

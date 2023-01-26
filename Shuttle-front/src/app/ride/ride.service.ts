@@ -50,6 +50,10 @@ export interface FavoriteRouteDTO {
     distance?: number,
 }
 
+export interface Message {
+    message: string
+}
+
 
 
 export enum RideStatus {
@@ -93,6 +97,7 @@ export interface RideRequest {
     providedIn: 'root'
 })
 export class RideService {
+
 
     constructor(private httpClient: HttpClient) { }
     readonly url: string = environment.serverOrigin + 'api/ride'
@@ -173,5 +178,11 @@ export class RideService {
         return this.httpClient.get<Array<FavoriteRouteDTO>>(`${this.url}/favorites/passenger/${passengerId}`, {
             responseType: 'json'
         });
-      }
+    }
+
+    public deleteFavorite(routeToRemove: FavoriteRouteDTO): Observable<Message> {
+        return this.httpClient.delete<Message>(`${this.url}/favorites/${routeToRemove.id}`, {
+            responseType: 'json'
+        });
+    }
 }
