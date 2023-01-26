@@ -1,73 +1,81 @@
-<ng-container *ngIf="!favoriteRides">
-    <div class="grey-centered-text">
-        User has no favorite rides!
+<div class="flex-container">
+    <div class="left">
+        <ng-container *ngIf="!favoriteRides">
+            <div class="grey-centered-text">
+                User has no favorite rides!
+            </div>
+        </ng-container>
+        <ng-container *ngIf="favoriteRides">
+            <table mat-table [dataSource]='favoriteRideDataSource' class="mat-elevation-z3">
+
+            <ng-container matColumnDef="favorite">
+                <th mat-header-cell *matHeaderCellDef> Favorite </th>
+                <td mat-cell *matCellDef="let element"> 
+                    <button mat-icon-button color="warn" aria-label="Heart icon">
+                        <mat-icon>favorite</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+            
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Name </th>
+                <td mat-cell *matCellDef="let element"> {{element.favoriteName}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="route">
+                <th mat-header-cell *matHeaderCellDef> Route </th>
+                <td mat-cell *matCellDef="let element"> {{ getFavoriteRideRouteString(element) }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="passengers">
+                <th mat-header-cell *matHeaderCellDef> Passengers </th>
+                <td mat-cell *matCellDef="let element"> 
+                    <button mat-raised-button color="primary" aria-label="Passengers" (click)="showPassengers(element)">
+                        Passengers
+                    </button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="vehicle type">
+                <th mat-header-cell *matHeaderCellDef> Vehicle type </th>
+                <td mat-cell *matCellDef="let element"> {{element.vehicleType}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="baby">
+                <th mat-header-cell *matHeaderCellDef> Baby </th>
+                <td mat-cell *matCellDef="let element;"> 
+                    <mat-checkbox [(ngModel)]="element.babyTransport" disabled>
+                    </mat-checkbox>
+                </td>
+                
+            </ng-container>
+
+            <ng-container matColumnDef="pet">
+                <th mat-header-cell *matHeaderCellDef> Pet </th>
+                <td mat-cell *matCellDef="let element;"> 
+                    <mat-checkbox [(ngModel)]="element.petTransport" disabled>
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="order again">
+                <th mat-header-cell *matHeaderCellDef> Order again </th>
+                <td mat-cell *matCellDef="let element"> 
+                    <button mat-raised-button color="primary" aria-label="Order again" (click)="orderAgain(element)">
+                        Order again
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="favoriteRideDisplayedColumns"></tr>
+            <tr mat-row *matRowDef="let rowData; columns: favoriteRideDisplayedColumns" (click)="displayRoute(rowData)"></tr>
+            </table>
+            <br />
+        </ng-container>
     </div>
-</ng-container>
-<ng-container *ngIf="favoriteRides">
-    <table mat-table [dataSource]='favoriteRideDataSource' class="mat-elevation-z3">
-
-    <ng-container matColumnDef="favorite">
-        <th mat-header-cell *matHeaderCellDef> Favorite </th>
-        <td mat-cell *matCellDef="let element"> 
-            <button mat-icon-button color="warn" aria-label="Heart icon">
-                <mat-icon>favorite</mat-icon>
-            </button>
-        </td>
-    </ng-container>
-     "", "", "", "", "];
-    
-    <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.favoriteName}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="route">
-        <th mat-header-cell *matHeaderCellDef> Route </th>
-        <td mat-cell *matCellDef="let element"> {{ getFavoriteRideRouteString(element) }} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="passengers">
-        <th mat-header-cell *matHeaderCellDef> Passengers </th>
-        <td mat-cell *matCellDef="let element"> 
-            <button mat-raised-button color="primary" aria-label="Passengers" (click)="showPassengers(element)">
-                Passengers
-            </button>
-        </td>
-    </ng-container>
-
-    <ng-container matColumnDef="vehicle type">
-        <th mat-header-cell *matHeaderCellDef> Vehicle type </th>
-        <td mat-cell *matCellDef="let element"> {{element.vehicleType}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="baby">
-        <th mat-header-cell *matHeaderCellDef> Baby </th>
-        <td mat-cell *matCellDef="let element;"> 
-            <mat-checkbox [(ngModel)]="element.babyTransport" disabled>
-            </mat-checkbox>
-        </td>
-        
-    </ng-container>
-
-    <ng-container matColumnDef="pet">
-        <th mat-header-cell *matHeaderCellDef> Pet </th>
-        <td mat-cell *matCellDef="let element;"> 
-            <mat-checkbox [(ngModel)]="element.petTransport" disabled>
-            </mat-checkbox>
-        </td>
-    </ng-container>
-
-    <ng-container matColumnDef="order again">
-        <th mat-header-cell *matHeaderCellDef> Order again </th>
-        <td mat-cell *matCellDef="let element"> 
-            <button mat-raised-button color="primary" aria-label="Order again" (click)="orderAgain(element)">
-                Order again
-            </button>
-        </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="favoriteRideDisplayedColumns"></tr>
-    <tr mat-row *matRowDef="let rowData; columns: favoriteRideDisplayedColumns"></tr>
-    </table>
-    <br />
-</ng-container>
+    <div class="map-container right">
+        <div class="map-frame">
+            <div id="favorite-map"></div>
+        </div>
+    </div>
+</div>

@@ -38,31 +38,16 @@ export interface RideListDTO {
     results: Array<Ride>
 }
 
-export interface RouteDTO {
-	departure: LocationDTO,
-	destination: LocationDTO
-}
-
-export interface LocationDTO {
-	address: String,
-	latitude: number,
-	longitude: number
-}
-
-export interface BasicUserInfoDTO {
-	id: number;
-	email: String;
-}
-
 export interface FavoriteRouteDTO {
     id: number,
-    favoriteName: String,
-    locations: Array<RouteDTO>,
-    passengers: Array<BasicUserInfoDTO>,
-    vehicleType: String,
+    favoriteName: string,
+    locations: Array<RideRequestLocation>,
+    passengers: Array<RideRequestPassenger>,
+    vehicleType: string,
     babyTransport: boolean,
     petTransport: boolean,
-    scheduledTime: String
+    scheduledTime: string,
+    distance?: number,
 }
 
 
@@ -111,6 +96,18 @@ export class RideService {
 
     constructor(private httpClient: HttpClient) { }
     readonly url: string = environment.serverOrigin + 'api/ride'
+
+    public favoriteRouteToRideRequest(favoriteRide: FavoriteRouteDTO){
+        return {
+            "babyTransport": favoriteRide.babyTransport,
+            "distance": favoriteRide.distance!,
+            "locations": favoriteRide.locations,
+            "passengers": favoriteRide.passengers,
+            "petTransport": favoriteRide.petTransport,
+            "scheduledTime": favoriteRide.scheduledTime,
+            "vehicleType": favoriteRide.vehicleType,
+        }
+    }
 
     public request(payload: RideRequest): Observable<RideRequest> {
         return this.httpClient.post<RideRequest>(`${this.url}`, payload, {
