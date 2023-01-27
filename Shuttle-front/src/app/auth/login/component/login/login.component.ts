@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {HttpErrorResponse} from "@angular/common/http";
 import {AuthService} from "../../../auth.service";
+import {TokenStorageService} from "../../../token-storage.service";
 
 @Component({
     selector: 'app-login',
@@ -10,6 +11,8 @@ import {AuthService} from "../../../auth.service";
     styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
+
+
     formGroup: FormGroup;
     hasError: boolean = false;
 
@@ -21,7 +24,9 @@ export class LoginComponent {
                     // @ts-ignore
                     //console.log(JSON.stringify(result['accessToken']));
                     // @ts-ignore
-                    localStorage.setItem('user', JSON.stringify(result['accessToken']));
+                    this.tokenStorage.saveToken(JSON.stringify(result['accessToken']));
+                    // @ts-ignore
+                    this.tokenStorage.saveRefreshToken(JSON.stringify(result['refreshToken']));
                     this.authService.setUser();
                     let homeRoute = this.authService.getRole() + '/home';
                     this.router.navigate([homeRoute]);
@@ -32,11 +37,11 @@ export class LoginComponent {
                     }
                 },
             });
-
         }
     }
 
-    constructor(private readonly formBuilder: FormBuilder, private authService: AuthService, private router: Router) {
+    constructor(private readonly formBuilder: FormBuilder, private authService: AuthService, private router: Router,
+                private tokenStorage: TokenStorageService) {
         this.formGroup = formBuilder.group({
             email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required]],

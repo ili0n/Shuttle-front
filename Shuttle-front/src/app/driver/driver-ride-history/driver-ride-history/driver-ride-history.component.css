@@ -1,0 +1,30 @@
+mat-card {
+    cursor: pointer;
+}
+.container {
+    display: flex;
+}
+
+section{
+    display: flex;
+    width: 45%;
+}
+#left {
+    align-self: flex-start;
+}
+#right {
+    align-self: flex-end;
+}
+#map_route {
+    height: 500px;
+}
+.map-container{
+    width: 40%;
+    display: block;
+    align-self: flex-end;
+}
+.cards{
+    display: block;
+    align-self: flex-start;
+    width: 45%;
+}

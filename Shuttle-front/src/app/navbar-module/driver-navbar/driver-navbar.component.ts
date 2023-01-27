@@ -23,10 +23,10 @@ export class DriverNavbarComponent implements OnInit {
     }
 
     constructor(
-        private readonly formBuilder: FormBuilder, 
-        private authService: AuthService, 
-        private router: Router, 
-        private userService: UserService, 
+        private readonly formBuilder: FormBuilder,
+        private authService: AuthService,
+        private router: Router,
+        private userService: UserService,
         private navbarService: NavbarService,
         private driverSocketService: DriverSocketService,
         private sharedService: SharedService
@@ -77,7 +77,7 @@ export class DriverNavbarComponent implements OnInit {
             this.ride = ride;
         }
 
-        if (this.ride.status == RideStatus.Started) { 
+        if (this.ride.status == RideStatus.Started) {
             this.formGroupIsActive.disable();
             this.setIsActive(true);
         } else {

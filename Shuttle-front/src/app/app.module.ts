@@ -26,13 +26,20 @@ import { EstimationFormComponent } from './estimation-form/estimation-form.compo
 import { DriverHomeComponent } from './driver/driver-home/driver-home.component';
 import { RejectRideDialogComponent } from './driver/reject-ride-dialog/reject-ride-dialog.component';
 import {NavbarModuleModule} from "./navbar-module/navbar-module.module";
-import { SnackbarComponent } from './util/snackbar/snackbar/snackbar.component';
-import { PassengerModule } from './passenger/passenger.module';
-import { DriverModule } from './driver/driver/driver.module';
-import { RideModule } from './ride/ride.module';
-import { RidePanicDialogComponent } from './ride/ride-panic-dialog/ride-panic-dialog.component';
-import { DriverHomeCurrentRideComponent } from './driver/driver-home/driver-home-current-ride/driver-home-current-ride.component';
-import { Interceptor } from './auth/interceptor/login.interceptor';
+import {
+    DriverRideHistoryComponent
+} from './driver/driver-ride-history/driver-ride-history/driver-ride-history.component';
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {Interceptor} from "./auth/interceptor/login.interceptor";
+import {MatNativeDateModule} from "@angular/material/core";
+import {SnackbarComponent} from './util/snackbar/snackbar/snackbar.component';
+import {PassengerModule} from './passenger/passenger.module';
+import {DriverModule} from './driver/driver/driver.module';
+import {RideModule} from './ride/ride.module';
+import {RidePanicDialogComponent} from './ride/ride-panic-dialog/ride-panic-dialog.component';
+import {
+    DriverHomeCurrentRideComponent
+} from './driver/driver-home/driver-home-current-ride/driver-home-current-ride.component';
 import { DriverHistoryComponent } from './driver/driver-history/driver-history.component';
 import { DriverHistoryRideTableComponent } from './driver/driver-history/driver-history-ride-table/driver-history-ride-table.component';
 import { DriverHistoryRideDetailsComponent } from './driver/driver-history/driver-history-ride-details/driver-history-ride-details.component';
@@ -55,6 +62,8 @@ import { PassengerDialog } from './passenger/passenger-favorites/passenger-favor
         LoginComponent,
         SnackbarComponent,
         DriverHomeCurrentRideComponent,
+        LoginComponent,
+        DriverRideHistoryComponent,
         DriverHistoryComponent,
         DriverHistoryRideTableComponent,
         DriverHistoryRideDetailsComponent,
@@ -78,13 +87,20 @@ import { PassengerDialog } from './passenger/passenger-favorites/passenger-favor
         PassengerModule,
         DriverModule,
         RideModule,
+        MatNativeDateModule,
+        MatDatepickerModule,
+        ReactiveFormsModule,
     ],
-    providers: [{
-        provide: HTTP_INTERCEPTORS,
-        useClass: Interceptor,
-        multi: true
+    providers: [
+        MatDatepickerModule,
+        MatNativeDateModule,
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: Interceptor,
+            multi: true
         },
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
