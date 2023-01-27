@@ -1,0 +1,41 @@
+<h2>Passengers</h2>
+<hr/>
+<mat-accordion *ngFor="let p of getSelectedRidePassengers()">
+    <mat-expansion-panel hideToggle class="passenger-card">
+        <mat-expansion-panel-header>
+            <mat-panel-title>{{p.passenger.name}} {{p.passenger.surname}}</mat-panel-title>
+            <mat-panel-description>{{p.passenger.email}}</mat-panel-description>
+        </mat-expansion-panel-header>
+        <div *ngIf="p.reviews != undefined">
+            <div *ngIf="p.reviews.vehicleReview.rating != null" class="text-regular">
+                <h2>Vehicle Review</h2>  
+                <span class="text-thin">Rating: </span>{{ p.reviews.vehicleReview.rating }}/5
+                <br />
+
+                <span *ngIf="p.reviews.vehicleReview.comment == ''">
+                    <span class="text-thin">No comment</span>
+                </span>
+                <span *ngIf="p.reviews.vehicleReview.comment != ''">
+                    <span class="text-thin">Comment: </span>{{ p.reviews.vehicleReview.comment }}
+                </span>
+            </div>
+            <div *ngIf="p.reviews.driverReview.rating != null" class="text-regular">
+                <h2>Driver Review</h2>
+                <span class="text-thin">Rating: </span>{{ p.reviews.driverReview.rating }}/5
+                <br />
+                
+                <span *ngIf="p.reviews.driverReview.comment == ''">
+                    <span class="text-thin">No comment</span>
+                </span>
+                <span *ngIf="p.reviews.driverReview.comment != ''">
+                    <span class="text-thin">Comment: </span>{{ p.reviews.driverReview.comment }}
+                </span>
+
+                
+            </div>
+        </div>
+        <div *ngIf="p.reviews == undefined">
+            {{p.passenger.name}} did not leave a review.
+        </div>
+    </mat-expansion-panel>
+</mat-accordion>

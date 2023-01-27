@@ -12,9 +12,10 @@ import { RejectRideDialogComponent } from '../../reject-ride-dialog/reject-ride-
 })
 export class DriverHomeCurrentRideComponent {
     @Input() public ride!: Ride;
-    @Output() private panicEvent = new EventEmitter<string>();
+    @Output() private acceptEvent = new EventEmitter<void>();
     @Output() private rejectEvent = new EventEmitter<string>();
-    @Output() private beginEvent = new EventEmitter<void>();
+    @Output() private startEvent = new EventEmitter<void>();
+    @Output() private panicEvent = new EventEmitter<string>();
     @Output() private finishEvent = new EventEmitter<void>();
 
     private timer: NodeJS.Timer | null = null;
@@ -42,8 +43,16 @@ export class DriverHomeCurrentRideComponent {
         return this.ride.status == RideStatus.Accepted;
     }
 
-    protected onBeginClick(): void {
-        this.beginEvent.emit();
+    protected isStarted(): boolean {
+        return this.ride.status == RideStatus.Started;
+    }
+
+    protected onAcceptClick(): void {
+        this.acceptEvent.emit();
+    }
+
+    protected onStartClick(): void {
+        this.startEvent.emit();
     }
 
     protected onFinishClick(): void {
@@ -88,13 +97,13 @@ export class DriverHomeCurrentRideComponent {
         if (this.ride == null) {
             return false;
         }
-        return this.ride.startTime != null;
+        return this.ride.scheduledTime != null;
     }
 
-    protected getRideStartTime(): string {
-        if (this.ride == null) {
+    protected getRideScheduledTime(): string {
+        if (this.ride == null ){
             return "";
         }
-        return this.ride.startTime;
+        return new Date(this.ride.scheduledTime).toLocaleTimeString();
     }
 }

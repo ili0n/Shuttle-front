@@ -28,7 +28,7 @@ export class UserGuard implements CanActivate {
             const role: string[] = this.authService.getRoles();
             const requiredRole: string = url.split('/')[1];
 
-            console.log("Roles " + role + " required " + requiredRole);
+            //console.log("Roles " + role + " required " + requiredRole);
 
             if (role.indexOf(requiredRole) != -1) {
                 // Logged in and can access the route.

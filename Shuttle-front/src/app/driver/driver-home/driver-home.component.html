@@ -2,20 +2,20 @@
     <div class="row">
         <!-- Left side - map -->
         <div class="column left">
-            <div id="map"></div>
+            <div id="map" #leafletMap></div>
         </div>
 
         <!-- Right side - info -->
         <div class="column right" *ngIf="hasCurrentRide()">
         <app-driver-home-current-ride
             [ride]="ride!"
-            (beginEvent)="onRideBegin()"
+            (acceptEvent)="onRideAccept()"
+            (startEvent)="onRideStart()"
             (finishEvent)="onRideFinish()"
             (rejectEvent)="onRideReject($event)"
             (panicEvent)="onRidePanic($event)"
         >
         </app-driver-home-current-ride>
-
         </div>   
     </div>
 </div>

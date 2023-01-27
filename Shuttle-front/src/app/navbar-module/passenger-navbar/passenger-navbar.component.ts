@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
-import { Ride } from 'src/app/ride/ride.service';
-import { Observable, Subject } from 'rxjs';
-import { VehicleLocationDTO } from 'src/app/vehicle/vehicle.service';
 
 @Component({
   selector: 'app-passenger-navbar',
@@ -24,5 +21,13 @@ export class PassengerNavbarComponent implements OnInit {
 
     home() {
         this.router.navigate(["passenger/home"]);
+    }
+
+    history() {
+        this.router.navigate(["passenger/history"]);
+    }
+
+    favorite() {
+        this.router.navigate(["passenger/favorites"]);
     }
 }

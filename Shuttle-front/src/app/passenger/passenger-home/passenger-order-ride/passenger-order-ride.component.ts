@@ -1,11 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors, FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PassengerService } from 'src/app/passenger/passenger.service';
 import { RideRequest } from 'src/app/ride/ride.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { UserIdEmail } from 'src/app/user/user.service';
 import { VehicleService, VehicleType } from 'src/app/vehicle/vehicle.service';
+import { RideOrderAgain } from '../../passenger-history/passenger-history.component';
 
 export interface RecalculateRouteDTO {
     departure: string,
@@ -38,13 +40,27 @@ export class PassengerOrderRideComponent implements OnInit {
                 private vehicleService: VehicleService,
                 private authService: AuthService,
                 private sharedService: SharedService,
-                private passengerService: PassengerService) {
+                private passengerService: PassengerService,
+                private route: ActivatedRoute) {
         this.initMainForm();
         this.initAllowedTime();
     }
 
     ngOnInit(): void {
-        this.vehicleTypes = this.vehicleService.getTypes();
+        this.vehicleService.getTypes().subscribe({
+            next: res => {
+                this.vehicleTypes = res;
+            }
+        });
+
+        this.route.queryParams.subscribe({
+            next: (params) => {
+                this.fromRouterParams(params as RideOrderAgain);
+            },
+            error: (error) => {
+                console.error(error);
+            }
+        });
     }
 
     /**
@@ -85,12 +101,22 @@ export class PassengerOrderRideComponent implements OnInit {
            PassengerOrderRideComponent.goodTimeValidator()
         );
     }
+    
+    private fromRouterParams(params: RideOrderAgain) {
+        if (params.dep) {
+            this.mainForm.get('route_form.departure')?.setValue(params.dep);
+        }
+        if (params.dest) {
+            this.mainForm.get('route_form.destination')?.setValue(params.dest);
+        }
+        this.recalculateRoute();
+    }
 
     /**
      * @returns A validator function that determines whether the selected time for a ride in the
      * future is valid.
      */
-    private static goodTimeValidator(): ValidatorFn {
+    public static goodTimeValidator(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
             const inFuture: boolean = control.get('is_later')?.value;
             if (!inFuture) {
@@ -198,7 +224,8 @@ export class PassengerOrderRideComponent implements OnInit {
             next: (value: UserIdEmail) => {
                 this.addPassenger(value);
             },
-            error: () => {
+            error: (error) => {
+                console.log(error);
                 this.sharedService.showSnackBar("User not found!", 2000);
             }
         })
@@ -222,7 +249,7 @@ export class PassengerOrderRideComponent implements OnInit {
         const vehicleType: string = this.mainForm.get('route_options_form.vehicle_type')?.getRawValue();
 
         if (vehicleType) {
-            const vehicleTypeCost: number = this.vehicleTypes.filter(t => t.name == vehicleType)[0].pricePerKm;
+            const vehicleTypeCost: number = this.vehicleTypes.filter(t => t.name == vehicleType)[0].pricePerKM;
             const price = (kmInt * (120 + vehicleTypeCost));
             return price.toString() + " RSD";
         } else {
@@ -244,6 +271,17 @@ export class PassengerOrderRideComponent implements OnInit {
         let passengersAll = [...this.otherPassengers];
         passengersAll.push(mePassenger);
 
+        let scheduledTimeStr: string | null = null;
+        if (this.isOrderingLater()) {
+            let now: Date = new Date();
+            now.setHours(this.mainForm.get('route_options_form.later.at_hour')?.value);
+            now.setMinutes(this.mainForm.get('route_options_form.later.at_minute')?.value);
+            now.setSeconds(0);   
+
+            // JS's Date API sucks.
+            scheduledTimeStr = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString();
+        }
+
         const request: RideRequest = {
             locations: [
                 {
@@ -263,9 +301,11 @@ export class PassengerOrderRideComponent implements OnInit {
             vehicleType: this.mainForm.get('route_options_form.vehicle_type')?.value,
             babyTransport: this.mainForm.get('route_options_form.babies')?.value,
             petTransport: this.mainForm.get('route_options_form.pets')?.value,
-            hour: this.mainForm.get('route_options_form.later.at_hour')?.value,
-            minute: this.mainForm.get('route_options_form.later.at_minute')?.value,
+            scheduledTime: scheduledTimeStr,
+            distance: this.routeDistance
         }
+
+        console.log(request);
 
         this.orderRideEvent.emit(request);
     }

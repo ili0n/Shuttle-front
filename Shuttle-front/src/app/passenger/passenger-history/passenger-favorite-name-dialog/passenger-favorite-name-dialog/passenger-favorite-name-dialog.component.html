@@ -1,0 +1,16 @@
+<div id="favoriteNameDialog">
+    <h1 mat-dialog-title>Give your favorite ride a name</h1>
+
+    <form [formGroup]="form">
+        <mat-form-field>
+            <mat-label>Name: </mat-label>
+            <input matInput formControlName="name" />
+        </mat-form-field>
+        <br/>
+    </form>
+    <div class="buttonContainer">
+        <button mat-button mat-raised-button color="primary" (click)="submit()" [disabled]="!form.valid">Confirm</button>
+        <button mat-button mat-raised-button color="secondary" (click)="cancel()">Cancel</button>
+    </div>
+</div>
+

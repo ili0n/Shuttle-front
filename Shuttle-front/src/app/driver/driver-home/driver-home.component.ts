@@ -1,17 +1,19 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as L from 'leaflet';
+import * as Stomp from 'stompjs';
 import 'leaflet-routing-machine';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
 import { PanicDTO, Ride, RideService, RideStatus } from 'src/app/ride/ride.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { VehicleLocationDTO } from 'src/app/vehicle/vehicle.service';
+import { DriverSocketService } from '../driver-socket.service';
 
 @Component({
     selector: 'app-driver-home',
     templateUrl: './driver-home.component.html',
     styleUrls: ['./driver-home.component.css']
 })
-export class DriverHomeComponent implements OnInit, AfterViewInit {
+export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private iconCarAvailable!: L.Icon;
     private iconCarBusy!: L.Icon;
     private iconLuxAvailable!: L.Icon;
@@ -19,22 +21,41 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
     private iconVanAvailable!: L.Icon;
     private iconVanBusy!: L.Icon;
 
+    @ViewChild('leafletMap')
+    private mapElement!: ElementRef;
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
     private carLayer!: L.LayerGroup;
-    private isActive: boolean = false;
+    private isActive: boolean = true;
 
     protected ride: Ride | null = null;
+
+    private rideSub: Stomp.Subscription | null = null;
+    private locationSub: Stomp.Subscription | null = null;
+    private activeSub: Stomp.Subscription | null = null;
 
     /****************************************** General ******************************************/
 
     constructor(private navbarService: NavbarService,
                 private sharedService: SharedService,
-                private rideService: RideService) {
+                private rideService: RideService,
+                private driverSocketService: DriverSocketService) {                     
     }
 
     ngOnInit(): void {
-        this.subscribeToSocketSubjects();
+        this.driverSocketService.onConnectedToSocket().subscribe({
+            next: (val: boolean) => {
+                if (val) {
+                    this.onConnectedToSocket();
+                }
+            }
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.rideSub?.unsubscribe();
+        this.locationSub?.unsubscribe();
+        this.activeSub?.unsubscribe();
     }
     
     ngAfterViewInit(): void {
@@ -42,32 +63,26 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
         this.initMapIcons();
     }
 
-    private subscribeToSocketSubjects(): void {
-        this.navbarService.getVehicleLocation().subscribe({
-            next: (value: VehicleLocationDTO) => this.onFetchCurrentLocation(value),
-            error: (error) => console.log(error)
-        });
+    private onConnectedToSocket(): void {
+        if (this.rideSub == null) {
+            this.rideSub = this.driverSocketService.subToRide((r: Ride) => {
+                this.onFetchRide(r);
+            });
+        }
 
-        this.navbarService.getRideDriver().subscribe({
-            next: (value: Ride) => this.onFetchRide(value),
-            error: (error) => console.log(error)          
-        });
+        if (this.locationSub == null) {
+            this.locationSub = this.driverSocketService.subToVehicleLocation((l : VehicleLocationDTO) => {
+                this.onFetchCurrentLocation(l);
+            });
+        }
 
-        this.navbarService.getDriverActiveFromOutsideState().subscribe({
-            next: (value: boolean) => {
-                //console.log("driver-home-component :: ", value);
-                this.isActive = value;
-                if (this.isActive) {
-                    this.navbarService.driverRequestToFetchRide();
-                }
-            }
-        });
+        this.driverSocketService.pingRide();
     }
 
     /******************************************** Map ********************************************/
 
     private initMap(id: string): void {
-        this.map = L.map(id, {center: [45.2396, 19.8227], zoom: 13 });
+        this.map = L.map(this.mapElement.nativeElement, {center: [45.2396, 19.8227], zoom: 13 });
         const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18, minZoom: 3,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -168,58 +183,53 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
     /******************************************** Ride********************************************/
 
     private onFetchRide(ride: Ride): void {
-        // If you're not active, ignore the ride. Once you become active, driverRequestToFetchRide()
-        // will be fired.
+        // If not active, ignore the ride. Once active again, the navbar will ping for a new ride.
 
+        // TODO: This isn't changed anywhere but since the fetch ride endpoint always gives started
+        // and accepted rides priority, it doesn't matter so this block of code is redundant.
         if (!this.isActive) {
             this.ride = null;
             this.clearRoute();
         }
 
         // If the ride is cancelled/withdrawn/completed -> set this.ride to null.
-        // Because we want to see the right panel ONLY for pending/active rides.
+        // Because we want to see the right panel ONLY for pending/active/started rides.
 
         else if ([RideStatus.Canceled, RideStatus.Rejected, RideStatus.Finished].includes(ride.status)) {
             this.ride = null;
             this.clearRoute();
         } 
             
-        // If the current ride is 'Accepted', ignore the upcoming ride (which can only be Pending).
+        // If the current ride is Accepted/Started, ignore upcoming ride (which can only be Pending).
         // The reason for this is that we don't want to bother the driver while he's working. Once
         // he finishes the current ride, he'll ask the backend to fetch again, and then he'll get
         // the other ride.
-        
-        else if (this.ride && [RideStatus.Accepted].includes(this.ride.status)) {
-            // Do nothing.
-        } else {    
-            this.ride = ride;
 
-            if (!this.hasRouteOnMap()) {
-                const A = this.ride.locations[0].departure;
-                const B = this.ride.locations.at(-1)!.destination;
+        else {
+            // If upstream ride has a weaker status than the current ride, ignore it (for now, it'll
+            // come back later).
 
-                const pointA = L.latLng(A.latitude, A.longitude);
-                const pointB = L.latLng(B.latitude, B.longitude);
+            let m: any = {};
+            m[RideStatus.Pending] = 0;
+            m[RideStatus.Accepted] = 1;
+            m[RideStatus.Started] = 2;
 
-                this.drawRoute(pointA, pointB);
+            if (this.ride != null && m[ride.status] <= m[this.ride.status]) {
+                // Ignore.
+            } else {
+                this.ride = ride;
+
+                // If no route for this ride, draw it now.
+                if (!this.hasRouteOnMap()) {
+                    const A = this.ride.locations[0].departure;
+                    const B = this.ride.locations.at(-1)!.destination;
+    
+                    const pointA = L.latLng(A.latitude, A.longitude);
+                    const pointB = L.latLng(B.latitude, B.longitude);
+    
+                    this.drawRoute(pointA, pointB);
+                }
             }
-        }
-
-        this.afterFetchRide();
-    }
-
-    private afterFetchRide(): void {
-        if (this.ride == null) {
-            this.navbarService.setCanDriverChangeActiveState(true);
-            return;
-        }
-
-        if (this.ride.status == RideStatus.Accepted) {
-            this.navbarService.setCanDriverChangeActiveState(false);
-            this.navbarService.setDriverActiveFromDriverState(true);
-        } else {
-            this.navbarService.setCanDriverChangeActiveState(true);
-            this.navbarService.driverRequestToFetchRide();
         }
     }
 
@@ -227,17 +237,32 @@ export class DriverHomeComponent implements OnInit, AfterViewInit {
         return this.ride != null;
     }
 
-    protected onRideBegin(): void {
+    protected onRideAccept(): void {
         if (!this.ride) {
             return;
         }
    
         this.rideService.accept(this.ride.id).subscribe({
             next: (ride: Ride) => {
-                this.sharedService.showSnackBar("Ride started.", 3000);
+                this.sharedService.showSnackBar("Ride accepted.", 3000);
                 this.onFetchRide(ride);
             },
-            error: (error) => this.sharedService.showSnackBar("Cannot begin ride.", 3000)
+            error: (error) => this.sharedService.showSnackBar("Cannot accept ride.", 3000)
+        });
+    }
+
+    protected onRideStart(): void {
+        if (!this.ride) {
+            return;
+        }
+   
+        this.rideService.start(this.ride.id).subscribe({
+            next: (ride: Ride) => {
+                this.sharedService.showSnackBar("Ride started.", 3000);
+                this.driverSocketService.pingRide();
+                //this.onFetchRide(ride);
+            },
+            error: (error) => this.sharedService.showSnackBar("Cannot start ride.", 3000)
         });
     }
 

@@ -18,4 +18,8 @@ export class AdminNavbarComponent {
     createDriver(){
         this.router.navigate(["admin/create-driver"]);
     }
+
+    history(){
+        this.router.navigate(["admin/history"]);
+    }
 }

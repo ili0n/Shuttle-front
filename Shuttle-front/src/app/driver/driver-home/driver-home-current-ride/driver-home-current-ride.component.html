@@ -2,9 +2,9 @@
 <span class="label">Passengers:</span>
 <br/>
 
-<span *ngFor="let passenger of ride.passengers">
-    <span class="value" matListItemTitle>{{ passenger.email }}</span>
-</span>
+<div *ngFor="let passenger of ride.passengers">
+    <mat-label class="value" matListItemTitle>{{passenger.email}}</mat-label>
+</div>
 <hr/>
 
 <!-- Location list -->
@@ -19,23 +19,35 @@
 <br/>
 <mat-icon>pets</mat-icon><mat-checkbox class="example-margin" [(ngModel)]="ride.petTransport" disabled="true"></mat-checkbox>
 
-<!-- While pending -->
-<ng-container *ngIf="isPending()">
+<!-- While pending OR accepted  -->
+<ng-container *ngIf="isPending() || isAccepted()">
     <div *ngIf="isScheduledForFuture()">
         <hr/>
         <div>
             <span class="label">Scheduled for: </span>
-            <span class="value">{{ getRideStartTime() | date:'HH:mm' }}</span>    
+            <span class="value">{{ getRideScheduledTime() }}</span>    
         </div>
     </div>
     <hr/>
-    <button mat-raised-button color="primary" (click)="onBeginClick()"><mat-icon>play_circle_filled</mat-icon> Begin ride</button>
-    <br/><br/>
-    <button type="submit" mat-raised-button color="warn" (click)="onRejectClick()"><mat-icon>stop</mat-icon> Reject ride</button>
+
+    <!-- Only while pending -->
+    <ng-container *ngIf="isPending()">
+        <button mat-raised-button color="primary" (click)="onAcceptClick()"><mat-icon>play_circle_filled</mat-icon> Accept ride</button>
+        <br/><br/>
+        <button type="submit" mat-raised-button color="warn" (click)="onRejectClick()"><mat-icon>stop</mat-icon> Reject ride</button>
+    </ng-container>
+
+    <!-- Only while accepted -->
+    <ng-container *ngIf="isAccepted()">
+        <button mat-raised-button color="primary" (click)="onStartClick()"><mat-icon>play_circle_filled</mat-icon> Start ride</button>
+    </ng-container>   
+
 </ng-container>
 
+
+
 <!-- While active -->
-<ng-container *ngIf="isAccepted()">
+<ng-container *ngIf="isStarted()">
     <hr/>
     
     <span id="elapsed-time">

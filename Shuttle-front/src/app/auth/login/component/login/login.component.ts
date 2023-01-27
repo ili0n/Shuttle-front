@@ -18,11 +18,11 @@ export class LoginComponent {
 
     onLoginSubmit(): void {
         if (this.formGroup.valid) {
-            console.log(this.formGroup.getRawValue());
+            //console.log(this.formGroup.getRawValue());
             this.authService.login(this.formGroup.getRawValue()).subscribe({
                 next: (result) => {
                     // @ts-ignore
-                    console.log(JSON.stringify(result['accessToken']));
+                    //console.log(JSON.stringify(result['accessToken']));
                     // @ts-ignore
                     this.tokenStorage.saveToken(JSON.stringify(result['accessToken']));
                     // @ts-ignore
