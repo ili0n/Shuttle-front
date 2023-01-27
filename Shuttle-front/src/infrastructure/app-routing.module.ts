@@ -15,8 +15,6 @@ import {
 } from "../app/driver/driver-ride-history/driver-ride-history/driver-ride-history.component";
 import {UserGuard} from 'src/app/auth/guard/user.guard';
 import {PassengerHomeComponent} from 'src/app/passenger/passenger-home/passenger-home.component';
-import { UserGuard } from 'src/app/auth/guard/user.guard';
-import { PassengerHomeComponent } from 'src/app/passenger/passenger-home/passenger-home.component';
 import { PassengerHistoryComponent } from 'src/app/passenger/passenger-history/passenger-history.component';
 import { DriverHistoryComponent } from 'src/app/driver/driver-history/driver-history.component';
 import { AdminHistoryComponent } from 'src/app/admin/admin-history/admin-history.component';

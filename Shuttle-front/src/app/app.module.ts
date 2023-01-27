@@ -87,9 +87,13 @@ import { PassengerDialog } from './passenger/passenger-favorites/passenger-favor
         PassengerModule,
         DriverModule,
         RideModule,
+        MatNativeDateModule,
+        MatDatepickerModule,
+        ReactiveFormsModule,
     ],
     providers: [
         MatDatepickerModule,
+        MatNativeDateModule,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: Interceptor,
