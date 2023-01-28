@@ -10,9 +10,6 @@ import { EstimationMapComponent } from '../app/estimation-map/estimation-map.com
 import { UnregisteredPageComponent } from 'src/app/unregistered-page/unregistered-page.component';
 import { DriverHomeComponent } from 'src/app/driver/driver-home/driver-home.component';
 import {LoginGuard} from "../app/auth/guard/login.guard";
-import {
-    DriverRideHistoryComponent
-} from "../app/driver/driver-ride-history/driver-ride-history/driver-ride-history.component";
 import {UserGuard} from 'src/app/auth/guard/user.guard';
 import {PassengerHomeComponent} from 'src/app/passenger/passenger-home/passenger-home.component';
 import { PassengerHistoryComponent } from 'src/app/passenger/passenger-history/passenger-history.component';
@@ -27,31 +24,22 @@ const routes: Routes = [
         loadChildren: () =>
             import('../app/auth/auth.module').then((m) => m.AuthModule),
     },
-    {path: "register", component: RegisterComponent, canActivate: [LoginGuard]},
-    {path: 'forgot-password', component: ForgotPasswordComponent},
-    {path: 'reset-password', redirectTo: 'login'},
-    {path: 'reset-password/:key', component: ResetPasswordComponent},
-    {path: 'unregistered', component: UnregisteredPageComponent},
-    {
-        path: 'driver/info',
-        component: DriverProfileComponent,
-        canActivate: [UserGuard],
-        loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)
-    },
-    {
-        path: 'driver/home',
-        component: DriverHomeComponent,
-        canActivate: [UserGuard],
-        loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)
-    },
-    {
-        path: "admin/create-driver",
-        component: CreateDriverComponent,
-        canActivate: [UserGuard],
-        loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)
-    },
+  {path: "register", component: RegisterComponent, canActivate: [LoginGuard]},
+  {path: 'forgot-password', component: ForgotPasswordComponent},
+  {path: 'reset-password', redirectTo: 'login'},
+  {path: 'reset-password/:key', component: ResetPasswordComponent},
+  {path: 'unregistered', component: UnregisteredPageComponent},
+
+  {path: 'driver/info', component: DriverProfileComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  {path: 'driver/home', component: DriverHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  {path: 'driver/history', component: DriverHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  
+  {path: "admin/create-driver", component: CreateDriverComponent , canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  {path: 'admin/history', component: AdminHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
 
   {path: 'passenger/home', component: PassengerHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  {path: 'passenger/history', component: PassengerHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  {path: 'passenger/favorites', component: PassengerFavoritesComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
 ];
 
 @NgModule({
