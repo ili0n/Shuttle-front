@@ -16,6 +16,7 @@ import { PassengerHistoryComponent } from 'src/app/passenger/passenger-history/p
 import { DriverHistoryComponent } from 'src/app/driver/driver-history/driver-history.component';
 import { AdminHistoryComponent } from 'src/app/admin/admin-history/admin-history.component';
 import { PassengerFavoritesComponent } from 'src/app/passenger/passenger-favorites/passenger-favorites.component';
+import { PassengerGraphComponent } from 'src/app/passenger/passenger-graph/passenger-graph/passenger-graph.component';
 
 const routes: Routes = [
 	{path: "login",
@@ -40,6 +41,7 @@ const routes: Routes = [
   {path: 'passenger/home', component: PassengerHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
   {path: 'passenger/history', component: PassengerHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
   {path: 'passenger/favorites', component: PassengerFavoritesComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  {path: 'passenger/graph', component: PassengerGraphComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
 ];
 
 @NgModule({

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Route } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -48,6 +48,13 @@ export interface FavoriteRouteDTO {
     petTransport: boolean,
     scheduledTime: string | null,
     distance?: number,
+}
+
+export interface GraphEntry {
+	time: string;
+	numberOfRides: number;
+	costSum: number;
+	length: number;
 }
 
 export interface Message {
@@ -203,6 +210,17 @@ export class RideService {
 
     public deleteFavorite(routeToRemove: FavoriteRouteDTO): Observable<Message> {
         return this.httpClient.delete<Message>(`${this.url}/favorites/${routeToRemove.id}`, {
+            responseType: 'json'
+        });
+    }
+
+    public getPassengerGraphData(passengerId: number, from: string, to: string): Observable<Array<GraphEntry>> {
+        return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/passenger/${passengerId}`, {
+            params: {
+                "from": from,
+                "to": to
+            },
+            observe: 'body',
             responseType: 'json'
         });
     }
