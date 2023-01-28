@@ -26,9 +26,6 @@ import { EstimationFormComponent } from './estimation-form/estimation-form.compo
 import { DriverHomeComponent } from './driver/driver-home/driver-home.component';
 import { RejectRideDialogComponent } from './driver/reject-ride-dialog/reject-ride-dialog.component';
 import {NavbarModuleModule} from "./navbar-module/navbar-module.module";
-import {
-    DriverRideHistoryComponent
-} from './driver/driver-ride-history/driver-ride-history/driver-ride-history.component';
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {Interceptor} from "./auth/interceptor/login.interceptor";
 import {MatNativeDateModule} from "@angular/material/core";
@@ -63,7 +60,6 @@ import { PassengerDialog } from './passenger/passenger-favorites/passenger-favor
         SnackbarComponent,
         DriverHomeCurrentRideComponent,
         LoginComponent,
-        DriverRideHistoryComponent,
         DriverHistoryComponent,
         DriverHistoryRideTableComponent,
         DriverHistoryRideDetailsComponent,
