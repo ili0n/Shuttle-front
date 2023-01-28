@@ -10,6 +10,9 @@ import { GraphComponent } from './graph/graph/graph.component';
   ],
   imports: [
     CommonModule
+  ],
+  exports: [
+    GraphComponent
   ]
 })
 export class UserModule { }

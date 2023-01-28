@@ -1,1 +1,5 @@
-<app-graph [lineChartData] = "lineChartData" [chartLabels] = "chartLabels"></app-graph>
+<div class="graphs">
+    <app-graph [lineChartData] = "numberOfRidesData" [chartLabels] = "chartLabels" [colorRGB]="'255, 0, 0'"></app-graph>
+    <app-graph [lineChartData] = "costSumData" [chartLabels] = "chartLabels" [colorRGB]="'0, 255, 0'"></app-graph>
+    <app-graph [lineChartData] = "lengthData" [chartLabels] = "chartLabels" [colorRGB]="'0, 0, 255'"></app-graph>
+</div>

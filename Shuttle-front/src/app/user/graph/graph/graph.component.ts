@@ -1,21 +1,34 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ChartDataSets, ChartType } from 'chart.js';
-import { BaseChartDirective, Label, Color } from 'ng2-charts';
-import { AuthService } from 'src/app/auth/auth.service';
-import { RideService } from 'src/app/ride/ride.service';
+import { BaseChartDirective, Color } from 'ng2-charts';
+
 
 @Component({
   selector: 'app-graph',
   templateUrl: './graph.component.html',
   styleUrls: ['./graph.component.css']
 })
-export class GraphComponent implements OnChanges{
+export class GraphComponent implements OnChanges, OnInit{
+
+  ngOnInit(): void {
+    this.lineChartColors = [
+      {
+        backgroundColor: 'rgba(' + this.colorRGB + ' , 0.2)',
+        borderColor: 'rgba(' + this.colorRGB + ')',
+        pointBackgroundColor: 'rgba(' + this.colorRGB + ')',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+      }
+    ]
+  }
 
 
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
   @Input() lineChartData: ChartDataSets[] = [];
   @Input() chartLabels: Array<string> = [];
+  @Input() colorRGB?: string;
 
   ngOnChanges(changes: SimpleChanges): void {
     if(this.chart != undefined){
@@ -28,32 +41,7 @@ export class GraphComponent implements OnChanges{
     responsive: true,
     maintainAspectRatio: false
   };
-  lineChartColors: Color[] = [
-    { // red
-      backgroundColor: 'rgba(255,0,0,0.2)',
-      borderColor: 'red',
-      pointBackgroundColor: 'red',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-    },
-    { // green
-      backgroundColor: 'rgba(0,255,0,0.2)',
-      borderColor: 'green',
-      pointBackgroundColor: 'green',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(77,83,96,1)'
-    },
-    { // blue
-      backgroundColor: 'rgba(0,0,255,0.2)',
-      borderColor: 'blue',
-      pointBackgroundColor: 'blue',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-    }
-  ];
+  lineChartColors: Color[] = [];
   lineChartLegend = true;
   lineChartPlugins = [];
   lineChartType: ChartType = 'line';

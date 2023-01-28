@@ -11,8 +11,9 @@ import { RideService } from 'src/app/ride/ride.service';
 })
 export class PassengerGraphComponent {
 
-  lineChartData: ChartDataSets[] = [];
-
+  numberOfRidesData: ChartDataSets[] = [];
+  costSumData: ChartDataSets[] = [];
+  lengthData: ChartDataSets[] = [];
   chartLabels: string[] = [];
 
   constructor(
@@ -24,33 +25,35 @@ export class PassengerGraphComponent {
     this.rideService.getPassengerGraphData(this.authService.getUserId(), "2021-01-11T17:45:00Z", "2055-01-11T17:45:00Z").subscribe({
       next: result => {
 
-        let numberOfRides = {
+        let numberOfRides = [{
           "data": result.map(entry => entry.numberOfRides),
           "label": 'Number of rides',
           "type": "line",
           "lineTension": 0 
-         };
+         }];
 
-         let costSum = {
+         let costSum = [{
           "data": result.map(entry => entry.costSum),
           "label": 'Cost sum',
           "type": "line",
           "lineTension": 0 
-         };
+         }];
 
-         let length = {
+         let length = [{
           "data": result.map(entry => entry.length),
           "label": 'Length in km',
           "type": "line",
           "lineTension": 0 
-         };
+         }];
          //console.log([numberOfRides, costSum, length]);
 
          let chartLabels = result.map(entry =>  entry.time);
          //console.log(chartLabels);
 
+         this.numberOfRidesData = numberOfRides;
+         this.costSumData = costSum;
+         this.lengthData = length;
          this.chartLabels = chartLabels;
-         this.lineChartData = [numberOfRides, costSum, length];
       },
       error: err => console.log(err)
     })
