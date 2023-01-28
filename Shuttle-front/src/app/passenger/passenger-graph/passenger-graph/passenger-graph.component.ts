@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { MatTable } from '@angular/material/table';
 import { ChartDataSets } from 'chart.js';
 import { Label } from 'ng2-charts';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -16,31 +17,39 @@ export class PassengerGraphComponent {
   lengthData: ChartDataSets[] = [];
   chartLabels: string[] = [];
 
+  rows: Array<{labelText: string, sum: number, avg: number}> = [];
+  columns = ["Label", "Sum", "Average"];
+  @ViewChild(MatTable) table?: MatTable<any>;
+
   constructor(
     private rideService: RideService,
     private authService: AuthService,
+    private changeDetectorRefs: ChangeDetectorRef
     ){}
 
   ngOnInit(): void {
     this.rideService.getPassengerGraphData(this.authService.getUserId(), "2021-01-11T17:45:00Z", "2055-01-11T17:45:00Z").subscribe({
       next: result => {
 
-        let numberOfRides = [{
-          "data": result.map(entry => entry.numberOfRides),
+        let numberOfRides = result.map(entry => entry.numberOfRides);
+        let numberOfRidesData = [{
+          "data": numberOfRides,
           "label": 'Number of rides',
           "type": "line",
           "lineTension": 0 
          }];
 
-         let costSum = [{
-          "data": result.map(entry => entry.costSum),
+         let costSum = result.map(entry => entry.costSum);
+         let costSumData = [{
+          "data": costSum,
           "label": 'Cost sum',
           "type": "line",
           "lineTension": 0 
          }];
 
-         let length = [{
-          "data": result.map(entry => entry.length),
+         let length = result.map(entry => entry.length);
+         let lengthData = [{
+          "data": length,
           "label": 'Length in km',
           "type": "line",
           "lineTension": 0 
@@ -50,12 +59,26 @@ export class PassengerGraphComponent {
          let chartLabels = result.map(entry =>  entry.time);
          //console.log(chartLabels);
 
-         this.numberOfRidesData = numberOfRides;
-         this.costSumData = costSum;
-         this.lengthData = length;
+         this.numberOfRidesData = numberOfRidesData;
+         this.costSumData = costSumData;
+         this.lengthData = lengthData;
          this.chartLabels = chartLabels;
+         this.calculateAndAdd(numberOfRides, costSum, length);
       },
       error: err => console.log(err)
     })
+  }
+  calculateAndAdd(numberOfRides: number[], costSum: number[], length: number[]) {
+    this.addRow("Number of rides", numberOfRides);
+    this.addRow("Cost sum", costSum);
+    this.addRow("Length", length);
+    this.changeDetectorRefs.detectChanges();
+    this.table?.renderRows();
+  }
+  addRow(labelText: string, arr: number[]) {
+    let add = (a: number, b: number) => a + b;
+    let sum = arr.reduce(add, 0);
+    let avg = sum / arr.length;
+    this.rows.push({labelText: labelText, sum: sum, avg: avg});
   }
 }
