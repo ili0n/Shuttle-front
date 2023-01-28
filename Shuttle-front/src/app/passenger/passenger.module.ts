@@ -14,7 +14,7 @@ import { PassengerFavoritesScheduleDialogComponent } from './passenger-favorites
 import { PassengerFavoriteNameDialogComponent } from './passenger-history/passenger-favorite-name-dialog/passenger-favorite-name-dialog/passenger-favorite-name-dialog.component';
 import { ChartsModule } from 'ng2-charts';
 import { PassengerGraphComponent } from './passenger-graph/passenger-graph/passenger-graph.component';
-import { GraphComponent } from '../user/graph/graph/graph.component';
+import { UserModule } from '../user/user.module';
 
 @NgModule({
   declarations: [
@@ -29,12 +29,13 @@ import { GraphComponent } from '../user/graph/graph/graph.component';
     PassengerFavoritesScheduleDialogComponent,
     PassengerFavoriteNameDialogComponent,
     PassengerGraphComponent,
-    GraphComponent
+
   ],
   imports: [
     CommonModule,
     MaterialModule,
-    ChartsModule
+    ChartsModule,
+    UserModule
   ],
   exports: [
     PassengerHomeComponent,

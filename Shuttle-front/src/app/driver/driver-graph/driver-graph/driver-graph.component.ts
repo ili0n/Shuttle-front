@@ -5,12 +5,11 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { RideService } from 'src/app/ride/ride.service';
 
 @Component({
-  selector: 'app-passenger-graph',
-  templateUrl: './passenger-graph.component.html',
-  styleUrls: ['./passenger-graph.component.css']
+  selector: 'app-driver-graph',
+  templateUrl: './driver-graph.component.html',
+  styleUrls: ['./driver-graph.component.css']
 })
-export class PassengerGraphComponent {
-
+export class DriverGraphComponent {
   numberOfRidesData: ChartDataSets[] = [];
   costSumData: ChartDataSets[] = [];
   lengthData: ChartDataSets[] = [];
@@ -27,7 +26,7 @@ export class PassengerGraphComponent {
     ){}
 
   ngOnInit(): void {
-    this.rideService.getPassengerGraphData(this.authService.getUserId(), "2021-01-11T17:45:00Z", "2055-01-11T17:45:00Z").subscribe({
+    this.rideService.getDriverGraphData(this.authService.getUserId(), "2021-01-11T17:45:00Z", "2055-01-11T17:45:00Z").subscribe({
       next: result => {
 
         let numberOfRides = result.map(entry => entry.numberOfRides);
@@ -41,7 +40,7 @@ export class PassengerGraphComponent {
          let costSum = result.map(entry => entry.costSum);
          let costSumData = [{
           "data": costSum,
-          "label": 'Cost sum',
+          "label": 'Money earned',
           "type": "line",
           "lineTension": 0 
          }];
@@ -69,7 +68,7 @@ export class PassengerGraphComponent {
   }
   calculateAndAdd(numberOfRides: number[], costSum: number[], length: number[]) {
     this.addRow("Number of rides", numberOfRides);
-    this.addRow("Cost sum", costSum);
+    this.addRow("Money earned", costSum);
     this.addRow("Length", length);
     this.changeDetectorRefs.detectChanges();
     this.table?.renderRows();
@@ -80,4 +79,5 @@ export class PassengerGraphComponent {
     let avg = sum / arr.length;
     this.rows.push({labelText: labelText, sum: sum, avg: avg});
   }
+
 }

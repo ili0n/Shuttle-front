@@ -1,0 +1,9 @@
+.graphs{
+    display: flex;
+    justify-content: space-around;
+}
+
+table{
+    padding: 30px;
+    border-style: none;
+}

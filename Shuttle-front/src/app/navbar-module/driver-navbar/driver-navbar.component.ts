@@ -135,4 +135,8 @@ export class DriverNavbarComponent implements OnInit {
     history() {
         this.router.navigate(["driver/history"]);
     }
+
+    graph() {
+        this.router.navigate(["driver/graph"]);
+    }
 }

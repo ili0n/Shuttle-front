@@ -107,6 +107,7 @@ export interface RideRequest {
 export class RideService {
 
 
+
     constructor(private httpClient: HttpClient) { }
     readonly url: string = environment.serverOrigin + 'api/ride'
 
@@ -224,4 +225,16 @@ export class RideService {
             responseType: 'json'
         });
     }
+
+    public getDriverGraphData(driverId: number, from: string, to: string): Observable<Array<GraphEntry>> {
+        return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/driver/${driverId}`, {
+            params: {
+                "from": from,
+                "to": to
+            },
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
 }
+

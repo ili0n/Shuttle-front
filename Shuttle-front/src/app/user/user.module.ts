@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GraphComponent } from './graph/graph/graph.component';
+import { ChartsModule } from 'ng2-charts';
 
 
 
@@ -9,7 +10,8 @@ import { GraphComponent } from './graph/graph/graph.component';
     GraphComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    ChartsModule
   ],
   exports: [
     GraphComponent

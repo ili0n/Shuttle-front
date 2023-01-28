@@ -65,7 +65,7 @@ import { ChartsModule } from 'ng2-charts';
         DriverHistoryRideTableComponent,
         DriverHistoryRideDetailsComponent,
         DriverHistoryRidePassengersComponent,
-        PassengerDialog
+        PassengerDialog,
     ],
     imports: [
         BrowserModule,
