@@ -10,6 +10,21 @@ import { BaseChartDirective, Color } from 'ng2-charts';
 })
 export class GraphComponent implements OnChanges, OnInit{
 
+  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
+
+  @Input() lineChartData: ChartDataSets[] = [];
+  @Input() chartLabels: Array<string> = [];
+  @Input() colorRGB?: string;
+
+  lineChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false
+  };
+  lineChartColors: Color[] = [];
+  lineChartLegend = true;
+  lineChartPlugins = [];
+  lineChartType: ChartType = 'line';
+
   ngOnInit(): void {
     this.lineChartColors = [
       {
@@ -23,13 +38,6 @@ export class GraphComponent implements OnChanges, OnInit{
     ]
   }
 
-
-  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
-
-  @Input() lineChartData: ChartDataSets[] = [];
-  @Input() chartLabels: Array<string> = [];
-  @Input() colorRGB?: string;
-
   ngOnChanges(changes: SimpleChanges): void {
     if(this.chart != undefined){
       this.chart.chart.data.labels = this.chartLabels.map(e => e);
@@ -37,12 +45,5 @@ export class GraphComponent implements OnChanges, OnInit{
     }
     this.chart?.update();
   }
-  lineChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false
-  };
-  lineChartColors: Color[] = [];
-  lineChartLegend = true;
-  lineChartPlugins = [];
-  lineChartType: ChartType = 'line';
+
 }
