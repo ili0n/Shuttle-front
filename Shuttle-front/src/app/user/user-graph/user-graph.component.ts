@@ -26,6 +26,8 @@ export class UserGraphComponent {
   @Input() costSumLabel :string = "";
   @Input() lengthLabel :string = "";
 
+  @Input() userId?: number;
+
   rows: Array<{labelText: string, sum: number, avg: number}> = [];
   columns = ["Label", "Sum", "Average"];
   @ViewChild(MatTable) table?: MatTable<any>;
@@ -49,9 +51,14 @@ export class UserGraphComponent {
     wayBack.setFullYear(2055);
     let wayForwardStr: string = new Date(wayForward.getTime() - (wayForward.getTimezoneOffset() * 60000)).toISOString();
 
-    if(this.getGraphDataFunc !== undefined){
+    console.log(this.authService.getRole());
+    if(this.authService.getRole() === "passenger" || this.authService.getRole() === "driver"){
+      this.userId = +this.authService.getId();
+    }
+
+    if(this.getGraphDataFunc !== undefined && this.userId !== undefined){
       this.getGraphDataFunc = this.getGraphDataFunc.bind(this.rideService);
-      this.getGraphDataFunc(this.authService.getUserId(), wayBackStr, wayForwardStr).subscribe({
+      this.getGraphDataFunc(this.userId, wayBackStr, wayForwardStr).subscribe({
         next: result => {
           this.showData(result);
         },
