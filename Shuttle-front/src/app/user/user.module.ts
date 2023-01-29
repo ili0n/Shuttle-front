@@ -7,13 +7,15 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MaterialModule } from 'src/infrastructure/material.module';
+import { AdminOverallGraphComponent } from './admin-overall-graph/admin-overall-graph.component';
 
 
 
 @NgModule({
   declarations: [
     GraphComponent,
-    UserGraphComponent
+    UserGraphComponent,
+    AdminOverallGraphComponent
   ],
   imports: [
     CommonModule,

@@ -236,5 +236,20 @@ export class RideService {
             responseType: 'json'
         });
     }
+
+    public getOverallDriverGraphData(): Observable<Array<GraphEntry>> {
+        return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/admin/driver`, {
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
+
+    public getOverallPassengerGraphData(): Observable<Array<GraphEntry>> {
+        return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/admin/passenger`, {
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
+  
 }
 
