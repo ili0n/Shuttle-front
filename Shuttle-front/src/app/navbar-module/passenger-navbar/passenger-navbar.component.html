@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
 <mat-toolbar class="passenger">
     <a routerLink="">
         shuttle
@@ -22,8 +24,9 @@
             <mat-icon>account_circle</mat-icon>
         </button>
         <button mat-icon-button (click)="graph()">
-            <mat-icon>graphic_eq</mat-icon>
+            <span class="material-symbols-outlined">monitoring</span>
         </button>
+        
         <button mat-flat-button class="button" id="sign-out" (click)="logout()">Sign out</button>
     </div>
 </mat-toolbar>
