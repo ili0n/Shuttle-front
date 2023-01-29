@@ -3,7 +3,8 @@
     <app-graph [lineChartData] = "costSumData" [chartLabels] = "chartLabels" [colorRGB]="'0, 255, 0'"></app-graph>
     <app-graph [lineChartData] = "lengthData" [chartLabels] = "chartLabels" [colorRGB]="'0, 0, 255'"></app-graph>
 </div>
-<table mat-table [dataSource]="rows" class="mat-elevation-z0"> 
+<h1 *ngIf="!rows.length" class="noRides">You haven't had any rides</h1>
+<table *ngIf="rows.length" mat-table [dataSource]="rows" class="mat-elevation-z0"> 
 
     <ng-container matColumnDef="Label">
       <th mat-header-cell *matHeaderCellDef> Label: </th>

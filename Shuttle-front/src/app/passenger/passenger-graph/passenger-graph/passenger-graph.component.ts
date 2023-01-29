@@ -29,6 +29,9 @@ export class PassengerGraphComponent {
   ngOnInit(): void {
     this.rideService.getPassengerGraphData(this.authService.getUserId(), "2021-01-11T17:45:00Z", "2055-01-11T17:45:00Z").subscribe({
       next: result => {
+        if(result.length === 0){
+          return;
+        }
 
         let numberOfRides = result.map(entry => entry.numberOfRides);
         let numberOfRidesData = [{

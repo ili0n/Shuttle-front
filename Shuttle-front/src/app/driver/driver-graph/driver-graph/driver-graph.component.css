@@ -7,3 +7,10 @@ table{
     padding: 30px;
     border-style: none;
 }
+
+.noRides{
+    text-align: center;
+    vertical-align: auto;
+    margin: auto ;
+    margin-top: 40px;
+}
