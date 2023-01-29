@@ -43,6 +43,7 @@ import { DriverHistoryRideDetailsComponent } from './driver/driver-history/drive
 import { DriverHistoryRidePassengersComponent } from './driver/driver-history/driver-history-ride-passengers/driver-history-ride-passengers.component';
 import { PassengerDialog } from './passenger/passenger-favorites/passenger-favorites.component';
 
+
 @NgModule({
     declarations: [
         AppComponent,
