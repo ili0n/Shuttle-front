@@ -6,7 +6,7 @@
 </div>
 
 <!-- date range picker -->
-<div class="graphDateRangePicker">
+<div *ngIf="rows.length"  class="graphDateRangePicker">
   <mat-form-field appearance="fill">
     <mat-label>Enter a date range</mat-label>
 
