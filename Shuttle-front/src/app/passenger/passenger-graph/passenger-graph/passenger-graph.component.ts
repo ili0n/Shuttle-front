@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { GraphEntry, RideService } from 'src/app/ride/ride.service';
+import { getGraphData, GraphEntry, RideService } from 'src/app/ride/ride.service';
 
-type getGraphData = (id: number, startDate: string, endDate: string) => Observable<Array<GraphEntry>>;
 
 @Component({
   selector: 'app-passenger-graph',

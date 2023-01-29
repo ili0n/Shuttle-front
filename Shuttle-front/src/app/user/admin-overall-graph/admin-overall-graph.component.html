@@ -1,10 +1,6 @@
-<div class="graphs">
-    <app-graph [lineChartData] = "driverChartData.numberOfRidesData" [chartLabels] = "driverChartData.chartLabels" [colorRGB]="'255, 0, 0'"></app-graph>
-    <app-graph [lineChartData] = "driverChartData.costSumData" [chartLabels] = "driverChartData.chartLabels" [colorRGB]="'0, 255, 0'"></app-graph>
-    <app-graph [lineChartData] = "driverChartData.lengthData" [chartLabels] = "driverChartData.chartLabels" [colorRGB]="'0, 0, 255'"></app-graph>
-</div>
-<div class="graphs">
-    <app-graph [lineChartData] = "passengerChartData.numberOfRidesData" [chartLabels] = "passengerChartData.chartLabels" [colorRGB]="'255, 0, 0'"></app-graph>
-    <app-graph [lineChartData] = "passengerChartData.costSumData" [chartLabels] = "passengerChartData.chartLabels" [colorRGB]="'0, 255, 0'"></app-graph>
-    <app-graph [lineChartData] = "passengerChartData.lengthData" [chartLabels] = "passengerChartData.chartLabels" [colorRGB]="'0, 0, 255'"></app-graph>
-</div>
+<app-user-graph
+  [getGraphDataFunc]="getDataFunc"
+   [costSumLabel]="costSumLabel"
+    [numberOfRidesLabel]="numberOfRidesLabel"
+     [lengthLabel]="lengthLabel">
+</app-user-graph>

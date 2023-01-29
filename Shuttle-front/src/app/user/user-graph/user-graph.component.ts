@@ -4,10 +4,8 @@ import { MatTable } from '@angular/material/table';
 import { ChartDataSets } from 'chart.js';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { GraphEntry, RideService } from 'src/app/ride/ride.service';
+import { getGraphData, GraphEntry, RideService } from 'src/app/ride/ride.service';
 
-
-type getGraphData = (id: number, startDate: string, endDate: string) => Observable<Array<GraphEntry>>;
 
 @Component({
   selector: 'app-user-graph',
@@ -15,6 +13,8 @@ type getGraphData = (id: number, startDate: string, endDate: string) => Observab
   styleUrls: ['./user-graph.component.css']
 })
 export class UserGraphComponent {
+  hasData: boolean = false;
+
   numberOfRidesData: ChartDataSets[] = [];
   costSumData: ChartDataSets[] = [];
   lengthData: ChartDataSets[] = [];
@@ -56,10 +56,12 @@ export class UserGraphComponent {
       this.userId = +this.authService.getId();
     }
 
-    if(this.getGraphDataFunc !== undefined && this.userId !== undefined){
+    if(this.getGraphDataFunc !== undefined){
       this.getGraphDataFunc = this.getGraphDataFunc.bind(this.rideService);
-      this.getGraphDataFunc(this.userId, wayBackStr, wayForwardStr).subscribe({
+      // if nullish set to -1
+      this.getGraphDataFunc(wayBackStr, wayForwardStr, this.userId ?? -1).subscribe({
         next: result => {
+          this.hasData = result.length != 0;
           this.showData(result);
         },
         error: err => console.log(err)
@@ -77,7 +79,7 @@ export class UserGraphComponent {
   addRow(labelText: string, arr: number[]) {
     let add = (a: number, b: number) => a + b;
     let sum = arr.reduce(add, 0);
-    let avg = arr ? sum / arr.length : 0;
+    let avg = arr.length ? sum / arr.length : 0;
     this.rows.push({labelText: labelText, sum: sum, avg: avg});
   }
 
@@ -91,7 +93,7 @@ export class UserGraphComponent {
       let end: Date = new Date(endInput.value);
       let endStr: string = new Date(end.getTime() - (end.getTimezoneOffset() * 60000)).toISOString();
 
-      this.rideService.getDriverGraphData(this.authService.getUserId(), startStr, endStr).subscribe({
+      this.getGraphDataFunc!(startStr, endStr, this.authService.getUserId()).subscribe({
         next: result => {
           this.showData(result);
         },
@@ -101,9 +103,6 @@ export class UserGraphComponent {
   }
 
   showData(result: import("src/app/ride/ride.service").GraphEntry[]) {
-    if(result.length === 0){
-      return;
-    }
 
     let numberOfRides = result.map(entry => entry.numberOfRides);
     let numberOfRidesData = [{

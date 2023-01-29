@@ -18,7 +18,6 @@ import { AdminHistoryComponent } from 'src/app/admin/admin-history/admin-history
 import { PassengerFavoritesComponent } from 'src/app/passenger/passenger-favorites/passenger-favorites.component';
 import { PassengerGraphComponent } from 'src/app/passenger/passenger-graph/passenger-graph/passenger-graph.component';
 import { DriverGraphComponent } from 'src/app/driver/driver-graph/driver-graph/driver-graph.component';
-import { AdminOverallGraphComponent } from 'src/app/user/admin-overall-graph/admin-overall-graph.component';
 
 const routes: Routes = [
 	{path: "login",
@@ -44,8 +43,7 @@ const routes: Routes = [
   {path: 'passenger/home', component: PassengerHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
   {path: 'passenger/history', component: PassengerHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
   {path: 'passenger/favorites', component: PassengerFavoritesComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
-  // {path: 'passenger/graph', component: PassengerGraphComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
-  {path: 'passenger/graph', component: AdminOverallGraphComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  {path: 'passenger/graph', component: PassengerGraphComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
 ];
 
 @NgModule({

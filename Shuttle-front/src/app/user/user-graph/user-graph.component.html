@@ -7,7 +7,7 @@
 
 
 <!-- date range picker -->
-<div *ngIf="rows.length" class="graphDateRangePicker">
+<div *ngIf="hasData" class="graphDateRangePicker">
   <mat-form-field appearance="fill">
     <mat-label>Enter a date range</mat-label>
 
@@ -26,8 +26,8 @@
 </div>
 
 <!-- table for overall data -->
-<h1 *ngIf="!rows.length" class="noRides">No rides rides</h1>
-<table *ngIf="rows.length" mat-table [dataSource]="rows" class="mat-elevation-z0"> 
+<h1 *ngIf="!hasData" class="noRides">No rides rides</h1>
+<table *ngIf="hasData" mat-table [dataSource]="rows" class="mat-elevation-z0"> 
 
     <ng-container matColumnDef="Label">
       <th mat-header-cell *matHeaderCellDef> Label: </th>

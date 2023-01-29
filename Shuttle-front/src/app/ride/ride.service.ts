@@ -8,6 +8,8 @@ import { Passenger } from '../passenger/passenger.service';
 import { UserIdEmail } from '../user/user.service';
 import { Vehicle } from '../vehicle/vehicle.service';
 
+export type getGraphData = (startDate: string, endDate: string, id: number) => Observable<Array<GraphEntry>>;
+
 export interface RejectionDTO {
     reason: string
 }
@@ -215,7 +217,7 @@ export class RideService {
         });
     }
 
-    public getPassengerGraphData(passengerId: number, from: string, to: string): Observable<Array<GraphEntry>> {
+    public getPassengerGraphData(from: string, to: string, passengerId: number): Observable<Array<GraphEntry>> {
         return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/passenger/${passengerId}`, {
             params: {
                 "from": from,
@@ -226,7 +228,7 @@ export class RideService {
         });
     }
 
-    public getDriverGraphData(driverId: number, from: string, to: string): Observable<Array<GraphEntry>> {
+    public getDriverGraphData(from: string, to: string, driverId: number): Observable<Array<GraphEntry>> {
         return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/driver/${driverId}`, {
             params: {
                 "from": from,
@@ -237,15 +239,12 @@ export class RideService {
         });
     }
 
-    public getOverallDriverGraphData(): Observable<Array<GraphEntry>> {
-        return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/admin/driver`, {
-            observe: 'body',
-            responseType: 'json'
-        });
-    }
-
-    public getOverallPassengerGraphData(): Observable<Array<GraphEntry>> {
-        return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/admin/passenger`, {
+    public getOverallGraphData(from: string, to: string): Observable<Array<GraphEntry>> {
+        return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/admin`, {
+            params: {
+                "from": from,
+                "to": to
+            },
             observe: 'body',
             responseType: 'json'
         });
