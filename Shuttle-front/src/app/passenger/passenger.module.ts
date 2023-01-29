@@ -15,6 +15,9 @@ import { PassengerFavoriteNameDialogComponent } from './passenger-history/passen
 import { ChartsModule } from 'ng2-charts';
 import { PassengerGraphComponent } from './passenger-graph/passenger-graph/passenger-graph.component';
 import { UserModule } from '../user/user.module';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -35,7 +38,10 @@ import { UserModule } from '../user/user.module';
     CommonModule,
     MaterialModule,
     ChartsModule,
-    UserModule
+    UserModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatNativeDateModule
   ],
   exports: [
     PassengerHomeComponent,

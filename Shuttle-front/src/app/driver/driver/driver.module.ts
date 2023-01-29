@@ -5,6 +5,9 @@ import { UserModule } from 'src/app/user/user.module';
 import { MaterialModule } from 'src/infrastructure/material.module';
 import { ChartsModule } from 'ng2-charts';
 import { DriverGraphComponent } from '../driver-graph/driver-graph/driver-graph.component';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
     declarations: [
@@ -14,7 +17,10 @@ import { DriverGraphComponent } from '../driver-graph/driver-graph/driver-graph.
         CommonModule,
         MaterialModule,
         ChartsModule,
-        UserModule
+        UserModule,
+        MatDatepickerModule,
+        MatFormFieldModule,
+        MatNativeDateModule
     ]
 })
 export class DriverModule { }
