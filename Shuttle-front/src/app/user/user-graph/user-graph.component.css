@@ -1,6 +1,7 @@
 .graphs{
     display: flex;
     justify-content: space-around;
+    padding-top: 40px;
 }
 
 table{
