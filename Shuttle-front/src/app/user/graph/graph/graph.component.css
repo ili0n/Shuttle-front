@@ -3,3 +3,9 @@
     height: 60vh;
     width: 30vw;
 }
+
+.chartForPrint{
+    display: block;
+    width: 90%;
+    padding: 40px;
+}
