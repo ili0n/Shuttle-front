@@ -5,6 +5,9 @@ import { ChartDataSets } from 'chart.js';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { getGraphData, GraphEntry, RideService } from 'src/app/ride/ride.service';
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
+
 
 
 @Component({
@@ -136,4 +139,63 @@ export class UserGraphComponent {
      this.chartLabels = chartLabels;
      this.calculateAndAdd(numberOfRides, costSum, length);
   }
+
+
+  convetToPDF(){
+    let table = document.getElementsByTagName("table")[0] as HTMLElement;
+    let title = 'report-generated-on-' + (new Date()).toDateString() + ".pdf";
+    let canvases: HTMLCollectionOf<Element> = document.getElementsByTagName("canvas");
+
+    let dimensions = {
+      top: 50,
+      padding: 30
+    }
+
+    let pdf = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
+    pdf.setProperties({
+      title: title,
+      subject: title
+    });
+    pdf.text("Report on money, length and number od rides ", pdf.internal.pageSize.getWidth() / 2, 20, {align: "center", lineHeightFactor: 2});
+    pdf.text(" Generated on " + new Date().toLocaleDateString(), 20, 40, {lineHeightFactor: 0.6});
+    let i = 0;
+    while (i < canvases.length) {
+      let canvas = canvases[i] as HTMLCanvasElement;
+      dimensions.top += this.addCanvas(canvas, pdf, i, dimensions);
+      ++i;
+    }
+
+    // pdf.addPage();
+    autoTable(pdf, {
+      html: "table",
+      startY: dimensions.top
+    })
+    pdf.save(title);
+  }
+
+  addCanvas(canvas: HTMLCanvasElement, pdf: jsPDF, i: number, dimensions: {top: number, padding: number}){
+    let canvasHeight = canvas.height;
+    let canvasWidth = canvas.height;
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+
+    if (canvasWidth > pageWidth) {
+      const ratio = pageWidth / canvasWidth;
+      canvasHeight = canvasHeight * ratio - dimensions.padding;
+      canvasWidth = canvasWidth * ratio - dimensions.padding;
+    }
+
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    if (dimensions.top + canvasHeight > pageHeight) {
+      pdf.addPage();
+      dimensions.top = 20;
+    }
+
+    const contentDataURL = canvas .toDataURL('image/png')
+
+    pdf.addImage(contentDataURL, "PNG", dimensions.padding / 2, dimensions.top, canvasWidth, canvasHeight, `image${i}`);
+    return canvasHeight + dimensions.padding;
+  }
+
 }
