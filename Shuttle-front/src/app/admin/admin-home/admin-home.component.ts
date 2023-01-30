@@ -10,6 +10,7 @@ const iconUrl = 'assets/marker-icon.png';
 const shadowUrl = 'assets/marker-shadow.png';
 
 const carMarkerUrl = 'assets/car-marker.png';
+const carPanicUrl = 'assets/car-marker-panic.png'
 const iconDefault = L.icon({
     iconRetinaUrl,
     iconUrl,
@@ -23,6 +24,15 @@ const iconDefault = L.icon({
 
 const carMarkerIcon = L.icon({
     iconUrl: carMarkerUrl,
+    shadowUrl,
+    iconSize: [48, 48],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+});
+const carPanicIcon = L.icon({
+    iconUrl: carPanicUrl,
     shadowUrl,
     iconSize: [48, 48],
     iconAnchor: [12, 41],
