@@ -30,4 +30,8 @@ export class PassengerNavbarComponent implements OnInit {
     favorite() {
         this.router.navigate(["passenger/favorites"]);
     }
+
+    graph() {
+        this.router.navigate(["passenger/graph"]);
+    }
 }

@@ -42,6 +42,7 @@ import { DriverHistoryRideTableComponent } from './driver/driver-history/driver-
 import { DriverHistoryRideDetailsComponent } from './driver/driver-history/driver-history-ride-details/driver-history-ride-details.component';
 import { DriverHistoryRidePassengersComponent } from './driver/driver-history/driver-history-ride-passengers/driver-history-ride-passengers.component';
 import { PassengerDialog } from './passenger/passenger-favorites/passenger-favorites.component';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
     declarations: [
@@ -64,7 +65,7 @@ import { PassengerDialog } from './passenger/passenger-favorites/passenger-favor
         DriverHistoryRideTableComponent,
         DriverHistoryRideDetailsComponent,
         DriverHistoryRidePassengersComponent,
-        PassengerDialog
+        PassengerDialog,
     ],
     imports: [
         BrowserModule,
@@ -86,6 +87,7 @@ import { PassengerDialog } from './passenger/passenger-favorites/passenger-favor
         MatNativeDateModule,
         MatDatepickerModule,
         ReactiveFormsModule,
+        ChartsModule
     ],
     providers: [
         MatDatepickerModule,
