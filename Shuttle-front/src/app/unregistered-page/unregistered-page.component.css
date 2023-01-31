@@ -1,0 +1,66 @@
+#form-container{
+    float: right;
+    width: 40%;
+    padding: 30px;
+    margin: 10px;
+    text-align: center;
+}
+
+mat-form-field{
+    display: block;
+}
+
+.icon{
+    width: 42px;
+    height: 42px;;
+}
+
+.flexCenter{
+    display: flex;
+    justify-content: center;
+}
+
+#babyContainer{
+    margin-right: 50px;
+}
+
+#checkboxesContainer{
+    padding: 20px;
+}
+
+.mat-checkbox .mat-checkbox-frame {
+    transform: scale(2);
+}
+
+.mat-checkbox-checked .mat-checkbox-background {
+    transform: scale(2);
+}
+
+mat-option:nth-child(1){
+    display: none;
+}
+
+#estimation{
+    font-size: 32px;
+    padding: 140px 20px;
+    line-height: normal;
+}
+
+.map-container {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 30px;
+    width: 50%;
+  }
+  
+  .map-frame {
+    border: 2px solid black;
+    height: 100%;
+  }
+  
+  #estimation-map {
+    height: 100%;
+  }
