@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
+import { CustomValidators } from 'src/app/register/confirm.validator';
 import { SharedService } from 'src/app/shared/shared.service';
 
 @Component({
@@ -26,12 +27,12 @@ export class ForgotPasswordComponent {
             email: ['', [Validators.required, Validators.email]],
         });
 
-        // TODO add confirm password validator
         this.codeFormGroup = formBuilder.group({
             code: ['', [Validators.required]],
             newPassword: ['', [Validators.required]],
             newPasswordConfirm: ['', [Validators.required]],
-        });
+        })
+        this.codeFormGroup.addValidators(CustomValidators.MatchValidator("newPassword", "newPasswordConfirm"));
     }
 
     sendPasswordResetLink() {
@@ -62,10 +63,11 @@ export class ForgotPasswordComponent {
 
     sendPasswordReset() {
         if (this.codeFormGroup.valid) {
-            let code = this.codeFormGroup.getRawValue()['code'];
-            let password =  this.codeFormGroup.getRawValue()['newPassword'];
             this.authService.resetPassword(this.codeFormGroup.value, this.id!).subscribe({
-                next: result => this.sharedService.showSnackBar("Successfully changed password", 3000),
+                next: result =>{
+                 this.sharedService.showSnackBar("Successfully changed password", 3000);
+                 this.router.navigate(["/login"]);
+                },
                 error: err => this.sharedService.showSnackBar("Failed to change password", 3000),
             });
         }
