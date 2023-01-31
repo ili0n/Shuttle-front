@@ -35,6 +35,7 @@ export class PassengerFavoritesComponent implements AfterViewInit, OnDestroy{
 
   ngOnInit() {
       this.fetchUserFavoriteRides();
+      window.onbeforeunload = () => this.ngOnDestroy();
   }
 
   private initMap(): void{
