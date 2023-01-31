@@ -42,9 +42,11 @@ export class ForgotPasswordComponent {
 
             this.authService.getUserByEmail(email).subscribe({
                 next: result => {
-                    this.emailPassed = true;
-                    this.id = result.id;
-                    this.sendPasswordResetLinkReally(result.id)
+                    if(result !== undefined){
+                        this.emailPassed = true;
+                        this.id = result.id;
+                        this.sendPasswordResetLinkReally(result.id)
+                    }
                 },
                 error: err => this.sharedService.showSnackBar("Couldn't send email, check your input", 3000)
             });
