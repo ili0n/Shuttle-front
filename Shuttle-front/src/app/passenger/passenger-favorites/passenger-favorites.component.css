@@ -29,3 +29,8 @@
 .right {
     flex: 2;
 }
+
+.row-selected *:not(button) {
+
+  background: rgb(204, 204, 204);
+}

@@ -6,7 +6,6 @@ import { ForgotPasswordComponent } from 'src/app/auth/login/component/forgot-pas
 import { RegisterComponent } from 'src/app/register/register.component';
 import { ResetPasswordComponent } from 'src/app/auth/login/component/reset-password/reset-password.component';
 import { DriverProfileComponent } from 'src/app/driver-profile/driver-profile.component';
-import { EstimationMapComponent } from '../app/estimation-map/estimation-map.component';
 import { UnregisteredPageComponent } from 'src/app/unregistered-page/unregistered-page.component';
 import { DriverHomeComponent } from 'src/app/driver/driver-home/driver-home.component';
 import {LoginGuard} from "../app/auth/guard/login.guard";

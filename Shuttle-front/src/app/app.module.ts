@@ -20,9 +20,7 @@ import { ForgotPasswordComponent } from './auth/login/component/forgot-password/
 import { ResetPasswordComponent } from './auth/login/component/reset-password/reset-password.component';
 import { SharedModule } from './shared/shared.module';
 import { DriverProfileComponent } from './driver-profile/driver-profile.component';
-import { EstimationMapComponent } from './estimation-map/estimation-map.component';
 import { UnregisteredPageComponent } from './unregistered-page/unregistered-page.component';
-import { EstimationFormComponent } from './estimation-form/estimation-form.component';
 import { DriverHomeComponent } from './driver/driver-home/driver-home.component';
 import { RejectRideDialogComponent } from './driver/reject-ride-dialog/reject-ride-dialog.component';
 import {NavbarModuleModule} from "./navbar-module/navbar-module.module";
@@ -52,9 +50,7 @@ import { ChartsModule } from 'ng2-charts';
         ForgotPasswordComponent,
         ResetPasswordComponent,
         DriverProfileComponent,
-        EstimationMapComponent,
         UnregisteredPageComponent,
-        EstimationFormComponent,
         DriverHomeComponent,
         RejectRideDialogComponent,
         LoginComponent,

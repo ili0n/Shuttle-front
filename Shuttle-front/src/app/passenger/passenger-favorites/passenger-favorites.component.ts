@@ -6,6 +6,7 @@ import { FavoriteRouteDTO, RideService, RideRequest, RideRequestSingleLocation }
 import * as L from "leaflet";
 import 'leaflet-routing-machine';
 import { Router } from '@angular/router';
+import {ThemePalette} from '@angular/material/core';
 import { SharedService } from 'src/app/shared/shared.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PassengerFavoritesScheduleDialogComponent } from './passenger-favorites-schedule-dialog/passenger-favorites-schedule-dialog/passenger-favorites-schedule-dialog.component';
@@ -19,6 +20,8 @@ export class PassengerFavoritesComponent implements AfterViewInit, OnDestroy{
   protected favoriteRideDataSource: MatTableDataSource<FavoriteRouteDTO> = new MatTableDataSource();
   protected favoriteRideDisplayedColumns = ["favorite", "name", "route", "passengers", "vehicle type", "baby", "pet", "order again"];
   protected favoriteRides?: Array<FavoriteRouteDTO>;
+
+  protected selectedFavorite?: FavoriteRouteDTO;
 
   private map!: L.Map;
   private route?: L.Routing.Control;
@@ -35,6 +38,7 @@ export class PassengerFavoritesComponent implements AfterViewInit, OnDestroy{
 
   ngOnInit() {
       this.fetchUserFavoriteRides();
+      window.onbeforeunload = () => this.ngOnDestroy();
   }
 
   private initMap(): void{
@@ -83,6 +87,10 @@ export class PassengerFavoritesComponent implements AfterViewInit, OnDestroy{
 
   }
 
+  isRouteSelected(row: FavoriteRouteDTO){
+    return this.selectedFavorite == row;
+  }
+
   private reorder(favoriteRoute: FavoriteRouteDTO){  
     console.log(favoriteRoute); 
     let that = this;
@@ -105,6 +113,7 @@ export class PassengerFavoritesComponent implements AfterViewInit, OnDestroy{
   }
 
   public displayRoute(favoriteRoute: FavoriteRouteDTO){
+    this.selectedFavorite = favoriteRoute;
     if(this.route != undefined)
       this.map.removeControl(this.route);
     this.constructRouteControl(favoriteRoute);
