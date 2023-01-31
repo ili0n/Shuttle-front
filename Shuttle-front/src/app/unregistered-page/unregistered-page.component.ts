@@ -11,6 +11,8 @@ import { DriverService } from '../driver/driver.service';
 //import { Stomp } from "@stomp/stompjs"
 import * as Stomp from 'stompjs';
 import { environment } from 'src/environments/environment';
+import { TitleStrategy } from '@angular/router';
+import { ResourceLoader } from '@angular/compiler';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -43,7 +45,7 @@ L.Marker.prototype.options.icon = iconDefault;
   templateUrl: './unregistered-page.component.html',
   styleUrls: ['./unregistered-page.component.css']
 })
-export class UnregisteredPageComponent{
+export class UnregisteredPageComponent implements OnInit{
 
   routeInfo?: RouteBaseInfo;
 
@@ -112,6 +114,7 @@ export class UnregisteredPageComponent{
   private departureCoordinates?: L.LatLng;
 
   private driverLocationMarkers?: L.LayerGroup;
+  private locationMarkerLayer?: L.LayerGroup;
 
   private initMap(): void{
     this.map = L.map("estimation-map", {
@@ -120,7 +123,10 @@ export class UnregisteredPageComponent{
     })
 
     this.driverLocationMarkers = L.layerGroup();
+    this.locationMarkerLayer = L.layerGroup();
     this.driverLocationMarkers.addTo(this.map!);
+    this.locationMarkerLayer.addTo(this.map!);
+
 
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
@@ -132,13 +138,26 @@ export class UnregisteredPageComponent{
 
 
     this.map.on("click", e => {
-      console.log(e.latlng);
       if(this.departureSelection){
         this.departureCoordinates = e.latlng;
+        let marker = L.marker([e.latlng.lat, e.latlng.lng], {icon: iconDefault});
+        marker.addTo(this.locationMarkerLayer!);
+
+        this.mapEstimationService.reverseSearch(e.latlng.lat, e.latlng.lng).subscribe({
+          next: result =>  this.routeForm.controls.departure.setValue(result.display_name),
+          error: err => console.error(err)
+        });
+       
       }
       else{
         this.destinationCoordinates = e.latlng;
+        this.mapEstimationService.reverseSearch(e.latlng.lat, e.latlng.lng).subscribe({
+          next: result =>  this.routeForm.controls.destination.setValue(result.display_name),
+          error: err => console.error(err)
+        });
       }
+      this.departureSelection = !this.departureSelection;
+      this.route();
     });
   }
 
@@ -175,6 +194,9 @@ export class UnregisteredPageComponent{
     if(this.map !== undefined &&
        this.departureCoordinates !== undefined &&
         this.destinationCoordinates !== undefined){
+
+      this.clearLocationarkers();
+      this.clearRoutes();
       
       this.routeControl = L.Routing.control({
         waypoints: [this.departureCoordinates, this.destinationCoordinates],
@@ -210,10 +232,7 @@ export class UnregisteredPageComponent{
 
   private refreshActiveDrivers(locations: [{latitude: number, longitude: number}]) {
     
-        if(this.driverLocationMarkers !== undefined){
-          this.driverLocationMarkers.clearLayers();
-        }
-
+        this.clearDriverMarkers();
         if(this.map !== undefined){
           locations.forEach(location => {
             let marker = L.marker([location.latitude, location.longitude], {icon: carMarkerIcon})
@@ -225,6 +244,23 @@ export class UnregisteredPageComponent{
 
   private checkInput() {
     return this.map === undefined;
+  }
+
+  private clearRoutes(){
+    if(this.routeControl !== undefined)
+          this.map?.removeControl(this.routeControl!);
+  }
+
+  private clearDriverMarkers(){
+    if(this.driverLocationMarkers !== undefined){
+      this.driverLocationMarkers.clearLayers();
+    }
+  }
+
+  private clearLocationarkers(){
+    if(this.locationMarkerLayer !== undefined){
+      this.locationMarkerLayer.clearLayers();
+    }
   }
 
   
@@ -243,8 +279,7 @@ export class UnregisteredPageComponent{
     this.mapEstimationService.search(departure).subscribe(departureLocation => {
       this.mapEstimationService.search(destination!).subscribe(destinationLocation =>{
 
-        if(this.routeControl !== undefined)
-          this.map?.removeControl(this.routeControl!);
+        this.clearRoutes();
 
         this.departureCoordinates = departureLocation[0];
 
