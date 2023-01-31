@@ -7,12 +7,12 @@
             <mat-label>Departure</mat-label>
             <input id="passenger-order-departure" matInput formControlName="departure" (blur)="recalculateRoute()" name="departure" />
         </mat-form-field>
-        <span class="space"></span>   
+        <span class="space"></span>
          <mat-form-field appearance="outline">
             <mat-label>Destination</mat-label>
             <input id="passenger-order-destination" matInput formControlName="destination" (blur)="recalculateRoute()" name="destination" />
         </mat-form-field>
-        <br/>      
+        <br/>
         <button id="passenger-order-find-route" type="submit" color="primary" mat-raised-button (click)="recalculateRoute()" [disabled]="!isRouteFormValid()">Find Route</button>
         <mat-spinner id="passenger-order-route-spinner" *ngIf="isRouteRecalculating" [diameter]="35"></mat-spinner>
     </div>
@@ -26,7 +26,7 @@
 
         <div>
             <span class="label">Distance: </span>
-            <span class="value">{{ getRouteDistanceStr() }}</span>
+            <span id="passenger-order-distance" class="value">{{ getRouteDistanceStr() }}</span>
         </div>
 
         <hr/>
@@ -35,16 +35,16 @@
 
         <mat-form-field appearance="outline">
             <mat-label>Vehicle</mat-label>
-            <mat-select formControlName="vehicle_type">
-                <mat-option *ngFor="let type of vehicleTypes" name="vehicle_type" [value]="type.name">{{type.name}}</mat-option>
+            <mat-select id="passenger-order-vehicle-selectbox" formControlName="vehicle_type">
+                <mat-option *ngFor="let type of vehicleTypes" id="passenger-order-vehicle-{{type.name}}" name="vehicle_type" [value]="type.name">{{type.name}}</mat-option>
             </mat-select>
         </mat-form-field>
 
         <!-- Babies and pets -->
 
         <div>
-            <mat-checkbox formControlName="babies" class="value">Babies</mat-checkbox>
-            <mat-checkbox formControlName="pets" class="value">Pets</mat-checkbox>
+            <mat-checkbox id="passenger-order-babies" formControlName="babies" class="value">Babies</mat-checkbox>
+            <mat-checkbox id="passenger-order-pets" formControlName="pets" class="value">Pets</mat-checkbox>
         </div>
 
         <hr/>
@@ -67,7 +67,7 @@
         </div>
 
         <br/>
-        
+
         <div>
             <mat-form-field appearance="outline">
                 <mat-label>Invite passenger</mat-label>
@@ -83,7 +83,7 @@
 
         <div>
             <span class="label">Price: </span>
-            <span class="value">{{ getRoutePrice() }}</span>
+            <span id="passenger-order-price" class="value">{{ getRoutePrice() }}</span>
         </div>
 
         <hr/>
@@ -117,6 +117,6 @@
         <!-- Order -->
 
         <br/>
-        <button type="submit" [disabled]="!canOrderRide()" color="primary" mat-raised-button (click)="orderRide()">Order</button>
+        <button id="passenger-order-submit" type="submit" [disabled]="!canOrderRide()" color="primary" mat-raised-button (click)="orderRide()">Order</button>
     </div>
 </form>

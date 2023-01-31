@@ -124,15 +124,16 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
      */
     private initMap(id: string): void {
         this.map = L.map(this.mapElement.nativeElement, {center: [45.2396, 19.8227], zoom: 13 });
+        //return; // TODO AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18, minZoom: 3,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         });
         tiles.addTo(this.map);
     }
-    
+
     /**
-     * 
+     *
      * @param data Data containing the text value
      */
     recalculateRoute(data: RecalculateRouteDTO) {
@@ -187,13 +188,13 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
         this.route.hide();
 
         let self = this;
-    
+
         this.route.on('routesfound', function (e) {
             let routes = e.routes;
             let summary = routes[0].summary;
 
             self.routeDistance = summary.totalDistance;
-            self.finishLoadingRoute();    
+            self.finishLoadingRoute();
         });
     }
 
@@ -250,10 +251,10 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
             [this.iconCarAvailable, this.iconLuxAvailable, this.iconVanAvailable],
             [this.iconCarBusy, this.iconLuxBusy, this.iconVanBusy],
         ]
-        
+
         for (let carLocation of locations) {
             // - 1 because IDs go from 1.
-            const ico = icon_map[carLocation.available ? 0 : 1][carLocation.vehicleTypeId - 1]; 
+            const ico = icon_map[carLocation.available ? 0 : 1][carLocation.vehicleTypeId - 1];
 
             markers.push(L.marker(
                 [carLocation.location.latitude, carLocation.location.longitude],
@@ -264,7 +265,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
         if (this.map.hasLayer(this.carLayer)) {
             this.map.removeLayer(this.carLayer);
         }
-        
+
         this.carLayer = new L.LayerGroup(markers);
         this.map.addLayer(this.carLayer);
     }
@@ -340,7 +341,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
             const reviewDriver = reviews.driver;
             if (reviewDriver.rating != 0) {
                 this.reviewService.leaveReviewDriver(ride.id, reviewDriver).subscribe({
-                    
+
                 });
             }
         });
