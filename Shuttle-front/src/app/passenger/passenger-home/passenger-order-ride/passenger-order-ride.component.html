@@ -5,16 +5,16 @@
     <div formGroupName="route_form">
         <mat-form-field appearance="outline">
             <mat-label>Departure</mat-label>
-            <input matInput formControlName="departure" (blur)="recalculateRoute()" name="departure" />
+            <input id="passenger-order-departure" matInput formControlName="departure" (blur)="recalculateRoute()" name="departure" />
         </mat-form-field>
         <span class="space"></span>   
          <mat-form-field appearance="outline">
             <mat-label>Destination</mat-label>
-            <input matInput formControlName="destination" (blur)="recalculateRoute()" name="destination" />
+            <input id="passenger-order-destination" matInput formControlName="destination" (blur)="recalculateRoute()" name="destination" />
         </mat-form-field>
         <br/>      
-        <button type="submit" color="primary" mat-raised-button (click)="recalculateRoute()" [disabled]="!isRouteFormValid()">Find Route</button>
-        <mat-spinner *ngIf="isRouteRecalculating" [diameter]="35"></mat-spinner>
+        <button id="passenger-order-find-route" type="submit" color="primary" mat-raised-button (click)="recalculateRoute()" [disabled]="!isRouteFormValid()">Find Route</button>
+        <mat-spinner id="passenger-order-route-spinner" *ngIf="isRouteRecalculating" [diameter]="35"></mat-spinner>
     </div>
 
     <!-- Details. -->

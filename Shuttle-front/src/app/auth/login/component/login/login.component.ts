@@ -11,7 +11,7 @@ import {TokenStorageService} from "../../../token-storage.service";
     styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
-
+    protected loginError: string = "";
 
     formGroup: FormGroup;
     hasError: boolean = false;
@@ -30,10 +30,14 @@ export class LoginComponent {
                     this.authService.setUser();
                     let homeRoute = this.authService.getRole() + '/home';
                     this.router.navigate([homeRoute]);
+                    this.loginError = "";
                 },
                 error: (error) => {
                     if (error instanceof HttpErrorResponse) {
                         this.hasError = true;
+                        if ((error as HttpErrorResponse).status == 400) {
+                            this.loginError = "Wrong username or password!";
+                        }
                     }
                 },
             });
