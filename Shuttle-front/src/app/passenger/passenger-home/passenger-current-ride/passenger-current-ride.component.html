@@ -35,13 +35,16 @@
 
     <div class="ride-passenger">
         <img src="">
-        <mat-label id="passenger-current-me" class="value">{{myEmail}}</mat-label>
+        <span *ngIf="meUserWithPfp">
+            <img class="pfp" src="{{ meUserWithPfp.profilePicture }}" />
+            <mat-label id="passenger-current-me" class="value">{{ meUserWithPfp.email }}</mat-label>
+        </span>
         <mat-label class="label"> (You)</mat-label>
     </div>
     <br/>
 
-    <div *ngFor="let other of otherPassengers" class="ride-passenger">
-        <img src="">
+    <div *ngFor="let other of otherUsersWithPfp" class="ride-passenger">
+        <img class="pfp" src="{{ other.profilePicture }}" />
         <mat-label class="value passenger-current-other">{{other.email}}</mat-label>
         <br/>
     </div>
@@ -51,6 +54,7 @@
     <hr/>
     <div>
         <span class="label">Driver: </span>
+        <img class="pfp" src="{{ driverPfp }}" />
         <span id="passenger-current-driver" class="value">{{ getDriverEmail() }}</span>
     </div>
 

@@ -19,7 +19,7 @@
             [ride]="ride!"
             [isRouteFound]="isRouteFound()"
             [routeDistance]="this.routeDistance"
-            [otherPassengers]="this.ride!.passengers"
+            [otherPassengers]="this.rideOtherPassengers"
             (panicEvent)="panicClick($event)"
             (cancelEvent)="cancelPendingRide()"
             (inconsistencyEvent)="reportDriverInconsistency()"

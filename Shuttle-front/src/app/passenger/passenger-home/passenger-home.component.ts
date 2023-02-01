@@ -14,6 +14,8 @@ import { SharedService } from "src/app/shared/shared.service";
 import { VehicleLocationDTO } from "src/app/vehicle/vehicle.service";
 import { PassengerSocketService } from "../passenger-socket.service";
 import { RecalculateRouteDTO } from "./passenger-order-ride/passenger-order-ride.component";
+import { UserIdEmail } from "src/app/user/user.service";
+import { AuthService } from "src/app/auth/auth.service";
 
 @Component({
     selector: 'app-passenger-home',
@@ -46,6 +48,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
     /************************************ Ride fields ********************************************/
 
     protected ride: Ride | null = null;
+    protected rideOtherPassengers: Array<UserIdEmail> = [];
 
     private rideSub: Stomp.Subscription | null = null;
     private vehiclesSub: Stomp.Subscription | null = null;
@@ -55,7 +58,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
     constructor(private mapService: MapEstimationService,
                 private rideService: RideService,
                 private sharedService: SharedService,
-                private navbarService: NavbarService,
+                private authService: AuthService,
                 private messageService: MessageService,
                 private dialog: MatDialog,
                 private reviewService: ReviewService,
@@ -312,6 +315,10 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
 
             this.ride = null;
             this.clearRoute();
+        }
+
+        if (this.ride != null) {
+            this.rideOtherPassengers = this.ride.passengers.filter(u => u.email != this.authService.getUserEmail());
         }
     }
 

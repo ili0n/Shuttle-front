@@ -2,7 +2,8 @@
 <span id="driver-current-passenger-list-container" class="label">Passengers:</span>
 <br/>
 
-<div class="driver-current-passenger-list" *ngFor="let passenger of ride.passengers">
+<div class="driver-current-passenger-list" *ngFor="let passenger of usersWithPfp">
+    <img class="pfp" src="{{ passenger.profilePicture }}" />
     <mat-label class="value" matListItemTitle>{{passenger.email}}</mat-label>
 </div>
 <hr/>

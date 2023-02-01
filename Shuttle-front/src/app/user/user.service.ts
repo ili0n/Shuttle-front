@@ -15,6 +15,10 @@ export interface ListUserDTO {
     results: Array<Passenger>; // TODO: Same interface different name.
 }
 
+export interface UserIdEmailPfp extends UserIdEmail {
+    profilePicture: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })

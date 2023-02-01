@@ -1,8 +1,11 @@
 import { outputAst } from '@angular/compiler';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { PassengerService } from 'src/app/passenger/passenger.service';
 import { RidePanicDialogComponent } from 'src/app/ride/ride-panic-dialog/ride-panic-dialog.component';
 import { Ride, RideStatus } from 'src/app/ride/ride.service';
+import { SharedService } from 'src/app/shared/shared.service';
+import { UserIdEmailPfp } from 'src/app/user/user.service';
 import { RejectRideDialogComponent } from '../../reject-ride-dialog/reject-ride-dialog.component';
 
 @Component({
@@ -10,7 +13,7 @@ import { RejectRideDialogComponent } from '../../reject-ride-dialog/reject-ride-
   templateUrl: './driver-home-current-ride.component.html',
   styleUrls: ['./driver-home-current-ride.component.css']
 })
-export class DriverHomeCurrentRideComponent {
+export class DriverHomeCurrentRideComponent implements OnInit {
     @Input() public ride!: Ride;
     @Output() private acceptEvent = new EventEmitter<void>();
     @Output() private rejectEvent = new EventEmitter<string>();
@@ -20,8 +23,34 @@ export class DriverHomeCurrentRideComponent {
 
     private timer: NodeJS.Timer | null = null;
     protected elapsedTime: string = "";
+    protected usersWithPfp: Array<UserIdEmailPfp> = [];
 
-    constructor(private dialog: MatDialog) {
+    public ngOnInit(): void {
+        this.fetchUserPfp();
+    }
+
+    private fetchUserPfp(): void {
+        this.usersWithPfp = [];
+        console.log(this.ride.passengers);
+        for (let p of this.ride.passengers) {
+            console.log(p);
+            this.passengerService.findById(p.id).subscribe({
+                next: passenger => {
+                    this.usersWithPfp.push({
+                        id: passenger.id,
+                        email:  passenger.email,
+                        profilePicture: 'data:image/jpg;base64,' + passenger.profilePicture
+                    });
+                },
+                error: err => {
+                    console.log(err);
+                    this.sharedService.showSnackBar(`Could not fetch user ${p.id}`, 3000)
+                }
+            });
+        }
+    }
+
+    constructor(private dialog: MatDialog, private passengerService: PassengerService, private sharedService: SharedService) {
         this.startElapsedTimeTimer();
     }
 
