@@ -13,6 +13,12 @@ export interface PasswordCodeDTO {
 	code: string
 }
 
+export interface PasswordDTO {
+	newPassword: string,
+	oldPassword: string
+}
+
+
 
 @Injectable({
     providedIn: 'root',
@@ -128,6 +134,13 @@ export class AuthService {
 
     resetPassword(passwordCode: PasswordCodeDTO, id: number){
         return this.http.put(environment.serverOrigin + `api/user/${id}` + "/resetPassword", passwordCode, {
+        observe: 'body',
+        responseType: 'json'
+        });
+    }
+
+    changePassword(password: PasswordDTO, id: number){
+        return this.http.put(environment.serverOrigin + `api/user/${id}` + "/changePassword", password, {
         observe: 'body',
         responseType: 'json'
         });

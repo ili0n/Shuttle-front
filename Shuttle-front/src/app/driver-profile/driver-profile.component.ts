@@ -61,8 +61,11 @@ export class DriverProfileComponent implements OnInit{
   }
 
   onPasswordSubmit(): void{
-    if (this.changeForm.valid) {
-
+    if (this.passwordForm.valid) {
+      this.authService.changePassword(this.passwordForm.value, +this.authService.getId()).subscribe({
+        next: result => this.sharedService.showSnackBar("Success", 3000),
+        error: err => this.sharedService.showSnackBar("Fail", 3000)
+      })
 			console.log("valid");
 		}
     else{
