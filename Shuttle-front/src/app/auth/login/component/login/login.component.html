@@ -10,13 +10,14 @@
 
 			<mat-form-field appearance="outline">
 				<mat-label>Enter your email</mat-label>
-				<input matInput name="email" type="email" formControlName="email" />
+				<input id="login-email" matInput name="email" type="email" formControlName="email" />
 			</mat-form-field>
 			<br />
 			<mat-form-field appearance="outline">
 				<mat-label>Enter your password</mat-label>
-				<input matInput name="password" type="password" formControlName="password" />
+				<input id="login-password" matInput name="password" type="password" formControlName="password" />
 			</mat-form-field>
+            <div id="login-error">{{ loginError }}</div>
 			<br />
 			<button id="submitButton" mat-raised-button type="submit" color="primary" [disabled]="!formGroup.valid">Log in</button>
 			<p><a class="rightAlign" routerLink="/forgot-password">Forgot password?</a></p>

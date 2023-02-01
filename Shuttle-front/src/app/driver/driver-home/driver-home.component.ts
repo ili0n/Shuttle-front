@@ -39,7 +39,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     constructor(private navbarService: NavbarService,
                 private sharedService: SharedService,
                 private rideService: RideService,
-                private driverSocketService: DriverSocketService) {                     
+                private driverSocketService: DriverSocketService) {
     }
 
     ngOnInit(): void {
@@ -57,7 +57,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.locationSub?.unsubscribe();
         this.activeSub?.unsubscribe();
     }
-    
+
     ngAfterViewInit(): void {
         this.initMap("map");
         this.initMapIcons();
@@ -83,6 +83,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private initMap(id: string): void {
         this.map = L.map(this.mapElement.nativeElement, {center: [45.2396, 19.8227], zoom: 13 });
+        //return; // TODO AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18, minZoom: 3,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -136,12 +137,12 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             [this.iconCarAvailable, this.iconLuxAvailable, this.iconVanAvailable],
             [this.iconCarBusy, this.iconLuxBusy, this.iconVanBusy],
         ];
-        const ico = icon_map[vehicle.available ? 0 : 1][vehicle.vehicleTypeId - 1]; 
+        const ico = icon_map[vehicle.available ? 0 : 1][vehicle.vehicleTypeId - 1];
         const marker: L.Marker = L.marker(
             [vehicle.location.latitude, vehicle.location.longitude],
             {icon: ico}
         );
-        
+
         if (this.map.hasLayer(this.carLayer)) {
             this.map.removeLayer(this.carLayer);
         }
@@ -198,8 +199,8 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         else if ([RideStatus.Canceled, RideStatus.Rejected, RideStatus.Finished].includes(ride.status)) {
             this.ride = null;
             this.clearRoute();
-        } 
-            
+        }
+
         // If the current ride is Accepted/Started, ignore upcoming ride (which can only be Pending).
         // The reason for this is that we don't want to bother the driver while he's working. Once
         // he finishes the current ride, he'll ask the backend to fetch again, and then he'll get
@@ -223,10 +224,10 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (!this.hasRouteOnMap()) {
                     const A = this.ride.locations[0].departure;
                     const B = this.ride.locations.at(-1)!.destination;
-    
+
                     const pointA = L.latLng(A.latitude, A.longitude);
                     const pointB = L.latLng(B.latitude, B.longitude);
-    
+
                     this.drawRoute(pointA, pointB);
                 }
             }
@@ -241,7 +242,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!this.ride) {
             return;
         }
-   
+
         this.rideService.accept(this.ride.id).subscribe({
             next: (ride: Ride) => {
                 this.sharedService.showSnackBar("Ride accepted.", 3000);
@@ -255,7 +256,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!this.ride) {
             return;
         }
-   
+
         this.rideService.start(this.ride.id).subscribe({
             next: (ride: Ride) => {
                 this.sharedService.showSnackBar("Ride started.", 3000);
@@ -270,7 +271,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!this.ride) {
             return;
         }
-   
+
         this.rideService.end(this.ride.id).subscribe({
             next: (ride: Ride) => {
                 this.sharedService.showSnackBar("Ride finished.", 3000);
@@ -284,7 +285,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!this.ride) {
             return;
         }
-   
+
         this.rideService.reject(this.ride.id, reason).subscribe({
             next: (ride: Ride) => {
                 this.sharedService.showSnackBar("Ride rejected.", 3000);
@@ -293,12 +294,12 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             error: (error) => this.sharedService.showSnackBar("Cannot reject ride.", 3000)
         });
     }
-    
+
     protected onRidePanic(reason: string): void {
         if (!this.ride) {
             return;
         }
-   
+
         this.rideService.panic(this.ride.id, reason).subscribe({
             next: (panicDTO: PanicDTO) => {
                 this.sharedService.showSnackBar("Ride aborted. The staff has been notified", 3000);

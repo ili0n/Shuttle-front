@@ -5,32 +5,32 @@
 
         <mat-form-field appearance="fill">
             <mat-label>Rate the driver</mat-label>
-            <mat-select formControlName="ratingDriver" (selectionChange)="onChangeDriverRating()">
-                <mat-option *ngFor="let r of possibleRatings" [value]="r">
+            <mat-select id="modal-review-driver-select" formControlName="ratingDriver" (selectionChange)="onChangeDriverRating()">
+                <mat-option *ngFor="let r of possibleRatings" [value]="r" id="modal-review-driver-{{r}}">
                     {{ r }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <mat-form-field >
             <mat-label>Leave a comment on the driver</mat-label>
-            <input matInput formControlName="commentDriver"/>
+            <input id="modal-review-driver-comment" matInput formControlName="commentDriver"/>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
             <mat-label>Rate the vehicle</mat-label>
-            <mat-select formControlName="ratingVehicle" (selectionChange)="onChangeVehicleRating()">
-                <mat-option *ngFor="let r of possibleRatings" [value]="r">
+            <mat-select id="modal-review-vehicle-select" formControlName="ratingVehicle" (selectionChange)="onChangeVehicleRating()">
+                <mat-option *ngFor="let r of possibleRatings" [value]="r" id="modal-review-vehicle-{{r}}">
                     {{ r }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <mat-form-field>
             <mat-label>Leave a comment on the vehicle</mat-label>
-            <input matInput formControlName="commentVehicle"/>
+            <input id="modal-review-vehicle-comment" matInput formControlName="commentVehicle"/>
         </mat-form-field>
 
         <br />
-        <button mat-button mat-raised-button color="primary" (click)="onOk()" [disabled]="!formGroup.valid">OK</button>
-        <button mat-button mat-raised-button color="secondary" (click)="onCancel()">CANCEL</button>
+        <button id="modal-review-ok" mat-button mat-raised-button color="primary" (click)="onOk()" [disabled]="!formGroup.valid">OK</button>
+        <button id="modal-review-cancel" mat-button mat-raised-button color="secondary" (click)="onCancel()">CANCEL</button>
     </form>
 </div>
