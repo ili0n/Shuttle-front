@@ -1,7 +1,7 @@
 <div id="leftSide">
     <form [formGroup]="changeForm" (ngSubmit)="onDataSubmit()" enctype="multipart/form-data" accept-charset="UTF-8">
         <h1>Profile info</h1>
-        <img src="../../assets/pfp_default.png" />
+        <img src="{{imageBase64}}" />
 
         <mat-form-field>
             <div>
@@ -63,7 +63,9 @@
             <input matInput type="password" formControlName="confirmPassword" required/>
         </mat-form-field>  
         <button mat-raised-button type="submit" color="primary">Change password</button>
-
+        <div *ngIf="passwordForm.hasError('mismatch') && passwordForm.dirty" class="warning">
+            Passwords must match
+        </div>
     </form>
 </div>
 

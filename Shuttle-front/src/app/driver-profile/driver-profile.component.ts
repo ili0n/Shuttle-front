@@ -4,7 +4,9 @@ import { CustomValidators } from '../register/confirm.validator';
 import { HttpEventType } from '@angular/common/http';
 import { DriverService } from '../driver/driver.service';
 import { AuthService } from '../auth/auth.service';
+import {FloatLabelType} from '@angular/material/form-field';
 import { SharedService } from '../shared/shared.service';
+
 
 @Component({
   selector: 'app-driver-profile',
@@ -16,25 +18,35 @@ export class DriverProfileComponent implements OnInit{
   selectedFileName?: string; 
   private selectedFileBase64: string = "";
 
+  imageBase64: string = "../../assets/pfp_default.png";
+
   changeForm = this.formBuilder.group({
     address: ["", [Validators.required]],
     telephoneNumber: ["", [Validators.required, Validators.pattern("^[\+]?[0-9]+$")]],
     name: ["", [Validators.required]],
     surname: ["", [Validators.required]],
-    profilePicture: new FormControl(null, [Validators.required]),
+    profilePicture: new FormControl(null, []),
   }, []);
 
   passwordForm = this.formBuilder.group({
-    oldPassword: ["", [Validators.required]],
-    newPassword: ["", [Validators.required]],
-    confirmPassword: ["", [Validators.required]],
-  },
-  [CustomValidators.MatchValidator('password', 'confirmPassword')]
+    oldPassword: ["", [Validators.required, Validators.pattern("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")]],
+    newPassword: ["", [Validators.required, Validators.pattern("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")]],
+    confirmPassword: ["", [Validators.required, Validators.pattern("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")]],
+  },[]
   );
   
 
   ngOnInit(): void {
-   
+    this.driverService.get(+this.authService.getId()).subscribe({
+      next: driver => {
+        this.changeForm.controls["address"].setValue(driver.address);
+        this.changeForm.controls["telephoneNumber"].setValue(driver.telephoneNumber);
+        this.changeForm.controls["name"].setValue(driver.name);
+        this.changeForm.controls["surname"].setValue(driver.surname);
+        this.imageBase64 = 'data:image/jpg;base64,' + driver.profilePicture;
+      },
+      error: err => this.sharedService.showSnackBar("Failed to retrieve driver", 3000)
+    });
   }
 
   constructor(
@@ -42,7 +54,9 @@ export class DriverProfileComponent implements OnInit{
     private driverService: DriverService,
     private authService: AuthService,
     private sharedService: SharedService
-    ){}
+    ){
+      this.passwordForm.addValidators(CustomValidators.MatchValidator('newPassword', 'confirmPassword'))
+    }
 
   onDataSubmit(): void{
     if (this.changeForm.valid) {
