@@ -9,6 +9,14 @@ import { Ride, RideStatus } from 'src/app/ride/ride.service';
 import { UserIdEmail } from 'src/app/user/user.service';
 import { Location, Vehicle, VehicleLocationDTO } from 'src/app/vehicle/vehicle.service';
 import { PassengerSocketService } from '../../passenger-socket.service';
+import { SharedService } from 'src/app/shared/shared.service';
+import { PassengerService } from '../../passenger.service';
+import { TitleStrategy } from '@angular/router';
+
+interface UserIdEmailPfp extends UserIdEmail {
+    profilePicture: string;
+}
+
 
 @Component({
   selector: 'app-passenger-current-ride',
@@ -30,6 +38,10 @@ export class PassengerCurrentRideComponent implements OnInit {
     private vehicleID: number = -1;
     private timer: NodeJS.Timer | null = null;
     private vehiclesSub: Stomp.Subscription | null = null;
+    protected driverPfp: string = "../../assets/pfp_default.png";
+    private usersWithPfp: Array<UserIdEmailPfp> = [];
+    protected otherUsersWithPfp: Array<UserIdEmailPfp> = [];
+    protected meUserWithPfp!: UserIdEmailPfp;
 
     protected getDriverEmail(): string {
         if (this.ride.driver.email != null) {
@@ -41,8 +53,9 @@ export class PassengerCurrentRideComponent implements OnInit {
 
     constructor(private authService: AuthService,
                 private driverService: DriverService,
-                private navbarService: NavbarService,
+                private sharedService: SharedService,
                 private dialog: MatDialog,
+                private passengerService: PassengerService,
                 private passengerSocketService: PassengerSocketService,) {
         this.startElapsedTimeTimer();
     }
@@ -67,6 +80,56 @@ export class PassengerCurrentRideComponent implements OnInit {
                 console.error("WHAT", error);
             }
         });
+
+        this.fetchDriverPfp();
+        this.fetchUserPfp();
+    }
+
+    private fetchDriverPfp(): void {
+        this.driverService.get(this.ride.driver.id).subscribe({
+            next: driver => {
+                this.driverPfp = 'data:image/jpg;base64,' + driver.profilePicture;
+            },
+            error: err => {
+                console.log(err);
+                this.sharedService.showSnackBar(`Could not fetch user ${this.ride.driver.id}`, 3000)
+            }
+        });
+    }
+
+    private fetchUserPfp(): void {
+        this.usersWithPfp = [];
+        console.log(this.ride.passengers);
+        for (let p of this.ride.passengers) {
+            console.log(p);
+            this.passengerService.findById(p.id).subscribe({
+                next: passenger => {
+                    this.usersWithPfp.push({
+                        id: passenger.id,
+                        email:  passenger.email,
+                        profilePicture: 'data:image/jpg;base64,' + passenger.profilePicture
+                    });
+
+                    if (passenger.email == this.authService.getUserEmail()) {
+                        this.meUserWithPfp = {
+                            id: passenger.id,
+                            email:  passenger.email,
+                            profilePicture: 'data:image/jpg;base64,' + passenger.profilePicture
+                        };
+                    } else {
+                        this.otherUsersWithPfp.push({
+                            id: passenger.id,
+                            email:  passenger.email,
+                            profilePicture: 'data:image/jpg;base64,' + passenger.profilePicture
+                        });
+                    }
+                },
+                error: err => {
+                    console.log(err);
+                    this.sharedService.showSnackBar(`Could not fetch user ${p.id}`, 3000)
+                }
+            });
+        }
     }
 
     private onConnectedToSocket(): void {
