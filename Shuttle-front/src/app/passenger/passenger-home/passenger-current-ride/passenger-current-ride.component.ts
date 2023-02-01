@@ -6,16 +6,14 @@ import { DriverService } from 'src/app/driver/driver.service';
 import { NavbarService } from 'src/app/navbar-module/navbar.service';
 import { RidePanicDialogComponent } from 'src/app/ride/ride-panic-dialog/ride-panic-dialog.component';
 import { Ride, RideStatus } from 'src/app/ride/ride.service';
-import { UserIdEmail } from 'src/app/user/user.service';
+import { UserIdEmail, UserIdEmailPfp } from 'src/app/user/user.service';
 import { Location, Vehicle, VehicleLocationDTO } from 'src/app/vehicle/vehicle.service';
 import { PassengerSocketService } from '../../passenger-socket.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { PassengerService } from '../../passenger.service';
 import { TitleStrategy } from '@angular/router';
 
-interface UserIdEmailPfp extends UserIdEmail {
-    profilePicture: string;
-}
+
 
 
 @Component({
