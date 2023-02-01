@@ -1,0 +1,32 @@
+.flex{
+    display: flex;
+}
+.map-container {
+    height: 100vh;
+    width: 70vw;
+    display: block;
+    justify-content: flex-start;
+}
+.map-frame {
+    height: 100%;
+}
+#admin-home-map {
+    height: 100%;
+}
+.cards {
+    height: 100vh;
+    width: 30vw;
+    display: block;
+    justify-content: flex-end;
+}
+mat-card {
+    width: 100%;
+    border-radius: 30px !important;
+    border-left: 5vw;
+    text-align: center;
+    align-content: normal;
+    height: fit-content;
+}
+h2 {
+    padding-top: 0.5vw;
+}

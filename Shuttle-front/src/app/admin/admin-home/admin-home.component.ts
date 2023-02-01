@@ -5,12 +5,19 @@ import {environment} from "../../../environments/environment";
 import * as Stomp from "stompjs";
 
 
+
+
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
 const shadowUrl = 'assets/marker-shadow.png';
 
-const carMarkerUrl = 'assets/car-marker.png';
-const carPanicUrl = 'assets/car-marker-panic.png'
+const carAvailableMarkerUrl = 'assets/ico_car_avail.png';
+const carBusyMarkerUrl = 'assets/ico_car_busy.png';
+const luxuryAvailableMarkerUrl = 'assets/ico_luxury_avail.png';
+const luxuryBusyMarkerUrl = 'assets/ico_luxury_busy.png';
+const vanAvailableMarkerUrl = 'assets/ico_van_avail.png';
+const vanBusyMarkerUrl = 'assets/ico_van_busy.png';
+const panicUrl = 'assets/car-marker-panic.png'
 const iconDefault = L.icon({
     iconRetinaUrl,
     iconUrl,
@@ -22,8 +29,8 @@ const iconDefault = L.icon({
     shadowSize: [41, 41]
 });
 
-const carMarkerIcon = L.icon({
-    iconUrl: carMarkerUrl,
+const carAvailableIcon = L.icon({
+    iconUrl: carAvailableMarkerUrl,
     shadowUrl,
     iconSize: [48, 48],
     iconAnchor: [12, 41],
@@ -31,8 +38,8 @@ const carMarkerIcon = L.icon({
     tooltipAnchor: [16, -28],
     shadowSize: [41, 41]
 });
-const carPanicIcon = L.icon({
-    iconUrl: carPanicUrl,
+const carBusyIcon = L.icon({
+    iconUrl: carBusyMarkerUrl,
     shadowUrl,
     iconSize: [48, 48],
     iconAnchor: [12, 41],
@@ -40,6 +47,53 @@ const carPanicIcon = L.icon({
     tooltipAnchor: [16, -28],
     shadowSize: [41, 41]
 });
+const luxuryAvailableIcon = L.icon({
+    iconUrl: luxuryAvailableMarkerUrl,
+    shadowUrl,
+    iconSize: [48, 48],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+});
+const luxuryBusyIcon = L.icon({
+    iconUrl: luxuryBusyMarkerUrl,
+    shadowUrl,
+    iconSize: [48, 48],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+});
+const vanAvailableIcon = L.icon({
+    iconUrl: vanAvailableMarkerUrl,
+    shadowUrl,
+    iconSize: [48, 48],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+});
+const vanBusyIcon = L.icon({
+    iconUrl: vanBusyMarkerUrl,
+    shadowUrl,
+    iconSize: [48, 48],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+});
+const panicIcon = L.icon({
+    iconUrl: panicUrl,
+    shadowUrl,
+    iconSize: [48, 48],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+});
+
+
 L.Marker.prototype.options.icon = iconDefault;
 
 
@@ -61,11 +115,12 @@ export class AdminHomeComponent {
     private departureCoordinates?: L.LatLng;
 
     private driverLocationMarkers?: L.LayerGroup;
+    plates: Array<string> = new Array<string>();
 
     private initMap(): void {
-        this.map = L.map("estimation-map", {
+        this.map = L.map("admin-home-map", {
             center: [45.267136, 19.833549],
-            zoom: 3
+            zoom: 13
         })
 
         this.driverLocationMarkers = L.layerGroup();
@@ -96,32 +151,68 @@ export class AdminHomeComponent {
 
     openSocket() {
         if (this.isLoaded) {
-            this.stompClient.subscribe('/active/vehicle/location', (message: { body: string }) => {
+            this.stompClient.subscribe('/active/vehicle/location/all', (message: { body: string }) => {
                 this.handleMessage(message);
             });
         }
     }
 
     handleMessage(message: { body: string }) {
-        let activeDriversLocations: [{ latitude: number, longitude: number }] = JSON.parse(message.body);
+        let activeDriversLocations: [VehicleLocationDTO] = JSON.parse(message.body);
         this.refreshActiveDrivers(activeDriversLocations);
     }
 
 
-    private refreshActiveDrivers(locations: [{ latitude: number, longitude: number }]) {
+    private refreshActiveDrivers(locations: [VehicleLocationDTO]) {
 
         if (this.driverLocationMarkers !== undefined) {
             this.driverLocationMarkers.clearLayers();
         }
-
+        this.plates = new Array<string>();
         if (this.map !== undefined) {
             locations.forEach(location => {
-                let marker = L.marker([location.latitude, location.longitude], {icon: carMarkerIcon})
-                    .addTo(this.driverLocationMarkers!)
+                let icon = panicIcon;
+                if (!location.panic) {
+                    switch (location.vehicleType.toLowerCase()) {
+                        case "standard": {
+                            if (location.available) icon = carAvailableIcon
+                            else icon = carBusyIcon;
+                            break;
+                        }
+                        case "van": {
+                            if (location.available) icon = vanAvailableIcon
+                            else icon = vanBusyIcon;
+                            break;
+                        }
+                        case "luxury": {
+                            if (location.available) icon = luxuryAvailableIcon
+                            else icon = luxuryBusyIcon;
+                            break;
+                        }
+                    }
+                }
+                let marker = L.marker([location.location.latitude, location.location.longitude], {icon: icon})
+                    .addTo(this.driverLocationMarkers!);
+                this.plates.push(location.licencePlate);
                 this.driverLocationMarkers?.addLayer(marker);
             })
         }
     }
 
 
+}
+
+export interface VehicleLocationDTO {
+    id: number
+    available: boolean
+    location: LocationDTO
+    licencePlate: string
+    panic: boolean
+    vehicleType: string
+}
+
+export interface LocationDTO {
+    latitude: number
+    longitude: number
+    address: string
 }
