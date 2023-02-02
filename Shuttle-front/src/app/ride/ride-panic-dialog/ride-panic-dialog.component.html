@@ -4,10 +4,10 @@
     <form [formGroup]="panicFormGroup">
         <mat-form-field>
             <mat-label>Reason</mat-label>
-            <input matInput formControlName="reason" />
+            <input id="modal-panic-reason" matInput formControlName="reason" />
         </mat-form-field>
         <br/>
-        <button mat-button mat-raised-button color="primary" (click)="onOk()" [disabled]="!panicFormGroup.valid">OK</button>
-        <button mat-button mat-raised-button color="secondary" (click)="onCancel()">CANCEL</button>
+        <button id="modal-panic-ok" mat-button mat-raised-button color="primary" (click)="onOk()" [disabled]="!panicFormGroup.valid">OK</button>
+        <button id="modal-panic-cancel" mat-button mat-raised-button color="secondary" (click)="onCancel()">CANCEL</button>
     </form>
 </div>
