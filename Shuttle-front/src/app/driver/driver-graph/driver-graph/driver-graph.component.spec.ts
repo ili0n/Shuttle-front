@@ -1,4 +1,7 @@
+import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { UserModule } from 'src/app/user/user.module';
 
 import { DriverGraphComponent } from './driver-graph.component';
 
@@ -8,7 +11,11 @@ describe('DriverGraphComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DriverGraphComponent ]
+      declarations: [ DriverGraphComponent ],
+      imports: [
+        HttpClientTestingModule,
+        UserModule,
+      ]
     })
     .compileComponents();
 

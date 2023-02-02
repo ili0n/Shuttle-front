@@ -30,10 +30,13 @@ export class DriverHomeCurrentRideComponent implements OnInit {
     }
 
     private fetchUserPfp(): void {
+        if (!this.ride) {
+            // Needed for should create in tests.
+            return;
+        }
+
         this.usersWithPfp = [];
-        console.log(this.ride.passengers);
         for (let p of this.ride.passengers) {
-            console.log(p);
             this.passengerService.findById(p.id).subscribe({
                 next: passenger => {
                     this.usersWithPfp.push({
