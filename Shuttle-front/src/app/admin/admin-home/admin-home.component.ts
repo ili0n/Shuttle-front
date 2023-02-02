@@ -3,6 +3,7 @@ import * as L from "leaflet";
 import * as SockJS from "sockjs-client";
 import {environment} from "../../../environments/environment";
 import * as Stomp from "stompjs";
+import {VehicleLocationDTO} from "../admin.service";
 
 
 
@@ -202,17 +203,4 @@ export class AdminHomeComponent {
 
 }
 
-export interface VehicleLocationDTO {
-    id: number
-    available: boolean
-    location: LocationDTO
-    licencePlate: string
-    panic: boolean
-    vehicleType: string
-}
 
-export interface LocationDTO {
-    latitude: number
-    longitude: number
-    address: string
-}

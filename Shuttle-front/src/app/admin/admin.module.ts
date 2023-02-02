@@ -8,6 +8,8 @@ import { AdminHistoryRideTableComponent } from './admin-history/admin-history-ri
 import { AdminHistoryRideDetailsComponent } from './admin-history/admin-history-ride-details/admin-history-ride-details.component';
 import { AdminHistoryRidePassengersComponent } from './admin-history/admin-history-ride-passengers/admin-history-ride-passengers.component';
 import { AdminHomeComponent } from './admin-home/admin-home.component';
+import { AdminPanicComponent } from './admin-panic/admin-panic.component';
+import { AdminPanicDetailsComponent } from './admin-panic/admin-panic-details/admin-panic-details.component';
 
 
 @NgModule({
@@ -19,6 +21,8 @@ import { AdminHomeComponent } from './admin-home/admin-home.component';
         AdminHistoryRideDetailsComponent,
         AdminHistoryRidePassengersComponent,
         AdminHomeComponent,
+        AdminPanicComponent,
+        AdminPanicDetailsComponent,
     ],
     imports: [
         CommonModule,

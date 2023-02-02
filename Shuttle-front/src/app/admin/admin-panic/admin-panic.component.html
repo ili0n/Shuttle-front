@@ -1,0 +1,12 @@
+<div class="flex">
+    <div class="cards">
+        <div *ngFor="let panic of panics;index as i">
+            <mat-card class="licenceCard" (click)="cardOnClick(i)">
+                <h2>{{panic.user.email}}</h2>
+                <p>{{panic.reason}}</p>
+            </mat-card>
+        </div>
+    </div>
+    <app-admin-panic-details [selectedPanic]="selectedCard">
+    </app-admin-panic-details>
+</div>
