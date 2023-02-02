@@ -3,14 +3,14 @@
 }
 .cards {
     height: 100vh;
-    width: 30vw;
+    width: 40vw;
     display: block;
     justify-content: flex-start;
 }
 mat-card {
     width: 100%;
     border-radius: 30px !important;
-    border-left: 5vw;
+    margin: 1vh;
     text-align: center;
     align-content: normal;
     height: fit-content;
@@ -19,6 +19,6 @@ h2 {
     padding-top: 0.5vw;
 }
 app-admin-panic-details {
-    width: 50vw;
+    width: 60vw;
     justify-self: flex-end;
 }

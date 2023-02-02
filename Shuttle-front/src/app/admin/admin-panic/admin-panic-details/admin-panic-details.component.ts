@@ -1,27 +1,33 @@
 import {AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
-import {PanicDTO, Ride} from "../../../ride/ride.service";
+import {PanicDTO, Ride, RideRequestPassenger} from "../../../ride/ride.service";
 import * as L from "leaflet";
 import {User} from "../../../services/register/register.service";
+import {UserIdEmail} from "../../../user/user.service";
 
 @Component({
-  selector: 'app-admin-panic-details',
-  templateUrl: './admin-panic-details.component.html',
-  styleUrls: ['./admin-panic-details.component.css']
+    selector: 'app-admin-panic-details',
+    templateUrl: './admin-panic-details.component.html',
+    styleUrls: ['./admin-panic-details.component.css']
 })
-export class AdminPanicDetailsComponent implements AfterViewInit, OnChanges{
+export class AdminPanicDetailsComponent implements AfterViewInit, OnChanges {
     @Input()
     selectedPanic: PanicDTO | undefined;
 
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
-    protected selectedUser: User | null = null;
-    protected selectedRide: Ride | null = null;
+    passengers = new Array<RideRequestPassenger>();
+    driver:UserIdEmail | undefined = undefined ;
 
-    @ViewChild('leafletMap')
-    private mapElement!: ElementRef;
+
 
     ngAfterViewInit(): void {
-        this.initMap("map");
+
+        let DefaultIcon = L.icon({
+            iconUrl: 'https://unpkg.com/leaflet@1.6.0/dist/images/marker-icon.png',
+        });
+
+        L.Marker.prototype.options.icon = DefaultIcon;
+        this.initMap();
     }
 
     ngOnDestroy(): void {
@@ -32,23 +38,28 @@ export class AdminPanicDetailsComponent implements AfterViewInit, OnChanges{
 
 
     ngOnChanges(changes: SimpleChanges): void {
+        if (changes['selectedPanic']) {
+            if (this.selectedPanic) {
+                this.drawRouteFrom(this.selectedPanic.ride)
+                this.passengers = this.selectedPanic.ride.passengers;
+                this.driver = this.selectedPanic.ride.driver;
+            }
 
-    }
-
-
-    protected onRideSelected(row: Ride): void {
-        if (this.selectedRide != row) {
-            this.selectedRide = row;
-            this.drawRouteFrom(this.selectedRide);
         }
     }
 
-    private initMap(id: string): void {
-        this.map = L.map(this.mapElement.nativeElement, {center: [45.2396, 19.8227], zoom: 13 });
+    initMap(): void {
+        this.map = L.map("admin-panic-map", {
+            center: [45.2396, 19.8227],
+            zoom: 13,
+        });
+
         const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18, minZoom: 3,
+            maxZoom: 18,
+            minZoom: 3,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         });
+
         tiles.addTo(this.map);
     }
 
@@ -67,24 +78,25 @@ export class AdminPanicDetailsComponent implements AfterViewInit, OnChanges{
         this.drawRoute(A, B);
     }
 
-    private drawRoute(A: L.LatLng, B: L.LatLng) {
-        const waypoints = [A, B];
-
-        this.clearRoute();
-        this.route = L.Routing.control({
+    private drawRoute(A: L.LatLng, B: L.LatLng): void {
+        this.map.remove();
+        this.initMap();
+        let waypoints = [A, B]
+        L.Routing.control({
             waypoints: waypoints,
+            routeWhileDragging: false,
+            addWaypoints: false,
             collapsible: true,
             fitSelectedRoutes: true,
-            routeWhileDragging: false,
-            plan: L.Routing.plan(waypoints, { draggableWaypoints: false, addWaypoints: false }),
+            plan: L.Routing.plan(waypoints, {draggableWaypoints: false, addWaypoints: false}),
             lineOptions:
                 {
-                    missingRouteTolerance: 0,
+                    missingRouteTolerance: 999, // TODO: ???
                     extendToWaypoints: true,
                     addWaypoints: false
-                },
+                }
         }).addTo(this.map);
-        this.route.hide();
+
     }
 
 }

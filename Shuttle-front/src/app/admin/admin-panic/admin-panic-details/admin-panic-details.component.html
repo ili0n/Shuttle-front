@@ -1,1 +1,18 @@
-<p>admin-panic-details works!</p>
+<div class="map-container">
+    <div class="map-frame">
+        <div id="admin-panic-map"></div>
+    </div>
+</div>
+<div *ngIf="driver !== undefined">
+    <mat-card class="licenceCard">
+        <h2>{{driver.email}}</h2>
+        <p><i>Driver</i></p>
+    </mat-card>
+</div>
+<div class="cards">
+    <div *ngFor="let passenger of passengers">
+        <mat-card class="licenceCard">
+            <h2>{{passenger.email}}</h2>
+        </mat-card>
+    </div>
+</div>

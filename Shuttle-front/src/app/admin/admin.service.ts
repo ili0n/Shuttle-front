@@ -13,9 +13,9 @@ export class AdminService {
     constructor(private httpClient: HttpClient) {
     }
 
-    public get(page: number): Observable<PanicDTO> {
+    public getPanics(page: number): Observable<Array<PanicDTO>> {
         const params = new HttpParams().set('page', page);
-        return this.httpClient.get<PanicDTO>(environment.serverOrigin + "api/panic/all", {
+        return this.httpClient.get<Array<PanicDTO>>(environment.serverOrigin + "api/panic/all", {
             params: params,
             responseType: 'json'
         });

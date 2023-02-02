@@ -22,7 +22,7 @@
 mat-card {
     width: 100%;
     border-radius: 30px !important;
-    border-left: 5vw;
+    margin: 1vh;
     text-align: center;
     align-content: normal;
     height: fit-content;

@@ -21,10 +21,15 @@ export class AdminPanicComponent implements OnInit {
     }
 
     getCardsPage(): void {
-        this.panics = new Array<PanicDTO>();
-        this.adminService.get(this.page).forEach(value => {
-            this.panics.push(value)
+        let panics = new Array<PanicDTO>();
+        this.adminService.getPanics(this.page).subscribe(value => {
+            value.forEach(value1 => {
+                console.log(value1);
+                panics.push(value1);
+            })
         });
+        console.log(panics);
+        this.panics = panics;
     }
 
     cardOnClick(index: number): void {
