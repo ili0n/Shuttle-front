@@ -1,11 +1,14 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Route } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Driver } from '../driver/driver.service';
 import { Passenger } from '../passenger/passenger.service';
 import { UserIdEmail } from '../user/user.service';
 import { Vehicle } from '../vehicle/vehicle.service';
+
+export type getGraphData = (startDate: string, endDate: string, id: number) => Observable<Array<GraphEntry>>;
 
 export interface RejectionDTO {
     reason: string
@@ -37,6 +40,31 @@ export interface RideListDTO {
     results: Array<Ride>
 }
 
+export interface FavoriteRouteDTO {
+    id?: number,
+    favoriteName: string,
+    locations: Array<RideRequestLocation>,
+    passengers: Array<RideRequestPassenger>,
+    vehicleType: string,
+    babyTransport: boolean,
+    petTransport: boolean,
+    scheduledTime: string | null,
+    distance?: number,
+}
+
+export interface GraphEntry {
+	time: string;
+	numberOfRides: number;
+	costSum: number;
+	length: number;
+}
+
+export interface Message {
+    message: string
+}
+
+
+
 export enum RideStatus {
     Pending = "PENDING", Accepted = "ACCEPTED", Rejected = "REJECTED", Canceled = "CANCELED", Finished = "FINISHED", Started = "STARTED"
 }
@@ -60,6 +88,7 @@ export interface Ride {
     endTime: string,
     vehicleType: string,
     rejection: RejectionTimeDTO,
+    totalLength?: number,
     driver: UserIdEmail,
     scheduledTime: string,
 }
@@ -78,8 +107,36 @@ export interface RideRequest {
     providedIn: 'root'
 })
 export class RideService {
+
+
+
     constructor(private httpClient: HttpClient) { }
     readonly url: string = environment.serverOrigin + 'api/ride'
+
+    public favoriteRouteToRideRequest(favoriteRide: FavoriteRouteDTO): RideRequest{
+        return {
+            "babyTransport": favoriteRide.babyTransport,
+            "distance": favoriteRide.distance!,
+            "locations": favoriteRide.locations,
+            "passengers": favoriteRide.passengers,
+            "petTransport": favoriteRide.petTransport,
+            "scheduledTime": favoriteRide.scheduledTime,
+            "vehicleType": favoriteRide.vehicleType,
+        }
+    }
+
+    public rideToFavoriteRoute(ride: Ride, favoriteName: string): FavoriteRouteDTO{
+        return {
+            "babyTransport": ride.babyTransport,
+            "distance": ride.totalLength!,
+            "locations": ride.locations,
+            "passengers": ride.passengers,
+            "petTransport": ride.petTransport,
+            "scheduledTime": ride.scheduledTime,
+            "vehicleType": ride.vehicleType,
+            "favoriteName": favoriteName,
+        }
+    }
 
     public request(payload: RideRequest): Observable<RideRequest> {
         return this.httpClient.post<RideRequest>(`${this.url}`, payload, {
@@ -139,4 +196,59 @@ export class RideService {
             responseType: 'json'
         });
     }
+
+    public favoriteRouteCreate(payload: FavoriteRouteDTO): Observable<FavoriteRouteDTO> {
+        return this.httpClient.post<FavoriteRouteDTO>(`${this.url}/favorites`, payload, {
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
+
+
+    public getFavoriteRides(passengerId: number): Observable<Array<FavoriteRouteDTO>> {
+        return this.httpClient.get<Array<FavoriteRouteDTO>>(`${this.url}/favorites/passenger/${passengerId}`, {
+            responseType: 'json'
+        });
+    }
+
+    public deleteFavorite(routeToRemove: FavoriteRouteDTO): Observable<Message> {
+        return this.httpClient.delete<Message>(`${this.url}/favorites/${routeToRemove.id}`, {
+            responseType: 'json'
+        });
+    }
+
+    public getPassengerGraphData(from: string, to: string, passengerId: number): Observable<Array<GraphEntry>> {
+        return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/passenger/${passengerId}`, {
+            params: {
+                "from": from,
+                "to": to
+            },
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
+
+    public getDriverGraphData(from: string, to: string, driverId: number): Observable<Array<GraphEntry>> {
+        return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/driver/${driverId}`, {
+            params: {
+                "from": from,
+                "to": to
+            },
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
+
+    public getOverallGraphData(from: string, to: string): Observable<Array<GraphEntry>> {
+        return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/admin`, {
+            params: {
+                "from": from,
+                "to": to
+            },
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
+  
 }
+

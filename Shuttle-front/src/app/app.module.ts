@@ -13,27 +13,26 @@ import {MatInputModule} from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/infrastructure/material.module';
 import { AdminModule } from './admin/admin.module';
-import { ForgotPasswordComponent } from './auth/login/component/forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from './auth/login/component/reset-password/reset-password.component';
 import { SharedModule } from './shared/shared.module';
-import { EstimationMapComponent } from './estimation-map/estimation-map.component';
 import { UnregisteredPageComponent } from './unregistered-page/unregistered-page.component';
-import { EstimationFormComponent } from './estimation-form/estimation-form.component';
+//import { EstimationFormComponent } from './estimation-form/estimation-form.component';
 import {NavbarModuleModule} from "./navbar-module/navbar-module.module";
-import { SnackbarComponent } from './util/snackbar/snackbar/snackbar.component';
 import { PassengerModule } from './passenger/passenger.module';
 import { DriverModule } from './driver/driver/driver.module';
 import { RideModule } from './ride/ride.module';
 import { LoginInterceptor } from './auth/interceptor/login.interceptor';
 import { AuthModule } from './auth/auth.module';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
     declarations: [
         AppComponent,
         //DriverProfileComponent,
-        EstimationMapComponent,
+        //EstimationMapComponent,
         UnregisteredPageComponent,
-        EstimationFormComponent,
+        //EstimationFormComponent,
         // DriverHomeComponent,
         //RejectRideDialogComponent,
         //SnackbarComponent,
@@ -42,6 +41,23 @@ import { AuthModule } from './auth/auth.module';
         // DriverHistoryRideTableComponent,
         // DriverHistoryRideDetailsComponent,
         // DriverHistoryRidePassengersComponent,
+        //RegisterComponent,
+        //LoginComponent,
+        //ForgotPasswordComponent,
+        //ResetPasswordComponent,
+        //DriverProfileComponent,
+        //UnregisteredPageComponent,
+        //DriverHomeComponent,
+        //RejectRideDialogComponent,
+        //LoginComponent,
+        //SnackbarComponent,
+        //DriverHomeCurrentRideComponent,
+        //LoginComponent,
+        //DriverHistoryComponent,
+        //DriverHistoryRideTableComponent,
+        //DriverHistoryRideDetailsComponent,
+        //DriverHistoryRidePassengersComponent,
+        //PassengerDialog,
     ],
     imports: [
         BrowserModule,
@@ -60,14 +76,21 @@ import { AuthModule } from './auth/auth.module';
         PassengerModule,
         DriverModule,
         RideModule,
-        AuthModule,
+        MatNativeDateModule,
+        MatDatepickerModule,
+        ReactiveFormsModule,
+        ChartsModule,
     ],
-    providers: [{
-        provide: HTTP_INTERCEPTORS,
-        useClass: LoginInterceptor,
-        multi: true
+    providers: [
+        MatDatepickerModule,
+        MatNativeDateModule,
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: LoginInterceptor,
+            multi: true
         },
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

@@ -1,8 +1,23 @@
 import { Component, OnInit } from '@angular/core';
+import { Validators, FormControl, FormBuilder } from '@angular/forms';
+import { AuthService } from 'src/app/auth/auth.service';
+import { CustomValidators } from 'src/app/auth/register/confirm.validator';
+import { SharedService } from 'src/app/shared/shared.service';
+import { DriverService } from '../driver.service';
+/*
 import { Form, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../../auth/register/confirm.validator';
 import { HttpEventType } from '@angular/common/http';
 import { DriverProfileUploadService } from '../../services/driver-profile-upload.service';
+import { Form, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { CustomValidators } from '../register/confirm.validator';
+import { HttpEventType } from '@angular/common/http';
+import { DriverService } from '../driver/driver.service';
+import { AuthService } from '../auth/auth.service';
+import {FloatLabelType} from '@angular/material/form-field';
+import { SharedService } from '../shared/shared.service';
+
+*/
 
 @Component({
   selector: 'app-driver-profile',
@@ -11,62 +26,92 @@ import { DriverProfileUploadService } from '../../services/driver-profile-upload
 })
 export class DriverProfileComponent implements OnInit{
   selectedFile?: File;
-  selectedFileName?: String = '';
+  selectedFileName?: string; 
+  private selectedFileBase64: string = "";
+
+  imageBase64: string = "../../assets/pfp_default.png";
 
   changeForm = this.formBuilder.group({
-    email: ["", [Validators.required, Validators.email]],
-    oldPassword: ["", [Validators.required]],
-    newPassword: ["", [Validators.required]],
-    confirmPassword: ["", [Validators.required]],
     address: ["", [Validators.required]],
-    phone: ["", [Validators.required, Validators.pattern("^[\+]?[0-9]+$")]],
+    telephoneNumber: ["", [Validators.required, Validators.pattern("^[\+]?[0-9]+$")]],
     name: ["", [Validators.required]],
     surname: ["", [Validators.required]],
-  },
-    [CustomValidators.MatchValidator('password', 'confirmPassword')]
-  )
+    profilePicture: new FormControl(null, []),
+  }, []);
+
+  passwordForm = this.formBuilder.group({
+    oldPassword: ["", [Validators.required, Validators.pattern("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")]],
+    newPassword: ["", [Validators.required, Validators.pattern("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")]],
+    confirmPassword: ["", [Validators.required, Validators.pattern("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")]],
+  },[]
+  );
   
 
   ngOnInit(): void {
-   
+    this.driverService.get(+this.authService.getId()).subscribe({
+      next: driver => {
+        this.changeForm.controls["address"].setValue(driver.address);
+        this.changeForm.controls["telephoneNumber"].setValue(driver.telephoneNumber);
+        this.changeForm.controls["name"].setValue(driver.name);
+        this.changeForm.controls["surname"].setValue(driver.surname);
+        this.imageBase64 = 'data:image/jpg;base64,' + driver.profilePicture;
+      },
+      error: err => this.sharedService.showSnackBar("Failed to retrieve driver", 3000)
+    });
   }
 
   constructor(
     private formBuilder: FormBuilder,
-    private submitService: DriverProfileUploadService
-    ){}
+    private driverService: DriverService,
+    private authService: AuthService,
+    private sharedService: SharedService
+    ){
+      this.passwordForm.addValidators(CustomValidators.MatchValidator('newPassword', 'confirmPassword'))
+    }
 
-  onSubmit(): void{
-    console.log("NES");
-    
-    if(this.selectedFile){
-      var formData: FormData = new FormData();
+  onDataSubmit(): void{
+    if (this.changeForm.valid) {
 
-      formData.append("name", this.changeForm.get("name")?.value);
-      formData.append("surname", this.changeForm.get("surname")?.value);
-      formData.append("email", this.changeForm.get("email")?.value);
-      formData.append("address", this.changeForm.get("address")?.value);
-      formData.append("phone", this.changeForm.get("phone")?.value);
-      formData.append("oldPassword", this.changeForm.get("oldPassword")?.value);
-      formData.append("newPassword", this.changeForm.get("newPassword")?.value);
-      formData.append("confirmPassword", this.changeForm.get("confirmPassword")?.value);
-      formData.append("profileImage", this.changeForm.get("profileImage")?.value);
+      const dataForSubmit = {...this.changeForm.value};
+      dataForSubmit.profilePicture = this.selectedFileBase64;
+      this.driverService.createChangeRequest(dataForSubmit, +this.authService.getId()).subscribe({
+        next: result => this.sharedService.showSnackBar("Success", 3000),
+        error: err => this.sharedService.showSnackBar("Fail", 3000)
+      });
+			console.log("valid");
+		}
+    else{
+      console.log("false");
+    }
+  }
 
-      this.submitService.submit(formData);
+  onPasswordSubmit(): void{
+    if (this.passwordForm.valid) {
+      this.authService.changePassword(this.passwordForm.value, +this.authService.getId()).subscribe({
+        next: result => this.sharedService.showSnackBar("Success", 3000),
+        error: err => this.sharedService.showSnackBar("Fail", 3000)
+      })
+			console.log("valid");
+		}
+    else{
+      console.log("false");
     }
   }
 
   selectFile(event : any): void{
     const reader = new FileReader();
-    // reader.onloadend = () => {
-    //   this.userFileInfo = reader.result;
-    //   this.imgURL = this.userFileInfo;
-    // };
     this.selectedFile = event.target.files[0];
-    if(this.selectedFile !== undefined){
-      reader.readAsDataURL(this.selectedFile);
 
-      this.selectedFileName = this.selectedFile.name;
+    if(this.selectedFile !== undefined){
+      reader.onloadend = (e) => {
+        this.selectedFileBase64 = e.target?.result as string;
+        let tokens = this.selectedFileBase64.split(",");
+        if(tokens.length >= 2){
+          this.selectedFileBase64 = tokens[1];
+        }
+     };
+    reader.readAsDataURL(this.selectedFile);
+    this.selectedFileName = this.selectedFile.name;
     }
   }
 }

@@ -1,0 +1,36 @@
+.map-container {
+    top: 40px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 30px;
+    width: 50%;
+    height: 80vh;
+  }
+  
+  .map-frame {
+    border: 2px solid black;
+    height: 100%;
+  }
+  
+  #favorite-map {
+    height: 100%;
+  }
+
+  .flex-container {
+    display: flex;
+    padding: 15px;
+  }
+
+.left {
+    flex: 3;
+}
+
+.right {
+    flex: 2;
+}
+
+.row-selected *:not(button) {
+
+  background: rgb(204, 204, 204);
+}

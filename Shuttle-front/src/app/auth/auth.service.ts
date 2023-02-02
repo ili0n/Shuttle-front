@@ -4,8 +4,21 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {JwtHelperService} from '@auth0/angular-jwt';
-import { UserService } from '../user/user.service';
+import { UserIdEmail, UserService } from '../user/user.service';
 import { SharedService } from '../shared/shared.service';
+import {TokenStorageService} from "./token-storage.service";
+
+export interface PasswordCodeDTO {
+	newPassword: string,
+	code: string
+}
+
+export interface PasswordDTO {
+	newPassword: string,
+	oldPassword: string
+}
+
+
 
 @Injectable({
     providedIn: 'root',
@@ -19,12 +32,20 @@ export class AuthService {
     user$ = new BehaviorSubject(null);
     userState$ = this.user$.asObservable();
 
-    constructor(private http: HttpClient, private userService: UserService, private sharedService: SharedService) {
+    constructor(private http: HttpClient, private userService: UserService, private sharedService: SharedService,private tokenStorage: TokenStorageService) {
         this.user$.next(this.getRole());
     }
 
     login(auth: any): Observable<Token> {
         return this.http.post<Token>(environment.serverOrigin + 'api/user/login', auth, {
+            headers: this.headers,
+        });
+    }
+
+    refreshToken(token: string) {
+        return this.http.post(environment.serverOrigin + 'api/user/refreshtoken', {
+            refreshToken: token
+        }, {
             headers: this.headers,
         });
     }
@@ -44,7 +65,7 @@ export class AuthService {
 
     getRole(): any {
         if (this.isLoggedIn()) {
-            const accessToken: any = localStorage.getItem('user');
+            const accessToken: any = this.tokenStorage.getToken();
             const helper = new JwtHelperService();
             return helper.decodeToken(accessToken).role[0].name;
         }
@@ -53,7 +74,7 @@ export class AuthService {
 
     getUserId(): number {
         if (this.isLoggedIn()) {
-            return new JwtHelperService().decodeToken(localStorage.getItem('user')!).id;
+            return new JwtHelperService().decodeToken(this.tokenStorage.getToken()!).id;
         }
         return -1;
     }
@@ -61,14 +82,14 @@ export class AuthService {
     getUserEmail(): string {
         if (this.isLoggedIn()) {
             //console.log(new JwtHelperService().decodeToken(localStorage.getItem('user')!));
-            return new JwtHelperService().decodeToken(localStorage.getItem('user')!).sub;
+            return new JwtHelperService().decodeToken(this.tokenStorage.getToken()!).sub;
         }
         return "";
     }
 
     getRoles(): string[] {
         if (this.isLoggedIn()) {
-            const accessToken: any = localStorage.getItem('user');
+            const accessToken: any = this.tokenStorage.getToken();
             const helper = new JwtHelperService();
             const roles: any[] = helper.decodeToken(accessToken).role;
             return roles.map(r => r.name);
@@ -77,11 +98,52 @@ export class AuthService {
     }
 
     isLoggedIn(): boolean {
-        return localStorage.getItem('user') != null;
+        return this.tokenStorage.getToken() != null;
 
     }
 
     setUser(): void {
         this.user$.next(this.getRole());
     }
+
+    getId(): string {
+        if (this.isLoggedIn()) {
+            const accessToken: any = this.tokenStorage.getToken();
+            const helper = new JwtHelperService();
+            return helper.decodeToken(accessToken).id;
+        }
+        return "";
+    }
+
+    getUserByEmail(email: string): Observable<UserIdEmail> {
+        return this.http.get<UserIdEmail>(environment.serverOrigin + 'api/user/email', {
+            params: {
+                email: email
+            },
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
+
+    sendCode(id: number){
+        return this.http.get(environment.serverOrigin + `api/user/${id}` + "/resetPassword",{
+        observe: 'body',
+        responseType: 'json'
+        });
+    }
+
+    resetPassword(passwordCode: PasswordCodeDTO, id: number){
+        return this.http.put(environment.serverOrigin + `api/user/${id}` + "/resetPassword", passwordCode, {
+        observe: 'body',
+        responseType: 'json'
+        });
+    }
+
+    changePassword(password: PasswordDTO, id: number){
+        return this.http.put(environment.serverOrigin + `api/user/${id}` + "/changePassword", password, {
+        observe: 'body',
+        responseType: 'json'
+        });
+    }
+
 }

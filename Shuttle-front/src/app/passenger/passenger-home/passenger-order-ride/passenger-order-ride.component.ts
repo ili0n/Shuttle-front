@@ -116,7 +116,7 @@ export class PassengerOrderRideComponent implements OnInit {
      * @returns A validator function that determines whether the selected time for a ride in the
      * future is valid.
      */
-    private static goodTimeValidator(): ValidatorFn {
+    public static goodTimeValidator(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
             const inFuture: boolean = control.get('is_later')?.value;
             if (!inFuture) {

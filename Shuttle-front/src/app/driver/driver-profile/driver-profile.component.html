@@ -1,23 +1,24 @@
-<form [formGroup]="changeForm" (ngSubmit)="onSubmit()">
-    <div id="leftSide">
+<div id="leftSide">
+    <form [formGroup]="changeForm" (ngSubmit)="onDataSubmit()" enctype="multipart/form-data" accept-charset="UTF-8">
         <h1>Profile info</h1>
-        <img src="../../assets/pfp_default.png" />
+        <img src="{{imageBase64}}" />
 
         <mat-form-field>
             <div>
-              <mat-toolbar>
+                <mat-toolbar>
                 <input matInput [value]="selectedFileName ? selectedFileName : 'Select Image'" />
-              </mat-toolbar>
-          
-              <input
+                </mat-toolbar>
+            
+                <input
                 type="file"
-                id="profileImage"
-                name="profileImage"
+                id="profilePicture"
+                name="profilePicture"
                 accept="image/*" multiple 
+                formControlName="profilePicture"
                 (change)="selectFile($event)"
-              />
+                />
             </div>
-          </mat-form-field>
+            </mat-form-field>
 
         <mat-form-field appearance="fill">
             <mat-label>Name: </mat-label>
@@ -30,25 +31,26 @@
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-            <mat-label>Email: </mat-label>
-            <input matInput type="email" formControlName="email" required/>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
             <mat-label>Address: </mat-label>
             <input matInput type="text" formControlName="address" required/>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
             <mat-label>Phone: </mat-label>
-            <input matInput type="text" formControlName="phone" pattern="^[\+]?[0-9]+$" required/>
+            <input matInput type="text" formControlName="telephoneNumber" pattern="^[\+]?[0-9]+$" required/>
         </mat-form-field>
-    </div>
-    <div id="rightSide">
+        <button mat-raised-button type="submit" color="primary">Update data</button>
+        <p>Your changes will be sent to an administrator for approval.</p>
+    </form>
+</div>
+<div id="rightSide">
+    <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()" accept-charset="UTF-8">
         <h1>Change password</h1>
         <mat-form-field appearance="fill">
             <mat-label>Old password: </mat-label>
-            <input matInput type="password" formControlName="oldPassword" required/>
+            <input matInput type="password" formControlName="oldPassword" required
+                title="Minimum 8 characters, at least one letter and one number"/>
+                <!-- pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" /> -->
         </mat-form-field>
 
         <mat-form-field appearance="fill">
@@ -60,7 +62,10 @@
             <mat-label>Confirm new password: </mat-label>
             <input matInput type="password" formControlName="confirmPassword" required/>
         </mat-form-field>  
-        <button mat-raised-button type="submit" color="primary">Sign up</button>
-        <p>Your changes will be sent to an administrator for approval.</p>
-    </div>
-</form>
+        <button mat-raised-button type="submit" color="primary">Change password</button>
+        <div *ngIf="passwordForm.hasError('mismatch') && passwordForm.dirty" class="warning">
+            Passwords must match
+        </div>
+    </form>
+</div>
+

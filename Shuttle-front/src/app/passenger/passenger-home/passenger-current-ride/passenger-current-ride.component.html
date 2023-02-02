@@ -1,14 +1,14 @@
- <div *ngIf="isRouteFound">
+ <div id="passenger-current" *ngIf="isRouteFound">
     <!-- Location list -->
     <span class="label">Locations</span>
     <ul>
-        <li class="value" *ngFor="let address of getAddressList()">{{ address }}</li>
+        <li class="value passenger-current-location-list" *ngFor="let address of getAddressList()">{{ address }}</li>
     </ul>
 
     <!-- Distance -->
     <div>
         <span class="label">Distance: </span>
-        <span class="value">{{ getRouteDistanceStr() }}</span>
+        <span id="passenger-current-distance" class="value">{{ getRouteDistanceStr() }}</span>
     </div>
 
     <hr/>
@@ -16,7 +16,7 @@
     <!-- Vehicle type. -->
     <div>
         <span class="label">Vehicle: </span>
-        <span class="value">{{ ride.vehicleType }}</span>
+        <span id="passenger-current-vehicle" class="value">{{ ride.vehicleType }}</span>
     </div>
 
     <hr/>
@@ -24,25 +24,28 @@
     <!-- Pets and babies -->
 
     <div>
-        <mat-checkbox class="value" [checked]="ride.babyTransport"[disabled]="true">Babies</mat-checkbox>
-        <br/>    
-        <mat-checkbox class="value" [checked]="ride.petTransport"[disabled]="true">Pets</mat-checkbox>
+        <mat-checkbox id="passenger-current-babies" class="value" [checked]="ride.babyTransport"[disabled]="true">Babies</mat-checkbox>
+        <br/>
+        <mat-checkbox id="passenger-current-pets" class="value" [checked]="ride.petTransport"[disabled]="true">Pets</mat-checkbox>
     </div>
 
     <hr/>
 
     <!-- Passenger list -->
-    
+
     <div class="ride-passenger">
         <img src="">
-        <mat-label class="value">{{myEmail}}</mat-label>
+        <span *ngIf="meUserWithPfp">
+            <img class="pfp" src="{{ meUserWithPfp.profilePicture }}" />
+            <mat-label id="passenger-current-me" class="value">{{ meUserWithPfp.email }}</mat-label>
+        </span>
         <mat-label class="label"> (You)</mat-label>
     </div>
     <br/>
 
-    <div *ngFor="let other of otherPassengers" class="ride-passenger">
-        <img src="">
-        <mat-label class="value">{{other.email}}</mat-label>
+    <div *ngFor="let other of otherUsersWithPfp" class="ride-passenger">
+        <img class="pfp" src="{{ other.profilePicture }}" />
+        <mat-label class="value passenger-current-other">{{other.email}}</mat-label>
         <br/>
     </div>
 
@@ -51,11 +54,12 @@
     <hr/>
     <div>
         <span class="label">Driver: </span>
-        <span class="value">{{ getDriverEmail() }}</span>
+        <img class="pfp" src="{{ driverPfp }}" />
+        <span id="passenger-current-driver" class="value">{{ getDriverEmail() }}</span>
     </div>
 
     <!-- Driver arrival time -->
-    
+
     <ng-container *ngIf="isPending() && !isScheduledForFuture()">
         <hr/>
         <div>
@@ -70,21 +74,21 @@
         <hr/>
         <div>
             <span class="label">Scheduled for: </span>
-            <span class="value">{{ getRideScheduledTime() }}</span>    
+            <span id="passenger-current-scheduled-for" class="value">{{ getRideScheduledTime() }}</span>
         </div>
     </ng-container>
 
     <!-- Before the ride begins, you can cancel it. -->
 
     <ng-container *ngIf="isPending() || isAccepted()">
-        <button mat-raised-button color="warn" (click)="cancelRide()">Cancel</button>
+        <button id="passenger-current-cancel" mat-raised-button color="warn" (click)="cancelRide()">Cancel</button>
     </ng-container>
 
     <!-- While it's accepted, wait -->
 
     <ng-container *ngIf="isAccepted()">
         <hr/>
-        <div>Your ride has been accepted.</div>
+        <div id="passenger-current-accepted">Your ride has been accepted.</div>
     </ng-container>
 
     <!-- Elapsed time, panic button, leaving a note etc. -->
@@ -96,9 +100,9 @@
             <span class="value">{{ elapsedTime }}</span>
         </span>
         <hr/>
-        <button mat-raised-button color="warn" (click)="reportInconsistency()"><mat-icon>warning</mat-icon> Report Inconsistency</button>
+        <button id="passenger-current-report" mat-raised-button color="warn" (click)="reportInconsistency()"><mat-icon>warning</mat-icon> Report Inconsistency</button>
         <hr/>
-        <button mat-raised-button color="warn" (click)="openPanicDialog()"><mat-icon>warning</mat-icon> Panic</button>
+        <button id="passenger-current-panic" mat-raised-button color="warn" (click)="openPanicDialog()"><mat-icon>warning</mat-icon> Panic</button>
     </ng-container>
 
 </div>

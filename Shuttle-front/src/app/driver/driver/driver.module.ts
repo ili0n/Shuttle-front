@@ -7,10 +7,14 @@ import { DriverHomeCurrentRideComponent } from '../driver-home/driver-home-curre
 import { DriverHistoryRideTableComponent } from '../driver-history/driver-history-ride-table/driver-history-ride-table.component';
 import { DriverHistoryRideDetailsComponent } from '../driver-history/driver-history-ride-details/driver-history-ride-details.component';
 import { RejectRideDialogComponent } from '../reject-ride-dialog/reject-ride-dialog.component';
-import { DriverService } from '../driver.service';
 import { MaterialModule } from 'src/infrastructure/material.module';
-import { RideModule } from 'src/app/ride/ride.module';
 import { DriverHistoryRidePassengersComponent } from '../driver-history/driver-history-ride-passengers/driver-history-ride-passengers.component';
+import { UserModule } from 'src/app/user/user.module';
+import { ChartsModule } from 'ng2-charts';
+import { DriverGraphComponent } from '../driver-graph/driver-graph/driver-graph.component';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
     declarations: [
@@ -22,10 +26,16 @@ import { DriverHistoryRidePassengersComponent } from '../driver-history/driver-h
         DriverHistoryRidePassengersComponent,
         RejectRideDialogComponent,
         DriverProfileComponent,
+        DriverGraphComponent
     ],
     imports: [
         CommonModule,
         MaterialModule,
+        ChartsModule,
+        UserModule,
+        MatDatepickerModule,
+        MatFormFieldModule,
+        MatNativeDateModule
     ],
     exports: [
         DriverHomeComponent,

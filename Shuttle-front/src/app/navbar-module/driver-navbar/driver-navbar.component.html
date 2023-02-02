@@ -21,7 +21,10 @@
         <button mat-icon-button (click)="info()">
             <mat-icon>account_circle</mat-icon>
         </button>
-
+        <button mat-icon-button (click)="graph()">
+            <mat-icon> insert_chart</mat-icon>
+        </button>
+        
         <form class="isActiveForm" [formGroup]="formGroupIsActive">
             <mat-slide-toggle formControlName="isActive" (change)="onToggleIsActive()"><span>Active</span></mat-slide-toggle>
         </form>

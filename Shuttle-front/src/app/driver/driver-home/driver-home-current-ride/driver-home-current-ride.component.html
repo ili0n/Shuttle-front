@@ -1,10 +1,11 @@
 <span *ngIf="ride">
 
 <!-- Passengers -->
-<span class="label">Passengers:</span>
+<span id="driver-current-passenger-list-container" class="label">Passengers:</span>
 <br/>
 
-<div *ngFor="let passenger of ride.passengers">
+<div class="driver-current-passenger-list" *ngFor="let passenger of usersWithPfp">
+    <img class="pfp" src="{{ passenger.profilePicture }}" />
     <mat-label class="value" matListItemTitle>{{passenger.email}}</mat-label>
 </div>
 <hr/>
@@ -12,14 +13,14 @@
 <!-- Location list -->
 <span class="label">Locations</span>
 <ul>
-    <li class="value" *ngFor="let address of getAddressList()">{{ address }}</li>
+    <li class="value driver-current-location-list" *ngFor="let address of getAddressList()">{{ address }}</li>
 </ul>
 <hr/>
 
 <!-- Baby and pet -->
-<mat-icon>child_care</mat-icon><mat-checkbox class="example-margin" [(ngModel)]="ride.babyTransport" disabled="true"></mat-checkbox>
+<mat-icon>child_care</mat-icon><mat-checkbox id="driver-current-babies" class="example-margin" [(ngModel)]="ride.babyTransport" disabled="true"></mat-checkbox>
 <br/>
-<mat-icon>pets</mat-icon><mat-checkbox class="example-margin" [(ngModel)]="ride.petTransport" disabled="true"></mat-checkbox>
+<mat-icon>pets</mat-icon><mat-checkbox id="driver-current-pets" class="example-margin" [(ngModel)]="ride.petTransport" disabled="true"></mat-checkbox>
 
 <!-- While pending OR accepted  -->
 <ng-container *ngIf="isPending() || isAccepted()">
@@ -27,22 +28,22 @@
         <hr/>
         <div>
             <span class="label">Scheduled for: </span>
-            <span class="value">{{ getRideScheduledTime() }}</span>    
+            <span  id="driver-current-future-schedule" class="value">{{ getRideScheduledTime() }}</span>
         </div>
     </div>
     <hr/>
 
     <!-- Only while pending -->
     <ng-container *ngIf="isPending()">
-        <button mat-raised-button color="primary" (click)="onAcceptClick()"><mat-icon>play_circle_filled</mat-icon> Accept ride</button>
+        <button id="driver-current-accept" mat-raised-button color="primary" (click)="onAcceptClick()"><mat-icon>play_circle_filled</mat-icon> Accept ride</button>
         <br/><br/>
-        <button type="submit" mat-raised-button color="warn" (click)="onRejectClick()"><mat-icon>stop</mat-icon> Reject ride</button>
+        <button id="driver-current-reject" type="submit" mat-raised-button color="warn" (click)="onRejectClick()"><mat-icon>stop</mat-icon> Reject ride</button>
     </ng-container>
 
     <!-- Only while accepted -->
     <ng-container *ngIf="isAccepted()">
-        <button mat-raised-button color="primary" (click)="onStartClick()"><mat-icon>play_circle_filled</mat-icon> Start ride</button>
-    </ng-container>   
+        <button id="driver-current-start" mat-raised-button color="primary" (click)="onStartClick()"><mat-icon>play_circle_filled</mat-icon> Start ride</button>
+    </ng-container>
 
 </ng-container>
 
@@ -51,15 +52,14 @@
 <!-- While active -->
 <ng-container *ngIf="isStarted()">
     <hr/>
-    
+
     <span id="elapsed-time">
         <span class="label">Elapsed time: </span>
         <span class="value">{{ elapsedTime }}</span>
     </span>
     <hr/>
 
-    <button mat-raised-button color="accent" (click)="onFinishClick()"><mat-icon>stop</mat-icon> Finish</button>
+    <button id="driver-current-finish" mat-raised-button color="accent" (click)="onFinishClick()"><mat-icon>stop</mat-icon> Finish</button>
     <br/><br/>
-    <button mat-raised-button color="warn" (click)="onPanicClick()"><mat-icon>warning</mat-icon> Panic</button>
+    <button id="driver-current-panic" mat-raised-button color="warn" (click)="onPanicClick()"><mat-icon>warning</mat-icon> Panic</button>
 </ng-container>
-</span>
