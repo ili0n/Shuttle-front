@@ -12,6 +12,12 @@ import { PassengerHistoryRideRateComponent } from './passenger-history/passenger
 import { PassengerFavoritesComponent } from './passenger-favorites/passenger-favorites.component';
 import { PassengerFavoritesScheduleDialogComponent } from './passenger-favorites/passenger-favorites-schedule-dialog/passenger-favorites-schedule-dialog/passenger-favorites-schedule-dialog.component';
 import { PassengerFavoriteNameDialogComponent } from './passenger-history/passenger-favorite-name-dialog/passenger-favorite-name-dialog/passenger-favorite-name-dialog.component';
+import { ChartsModule } from 'ng2-charts';
+import { PassengerGraphComponent } from './passenger-graph/passenger-graph/passenger-graph.component';
+import { UserModule } from '../user/user.module';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -25,10 +31,17 @@ import { PassengerFavoriteNameDialogComponent } from './passenger-history/passen
     PassengerFavoritesComponent,
     PassengerFavoritesScheduleDialogComponent,
     PassengerFavoriteNameDialogComponent,
+    PassengerGraphComponent,
+
   ],
   imports: [
     CommonModule,
-    MaterialModule
+    MaterialModule,
+    ChartsModule,
+    UserModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatNativeDateModule
   ],
   exports: [
     PassengerHomeComponent,

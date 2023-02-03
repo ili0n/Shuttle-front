@@ -44,3 +44,8 @@ form button {
 .rightAlign {
 	float: right;
 }
+
+
+#login-error {
+    color: red;
+}

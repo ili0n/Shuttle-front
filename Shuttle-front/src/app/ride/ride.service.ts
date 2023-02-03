@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Route } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -7,6 +7,8 @@ import { Driver } from '../driver/driver.service';
 import { Passenger } from '../passenger/passenger.service';
 import { UserIdEmail } from '../user/user.service';
 import { Vehicle } from '../vehicle/vehicle.service';
+
+export type getGraphData = (startDate: string, endDate: string, id: number) => Observable<Array<GraphEntry>>;
 
 export interface RejectionDTO {
     reason: string
@@ -48,6 +50,13 @@ export interface FavoriteRouteDTO {
     petTransport: boolean,
     scheduledTime: string | null,
     distance?: number,
+}
+
+export interface GraphEntry {
+	time: string;
+	numberOfRides: number;
+	costSum: number;
+	length: number;
 }
 
 export interface Message {
@@ -98,6 +107,7 @@ export interface RideRequest {
     providedIn: 'root'
 })
 export class RideService {
+
 
 
     constructor(private httpClient: HttpClient) { }
@@ -206,4 +216,39 @@ export class RideService {
             responseType: 'json'
         });
     }
+
+    public getPassengerGraphData(from: string, to: string, passengerId: number): Observable<Array<GraphEntry>> {
+        return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/passenger/${passengerId}`, {
+            params: {
+                "from": from,
+                "to": to
+            },
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
+
+    public getDriverGraphData(from: string, to: string, driverId: number): Observable<Array<GraphEntry>> {
+        return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/driver/${driverId}`, {
+            params: {
+                "from": from,
+                "to": to
+            },
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
+
+    public getOverallGraphData(from: string, to: string): Observable<Array<GraphEntry>> {
+        return this.httpClient.get<Array<GraphEntry>>(`${this.url}/graph/admin`, {
+            params: {
+                "from": from,
+                "to": to
+            },
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
+  
 }
+

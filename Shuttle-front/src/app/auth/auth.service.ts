@@ -4,9 +4,21 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {JwtHelperService} from '@auth0/angular-jwt';
-import { UserService } from '../user/user.service';
+import { UserIdEmail, UserService } from '../user/user.service';
 import { SharedService } from '../shared/shared.service';
 import {TokenStorageService} from "./token-storage.service";
+
+export interface PasswordCodeDTO {
+	newPassword: string,
+	code: string
+}
+
+export interface PasswordDTO {
+	newPassword: string,
+	oldPassword: string
+}
+
+
 
 @Injectable({
     providedIn: 'root',
@@ -101,6 +113,37 @@ export class AuthService {
             return helper.decodeToken(accessToken).id;
         }
         return "";
+    }
+
+    getUserByEmail(email: string): Observable<UserIdEmail> {
+        return this.http.get<UserIdEmail>(environment.serverOrigin + 'api/user/email', {
+            params: {
+                email: email
+            },
+            observe: 'body',
+            responseType: 'json'
+        });
+    }
+
+    sendCode(id: number){
+        return this.http.get(environment.serverOrigin + `api/user/${id}` + "/resetPassword",{
+        observe: 'body',
+        responseType: 'json'
+        });
+    }
+
+    resetPassword(passwordCode: PasswordCodeDTO, id: number){
+        return this.http.put(environment.serverOrigin + `api/user/${id}` + "/resetPassword", passwordCode, {
+        observe: 'body',
+        responseType: 'json'
+        });
+    }
+
+    changePassword(password: PasswordDTO, id: number){
+        return this.http.put(environment.serverOrigin + `api/user/${id}` + "/changePassword", password, {
+        observe: 'body',
+        responseType: 'json'
+        });
     }
 
 }

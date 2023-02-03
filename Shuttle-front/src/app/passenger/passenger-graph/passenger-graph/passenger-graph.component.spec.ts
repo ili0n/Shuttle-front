@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EstimationFormComponent } from './estimation-form.component';
+import { PassengerGraphComponent } from './passenger-graph.component';
 
-describe('EstimationFormComponent', () => {
-  let component: EstimationFormComponent;
-  let fixture: ComponentFixture<EstimationFormComponent>;
+describe('PassengerGraphComponent', () => {
+  let component: PassengerGraphComponent;
+  let fixture: ComponentFixture<PassengerGraphComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EstimationFormComponent ]
+      declarations: [ PassengerGraphComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(EstimationFormComponent);
+    fixture = TestBed.createComponent(PassengerGraphComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
