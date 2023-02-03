@@ -10,6 +10,8 @@ import { AdminHistoryRidePassengersComponent } from './admin-history/admin-histo
 import { AdminHomeComponent } from './admin-home/admin-home.component';
 import { AdminPanicComponent } from './admin-panic/admin-panic.component';
 import { AdminPanicDetailsComponent } from './admin-panic/admin-panic-details/admin-panic-details.component';
+import { AdminGraphComponent } from './admin-report/admin-graph.component';
+import {UserModule} from "../user/user.module";
 
 
 @NgModule({
@@ -23,10 +25,12 @@ import { AdminPanicDetailsComponent } from './admin-panic/admin-panic-details/ad
         AdminHomeComponent,
         AdminPanicComponent,
         AdminPanicDetailsComponent,
+        AdminGraphComponent,
     ],
     imports: [
         CommonModule,
-        MaterialModule
+        MaterialModule,
+        UserModule
     ],
     exports: [
         CreateDriverComponent,

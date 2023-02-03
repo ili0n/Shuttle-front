@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Passenger } from '../passenger/passenger.service';
+import {Passenger, UserRole} from '../passenger/passenger.service';
 import { RideListDTO } from '../ride/ride.service';
 
 export interface UserIdEmail {
@@ -12,7 +12,7 @@ export interface UserIdEmail {
 
 export interface ListUserDTO {
     totalCount: number;
-    results: Array<Passenger>; // TODO: Same interface different name.
+    results: Array<UserRole>; // TODO: Same interface different name.
 }
 
 export interface UserIdEmailPfp extends UserIdEmail {
@@ -48,7 +48,7 @@ export class UserService {
     }
 
     public get(): Observable<ListUserDTO> {
-        return this.httpClient.get<ListUserDTO>(`${this.url}`, {
+        return this.httpClient.get<ListUserDTO>(`${this.url}/roles`, {
             observe: "body",
             responseType: "json",
         });
@@ -58,6 +58,6 @@ export class UserService {
         return this.httpClient.get<RideListDTO>(`${this.url}/${userId}/ride`, {
             observe: "body",
             responseType: "json",
-        });     
+        });
     }
 }

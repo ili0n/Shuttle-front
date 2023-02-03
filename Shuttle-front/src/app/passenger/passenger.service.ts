@@ -17,6 +17,10 @@ export interface Passenger {
     address: string,
 }
 
+export interface UserRole extends Passenger{
+    role:string
+}
+
 @Injectable({
     providedIn: 'root'
 })

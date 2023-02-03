@@ -28,4 +28,7 @@ export class AdminNavbarComponent {
     panics(){
         this.router.navigate(["admin/panic"]);
     }
+    graph() {
+        this.router.navigate(["admin/graph"]);
+    }
 }
