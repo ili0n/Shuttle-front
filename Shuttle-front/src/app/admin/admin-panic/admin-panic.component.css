@@ -22,3 +22,7 @@ app-admin-panic-details {
     width: 60vw;
     justify-self: flex-end;
 }
+button {
+    width: 50%;
+    background: #9780A6;
+}

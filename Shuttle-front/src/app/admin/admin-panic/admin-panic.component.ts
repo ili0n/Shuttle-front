@@ -36,4 +36,18 @@ export class AdminPanicComponent implements OnInit {
         this.selectedCard = this.panics[index];
     }
 
+    previous() {
+        if (this.page > 0)
+            this.page--;
+        this.buttonClicked();
+    }
+
+    next() {
+        this.page++;
+        this.buttonClicked();
+    }
+
+    private buttonClicked(){
+        this.getCardsPage()
+    }
 }
