@@ -14,6 +14,7 @@ export class LoginComponent {
     loginError: string = "";
     formGroup: FormGroup;
     hasError: boolean = false;
+    static readonly errorMsgBadCredentials: string = "Wrong username or password!"
 
     onLoginSubmit(): void {
         if (this.formGroup.valid) {
@@ -35,7 +36,7 @@ export class LoginComponent {
                     if (error instanceof HttpErrorResponse) {
                         this.hasError = true;
                         if ((error as HttpErrorResponse).status == 400) {
-                            this.loginError = "Wrong username or password!";
+                            this.loginError = LoginComponent.errorMsgBadCredentials;
                         }
                     }
                 },
@@ -43,8 +44,12 @@ export class LoginComponent {
         }
     }
 
-    constructor(private readonly formBuilder: FormBuilder, private authService: AuthService, private router: Router,
-                private tokenStorage: TokenStorageService) {
+    constructor(
+            private readonly formBuilder: FormBuilder, 
+            private authService: AuthService, 
+            private router: Router,
+            private tokenStorage: TokenStorageService) 
+        {
         this.formGroup = formBuilder.group({
             email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required]],
