@@ -35,11 +35,7 @@ describe('LoginComponent', () => {
 
     function setFormData(email: string, password: string): void {
         component.formGroup.setValue({ email, password });
-    } 
-
-    it('YESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS', () => {
-        expect(true).toBeTruthy();
-    });
+    }
 
     it('should create the component', () => {
         expect(component).toBeTruthy();
@@ -52,11 +48,42 @@ describe('LoginComponent', () => {
         expect(component.formGroup.valid).toBeFalsy();
     });
 
+    it('should update the formGroup after entering an email and password', () => {
+        const email = 'bob@gmail.com';
+        const password = 'bob123';
+        setFormData(email, password);
+        expect(component.formGroup.value).toEqual({email, password});
+    });
+
+    it('should make the formGroup invalid if email is empty', () => {
+        const email = '';
+        const password = 'bob123';
+        setFormData(email, password);
+        expect(component.formGroup.valid).toBeFalsy();
+    });
+
+    it('should make the formGroup invalid if password is empty', () => {
+        const email = 'bob@gmail.com';
+        const password = '';
+        setFormData(email, password);
+        expect(component.formGroup.valid).toBeFalsy();
+    });
+
+    it('should make the formGroup invalid if email is invalid', () => {
+        const email = 'bobgmail.com';
+        const password = 'bob123';
+        setFormData(email, password);
+        expect(component.formGroup.valid).toBeFalsy();
+    });
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    
     it('should not display a login error initially', () => {
         fixture.detectChanges();
         const compiled = fixture.nativeElement as HTMLElement;
         expect(compiled.querySelector('#login-error')?.textContent).toEqual('');
     });
+
 
     it('should let me click on login if the input fields are valid', () => {
         setFormData('bob@gmail.com', 'bob123');
