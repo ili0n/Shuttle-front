@@ -5,6 +5,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Route, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Observable, of, throwError} from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -18,9 +19,10 @@ describe('LoginComponent', () => {
     let fixture: ComponentFixture<LoginComponent>;
     let authServiceSpy: jasmine.SpyObj<AuthService>;
     let tokenStorageSpy: jasmine.SpyObj<TokenStorageService>;
+    let routerMock: Router;
 
     beforeEach(async () => {
-        authServiceSpy = jasmine.createSpyObj<AuthService>(['login', 'setUser']);
+        authServiceSpy = jasmine.createSpyObj<AuthService>(['login', 'setUser', 'getRole']);
         tokenStorageSpy = jasmine.createSpyObj<TokenStorageService>(['saveToken', 'saveRefreshToken']);
 
         await TestBed.configureTestingModule({
@@ -47,6 +49,7 @@ describe('LoginComponent', () => {
 
 
         fixture = TestBed.createComponent(LoginComponent);
+        routerMock = TestBed.inject(Router);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
@@ -138,39 +141,67 @@ describe('LoginComponent', () => {
         expect(button.nativeElement.disabled).toBeFalsy();
     });
 
-    // Note the async() because of whenStable and async operations.
-    it('should call login() when I click on the enabled login button', async () => {
+    it('should call login(), setUser() and getRole() when I click on the enabled login button', (done) => {
+        authServiceSpy.login.and.returnValue(of({} as Token));
+        authServiceSpy.setUser.and.returnValue();
+        authServiceSpy.getRole.and.returnValue('driver');
+
         setFormData('bob@gmail.com', 'bob123');
         fixture.detectChanges();
 
         const button = fixture.debugElement.query(By.css("#submitButton"));
         button.nativeElement.click();
 
-        authServiceSpy.login.and.returnValue(of({} as Token));
         fixture.whenStable().then(() => {
             expect(authServiceSpy.login).toHaveBeenCalled();
+            expect(authServiceSpy.setUser).toHaveBeenCalled();
+            expect(authServiceSpy.getRole).toHaveBeenCalled();
+            done();
         });
     });
 
-    it('should save token when I successfully log in', async () => {
-        setFormData('bob@gmail.com', 'bob123');
-        fixture.detectChanges();
-
-        const button = fixture.debugElement.query(By.css("#submitButton"));
-        button.nativeElement.click();
-
+    it('should save the token when I successfully log in', (done) => {
         authServiceSpy.login.and.returnValue(of({} as Token));
         tokenStorageSpy.saveRefreshToken.and.callFake((token) => {});
         tokenStorageSpy.saveToken.and.callFake((token) => {});
+
+        setFormData('bob@gmail.com', 'bob123');
+        fixture.detectChanges();
+
+        const button = fixture.debugElement.query(By.css("#submitButton"));
+        button.nativeElement.click();
+
         fixture.whenStable().then(() => {
-            // expect(tokenStorageSpy.saveToken).toHaveBeenCalled();
-            // expect(tokenStorageSpy.saveRefreshToken).toHaveBeenCalled();
-            // TODO: Why don't these work? Why is tokenStorageSpy unknown?
+            expect(tokenStorageSpy.saveToken).toHaveBeenCalled();
+            expect(tokenStorageSpy.saveRefreshToken).toHaveBeenCalled();
+            done();
+        });
+    });
+  
+    it('should navigate me to home when I successfully log in', async () => {
+        authServiceSpy.login.and.returnValue(of({} as Token));
+        authServiceSpy.setUser.and.returnValue();
+        authServiceSpy.getRole.and.returnValue('driver');
+        const routerSpy = spyOn(routerMock, 'navigate');
+
+        setFormData('bob@gmail.com', 'bob123');
+        fixture.detectChanges();
+
+        const button = fixture.debugElement.query(By.css("#submitButton"));
+        button.nativeElement.click();
+
+        fixture.whenStable().then(() => {
+            expect(authServiceSpy.login).toHaveBeenCalled();
+            expect(authServiceSpy.setUser).toHaveBeenCalled();
+            expect(authServiceSpy.getRole).toHaveBeenCalled();
+
+            expect(routerSpy).toHaveBeenCalledWith(['driver/home']);
         });
     });
 
-    it('should show an error message when I log in with bad credentials', () => {
+    it('should show an error message when I log in with bad credentials', async () => {
         authServiceSpy.login.and.returnValue(throwError(() => new HttpErrorResponse({status:400})));
+        const routerSpy = spyOn(routerMock, 'navigate');
 
         setFormData('bob@gmail.com', 'NotMyPassword');
         fixture.detectChanges();
@@ -180,10 +211,16 @@ describe('LoginComponent', () => {
 
         fixture.detectChanges();
 
-        const compiled = fixture.debugElement.nativeElement as HTMLElement;
+        fixture.whenStable().then(() => {
+            const compiled = fixture.debugElement.nativeElement as HTMLElement;
+            expect(authServiceSpy.login).toHaveBeenCalled();
+            expect(authServiceSpy.setUser).toHaveBeenCalledTimes(0);
+            expect(authServiceSpy.getRole).toHaveBeenCalledTimes(0);
+            expect(routerSpy).toHaveBeenCalledTimes(0);
 
-        expect(component.hasError).toBeTruthy();
-        expect(component.loginError).toEqual(LoginComponent.errorMsgBadCredentials);
-        expect(compiled.querySelector('#login-error')?.textContent).toEqual(component.loginError);
+            expect(component.hasError).toBeTruthy();
+            expect(component.loginError).toEqual(LoginComponent.errorMsgBadCredentials);
+            expect(compiled.querySelector('#login-error')?.textContent).toEqual(component.loginError);
+        });
     });
 });
