@@ -11,8 +11,7 @@ import {TokenStorageService} from "../../../token-storage.service";
     styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
-    protected loginError: string = "";
-
+    loginError: string = "";
     formGroup: FormGroup;
     hasError: boolean = false;
 
