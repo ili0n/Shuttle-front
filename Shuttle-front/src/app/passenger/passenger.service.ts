@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { RideListDTO } from '../ride/ride.service';
 import { UserIdEmail } from '../user/user.service';
+import {DriverUpdate} from "../driver/driver.service";
+import {User} from "../services/register/register.service";
 
 
 export interface Passenger {
@@ -59,6 +61,18 @@ export class PassengerService {
         return this.httpClient.get<RideListDTO>(`${this.url}/${passengerId}/ride?${queryParams}`, {
             observe: "body",
             responseType: "json"
+        });
+    }
+
+    public changeProfile(dataForSubmit: DriverUpdate, passengerId: number):  Observable<DriverUpdate>{
+        return this.httpClient.put<DriverUpdate>(`${this.url}/${passengerId}`, dataForSubmit, {
+            observe: "body",
+            responseType: "json"
+        });
+    }
+    public get(id: number): Observable<User> {
+        return this.httpClient.get<User>(`${this.url}/${id}`, {
+            responseType: 'json'
         });
     }
 }
