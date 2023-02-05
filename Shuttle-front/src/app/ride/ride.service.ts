@@ -145,14 +145,12 @@ export class RideService {
         });
     }
 
-    public accept(rideID: number): Observable<any> {
-        const options: any = { responseType: 'json' };
-        return this.httpClient.put(`${this.url}/${rideID}/accept`, options);
+    public accept(rideID: number): Observable<Ride> {
+        return this.httpClient.put<Ride>(`${this.url}/${rideID}/accept`, { responseType: 'json' });
     }
 
-    public start(rideID: number): Observable<any> {
-        const options: any = { responseType: 'json' };
-        return this.httpClient.put(`${this.url}/${rideID}/start`, options);
+    public start(rideID: number): Observable<Ride> {
+        return this.httpClient.put<Ride>(`${this.url}/${rideID}/start`, { responseType: 'json' });
     }
 
     public reject(rideID: number, reason: string): Observable<Ride> {

@@ -41,11 +41,8 @@ export interface VehicleLocationDTO {
 export class VehicleService {
     constructor(private httpClient: HttpClient, ) { }
 
-    public add(vehicle: Vehicle): Observable<any> {
-        const options: any = {
-            responseType: 'json'
-        };
-        return this.httpClient.post(environment.serverOrigin + 'api/vehicle', vehicle, options);
+    public add(vehicle: Vehicle): Observable<Vehicle> {
+        return this.httpClient.post<Vehicle>(environment.serverOrigin + 'api/vehicle', vehicle, { responseType: 'json' });
     }
 
     public getTypes(): Observable<Array<VehicleType>> {
