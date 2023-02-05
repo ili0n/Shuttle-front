@@ -6,8 +6,6 @@ import * as Stomp from "stompjs";
 import {VehicleLocationDTO} from "../admin.service";
 
 
-
-
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
 const shadowUrl = 'assets/marker-shadow.png';
@@ -106,7 +104,7 @@ L.Marker.prototype.options.icon = iconDefault;
 export class AdminHomeComponent {
 
     isLoaded: boolean = false;
-    stompClient: any;
+    stompClient: Stomp.Client | undefined;
 
 
     private map?: L.Map;
@@ -152,9 +150,10 @@ export class AdminHomeComponent {
 
     openSocket() {
         if (this.isLoaded) {
-            this.stompClient.subscribe('/active/vehicle/location/all', (message: { body: string }) => {
-                this.handleMessage(message);
-            });
+            if (this.stompClient)
+                this.stompClient.subscribe('/active/vehicle/location/all', (message: { body: string }) => {
+                    this.handleMessage(message);
+                });
         }
     }
 

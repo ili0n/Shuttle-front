@@ -1,0 +1,38 @@
+.message {
+    padding: 10px;
+    border-radius: 10px;
+    display: inline-block;
+}
+.me {
+    background: greenyellow;
+}
+.him {
+    background: white;
+}
+.right {
+    margin-left: auto;
+}
+.left {
+    margin-right: auto;
+}
+.messages-holder {
+    background: gainsboro;
+    height: 80vh;
+    overflow-y: scroll;
+    width: 70vw;
+}
+
+.isflex {
+    display: flex;
+}
+.messageInput {
+    width: 100%;
+}
+.inbox{
+    width: 30vw;
+    align-self: flex-start;
+}
+.current{
+    align-self: flex-end;
+    width: 30vw;
+}
