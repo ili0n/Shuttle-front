@@ -65,7 +65,7 @@ export class UnregisteredPageComponent implements OnInit{
      private mapEstimationService: MapEstimationService,
       private cdf: ChangeDetectorRef){}
 
-  
+
   onSubmit(): void{
     if(this.routeForm.valid){
       this.refreshRoutes();
@@ -75,13 +75,13 @@ export class UnregisteredPageComponent implements OnInit{
   private fillSelect(){
     this.vehicleTypeService.getAllVehicleTypes().subscribe(
       result => {
-        this.vehicleTypes = result; 
+        this.vehicleTypes = result;
       }
     )
   }
 
   createRideDTO(destinationLocation :any, departureLocation: any): CreateRide{
-    return { 
+    return {
           "locations": [
             {
               "departure": {
@@ -119,7 +119,7 @@ export class UnregisteredPageComponent implements OnInit{
   private initMap(): void{
     this.map = L.map("estimation-map", {
       center: [ 45.267136, 19.833549 ],
-      zoom: 3
+      zoom: 13
     })
 
     this.driverLocationMarkers = L.layerGroup();
@@ -147,7 +147,7 @@ export class UnregisteredPageComponent implements OnInit{
           next: result =>  this.routeForm.controls.departure.setValue(result.display_name),
           error: err => console.error(err)
         });
-       
+
       }
       else{
         this.destinationCoordinates = e.latlng;
@@ -170,7 +170,7 @@ export class UnregisteredPageComponent implements OnInit{
     this.refreshRoutes();
     let socket = new SockJS(environment.serverOrigin + "socket");
     this.stompClient = Stomp.over(socket);
-    
+
     this.stompClient.connect({}, () =>{
       this.isLoaded = true;
       this.openSocket();
@@ -179,14 +179,14 @@ export class UnregisteredPageComponent implements OnInit{
   openSocket() {
     if(this.isLoaded){
       this.stompClient!.subscribe('/active/vehicle/location', (message: {body: string}) =>{
-        this.handleMessage(message);        
+        this.handleMessage(message);
       });
     }
   }
 
   handleMessage(message: {body: string}){
     let activeDriversLocations: [{latitude: number, longitude: number}] = JSON.parse(message.body);
-    this.refreshActiveDrivers(activeDriversLocations); 
+    this.refreshActiveDrivers(activeDriversLocations);
   }
 
 
@@ -197,7 +197,7 @@ export class UnregisteredPageComponent implements OnInit{
 
       this.clearLocationarkers();
       this.clearRoutes();
-      
+
       this.routeControl = L.Routing.control({
         waypoints: [this.departureCoordinates, this.destinationCoordinates],
         lineOptions: {
@@ -226,12 +226,12 @@ export class UnregisteredPageComponent implements OnInit{
           })
         })
       }).addTo(this.map);
-      this.routeControl.show();   
+      this.routeControl.show();
     }
   }
 
   private refreshActiveDrivers(locations: [{latitude: number, longitude: number}]) {
-    
+
         this.clearDriverMarkers();
         if(this.map !== undefined){
           locations.forEach(location => {
@@ -240,7 +240,7 @@ export class UnregisteredPageComponent implements OnInit{
             this.driverLocationMarkers?.addLayer(marker);
           })
         }
-  } 
+  }
 
   private checkInput() {
     return this.map === undefined;
@@ -263,9 +263,9 @@ export class UnregisteredPageComponent implements OnInit{
     }
   }
 
-  
+
   private refreshRoutes(): void{
-    
+
     if(this.checkInput()){
       return;
     }
