@@ -4,7 +4,7 @@
         shuttle
     </a>
     <div id="buttons">
-        <button mat-icon-button>
+        <button mat-icon-button (click)="home()">
             <mat-icon>home</mat-icon>
         </button>
         <button mat-icon-button (click)="history()">
@@ -13,14 +13,23 @@
         <button mat-icon-button (click)="createDriver()">
             <mat-icon>directions_car</mat-icon>
         </button>
-        <button mat-icon-button>
-            <mat-icon>map</mat-icon>
+<!--        <button mat-icon-button>-->
+<!--            <mat-icon>map</mat-icon>-->
+<!--        </button>-->
+        <button mat-icon-button (click)="panics()">
+            <mat-icon>warning</mat-icon>
+        </button>
+        <button mat-icon-button (click)="block()">
+            <mat-icon>person_off</mat-icon>
         </button>
         <button mat-icon-button>
             <mat-icon>chat</mat-icon>
         </button>
         <button mat-icon-button>
             <mat-icon>notifications</mat-icon>
+        </button>
+        <button mat-icon-button (click)="graph()">
+            <mat-icon> insert_chart</mat-icon>
         </button>
         <button mat-icon-button>
             <mat-icon>account_circle</mat-icon>

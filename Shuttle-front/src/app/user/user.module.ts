@@ -25,9 +25,10 @@ import { AdminOverallGraphComponent } from './admin-overall-graph/admin-overall-
     MatFormFieldModule,
     MatNativeDateModule,
   ],
-  exports: [
-    GraphComponent,
-    UserGraphComponent
-  ]
+    exports: [
+        GraphComponent,
+        UserGraphComponent,
+        AdminOverallGraphComponent
+    ]
 })
 export class UserModule { }

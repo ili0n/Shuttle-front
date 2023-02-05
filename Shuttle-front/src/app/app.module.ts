@@ -42,6 +42,7 @@ import { DriverHistoryRidePassengersComponent } from './driver/driver-history/dr
 import { PassengerDialog } from './passenger/passenger-favorites/passenger-favorites.component';
 import { ChartsModule } from 'ng2-charts';
 
+
 @NgModule({
     declarations: [
         AppComponent,

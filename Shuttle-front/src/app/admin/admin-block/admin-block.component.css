@@ -1,0 +1,21 @@
+.flex{
+    display: flex;
+}
+.table{
+    width: 30vw;
+    align-self: flex-start;
+}
+.account{
+    width:70vw;
+    display: flex;
+}
+app-admin-profile-overview{
+    width: 40vw;
+    display: block;
+    align-self: flex-start;
+
+}
+app-admin-note {
+    width: 30vw;
+    align-self: flex-end;
+}

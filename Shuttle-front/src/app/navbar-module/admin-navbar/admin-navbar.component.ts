@@ -22,4 +22,16 @@ export class AdminNavbarComponent {
     history(){
         this.router.navigate(["admin/history"]);
     }
+    home(){
+        this.router.navigate(["admin/home"]);
+    }
+    panics(){
+        this.router.navigate(["admin/panic"]);
+    }
+    graph() {
+        this.router.navigate(["admin/graph"]);
+    }
+    block(){
+        this.router.navigate(["admin/block"]);
+    }
 }

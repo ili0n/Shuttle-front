@@ -17,6 +17,10 @@ import { AdminHistoryComponent } from 'src/app/admin/admin-history/admin-history
 import { PassengerFavoritesComponent } from 'src/app/passenger/passenger-favorites/passenger-favorites.component';
 import { PassengerGraphComponent } from 'src/app/passenger/passenger-graph/passenger-graph/passenger-graph.component';
 import { DriverGraphComponent } from 'src/app/driver/driver-graph/driver-graph/driver-graph.component';
+import {AdminHomeComponent} from "../app/admin/admin-home/admin-home.component";
+import {AdminPanicComponent} from "../app/admin/admin-panic/admin-panic.component";
+import {AdminGraphComponent} from "../app/admin/admin-report/admin-graph.component";
+import {AdminBlockComponent} from "../app/admin/admin-block/admin-block.component";
 
 const routes: Routes = [
 	{path: "login",
@@ -32,13 +36,18 @@ const routes: Routes = [
   {path: 'reset-password/:key', component: ResetPasswordComponent},
   {path: 'unregistered', component: UnregisteredPageComponent},
 
-  {path: 'driver/info', component: DriverProfileComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
-  {path: 'driver/home', component: DriverHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
-  {path: 'driver/history', component: DriverHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
-  {path: 'driver/graph', component: DriverGraphComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
-  
-  {path: "admin/create-driver", component: CreateDriverComponent , canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
-  {path: 'admin/history', component: AdminHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+    {path: 'driver/info', component: DriverProfileComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+    {path: 'driver/home', component: DriverHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+    {path: 'driver/history', component: DriverHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+    {path: 'driver/graph', component: DriverGraphComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+
+    {path: "admin/create-driver", component: CreateDriverComponent , canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+    {path: 'admin/history', component: AdminHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+    {path: 'admin/home', component: AdminHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+    {path: 'admin/panic', component: AdminPanicComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+    {path: 'admin/graph', component: AdminGraphComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+    {path: 'admin/block', component: AdminBlockComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+
 
   {path: 'passenger/home', component: PassengerHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
   {path: 'passenger/history', component: PassengerHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
