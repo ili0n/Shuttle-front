@@ -1,1 +1,20 @@
-<p>admin-chat works!</p>
+<div *ngFor="let message of fistMessages; index as i" class="example-item">
+    <mat-card class="licenceCard" (click)="displayChat(i)">
+        <h2>{{message.message}}</h2>
+        <p>{{message.timeOfSending}}</p>
+    </mat-card>
+</div>
+
+<div *ngFor="let message of currentChat; index as i" class="example-item">
+        <p>{{message.message}}</p>
+</div>
+
+<form [formGroup]="noteForm" (ngSubmit)="sendMessage()" enctype="multipart/form-data" accept-charset="UTF-8">
+
+    <mat-form-field appearance="fill">
+        <mat-label>Message:</mat-label>
+        <input matInput type="text" formControlName="note" required/>
+    </mat-form-field>
+
+    <button mat-raised-button type="submit" color="primary">Send</button>
+</form>

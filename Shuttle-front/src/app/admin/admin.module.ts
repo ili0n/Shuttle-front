@@ -18,6 +18,7 @@ import { AdminNoteComponent } from './admin-block/admin-note/admin-note.componen
 import { AdminDriverChangeApproveComponent } from './admin-driver-change-approve/admin-driver-change-approve.component';
 import { AdminDriverProfileChangeComponent } from './admin-driver-change-approve/admin-driver-profile-change/admin-driver-profile-change.component';
 import { AdminChatComponent } from './admin-chat/admin-chat.component';
+import {ScrollingModule} from "@angular/cdk/scrolling";
 
 
 @NgModule({
@@ -42,7 +43,8 @@ import { AdminChatComponent } from './admin-chat/admin-chat.component';
     imports: [
         CommonModule,
         MaterialModule,
-        UserModule
+        UserModule,
+        ScrollingModule
     ],
     exports: [
         CreateDriverComponent,
