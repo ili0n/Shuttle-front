@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, Validators } from "@angular/forms";
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { RegisterService } from '../services/register/register.service';
+import { SharedService } from '../shared/shared.service';
 import { SnackbarComponent } from '../util/snackbar/snackbar/snackbar.component';
 import {CustomValidators} from "./confirm.validator"
 
@@ -39,7 +40,7 @@ export class RegisterComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private registerService: RegisterService,
-    private _snackBar: MatSnackBar
+    private sharedService: SharedService
   ) { 
     this.registerForm.setValidators(CustomValidators.MatchValidator('password', 'confirmPassword'))
   }
@@ -54,8 +55,8 @@ export class RegisterComponent implements OnInit {
       dataForSubmit.profilePicture = this.selectedFileBase64;
 
       this.registerService.submit(dataForSubmit, this.selectedFile!).subscribe({
-        complete: () => this.openSnackBar(),
-        error: (e) => console.error(e),
+        complete: () =>this.sharedService.showSnackBar("Success", 3000),
+        error: (e) => this.sharedService.showSnackBar("Fail", 3000)
     })
 			console.log("valid");
 		}
@@ -79,13 +80,6 @@ export class RegisterComponent implements OnInit {
     reader.readAsDataURL(this.selectedFile);
     this.selectedFileName = this.selectedFile.name;
     }
-  }
-
-  openSnackBar() {
-    this._snackBar.openFromComponent(SnackbarComponent, {
-      duration: 5 * 1000,
-      panelClass: "success-dialog"
-    });
   }
 
 
