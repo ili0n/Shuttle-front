@@ -250,7 +250,7 @@ export class PassengerOrderRideComponent implements OnInit {
 
         if (vehicleType) {
             const vehicleTypeCost: number = this.vehicleTypes.filter(t => t.name == vehicleType)[0].pricePerKM;
-            const price = (kmInt * (120 + vehicleTypeCost));
+            const price = kmInt * 120 + vehicleTypeCost;
             return price.toString() + " RSD";
         } else {
             return "? RSD";
