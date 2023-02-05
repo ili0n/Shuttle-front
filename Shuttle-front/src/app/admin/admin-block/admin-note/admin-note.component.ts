@@ -61,6 +61,7 @@ export class AdminNoteComponent {
                 this.adminService.postNote(this.selectedUser.id, this.noteForm.get("note")?.value).subscribe(value => {
                     this.page = 0;
                     this.setNotes();
+                    this.noteForm.reset();
                 })
             }
         }
