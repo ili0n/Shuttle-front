@@ -17,8 +17,9 @@
 }
 .messages-holder {
     background: gainsboro;
-    height: 600px;
+    height: 80vh;
     overflow-y: scroll;
+    width: 70vw;
 }
 
 .isflex {
@@ -26,4 +27,12 @@
 }
 .messageInput {
     width: 100%;
+}
+.inbox{
+    width: 30vw;
+    align-self: flex-start;
+}
+.current{
+    align-self: flex-end;
+    width: 30vw;
 }

@@ -1,12 +1,13 @@
-<div *ngFor="let message of fistMessages; index as i" class="example-item">
+<div class="isflex">
+<div *ngFor="let message of fistMessages; index as i" class="inbox">
     <mat-card class="licenceCard" (click)="displayChat(i)">
         <h2>{{message.message}}</h2>
         <p>{{message.timeOfSending}}</p>
     </mat-card>
 </div>
-
+<div *ngIf="currentChat" class="current">
 <div class="messages-holder">
-<div *ngFor="let message of currentChatMock; index as i" class="example-item isflex">
+<div *ngFor="let message of currentChat; index as i" class="example-item isflex">
     <div *ngIf="message.senderId === myId" class="message right">
         <span>{{message.timeOfSending | date:'shortTime'}}</span><br/>
         <span class="message me">{{message.message}}</span>
@@ -17,15 +18,17 @@
     </div>
 </div>
 </div>
+    <div style="width: 100%">
+        <form [formGroup]="noteForm" (ngSubmit)="sendMessage()" enctype="multipart/form-data" accept-charset="UTF-8">
 
-<div style="width: 100%">
-    <form [formGroup]="noteForm" (ngSubmit)="sendMessage()" enctype="multipart/form-data" accept-charset="UTF-8">
+            <mat-form-field appearance="fill">
+                <mat-label>Message:</mat-label>
+                <input matInput type="text" formControlName="note" class="messageInput" required/>
+            </mat-form-field>
 
-        <mat-form-field appearance="fill">
-            <mat-label>Message:</mat-label>
-            <input matInput type="text" formControlName="note" class="messageInput" required/>
-        </mat-form-field>
-
-        <button mat-raised-button type="submit" color="primary">Send</button>
-    </form>
+            <button mat-raised-button type="submit" color="primary">Send</button>
+        </form>
+    </div>
 </div>
+</div>
+
