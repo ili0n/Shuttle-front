@@ -14,6 +14,24 @@ import { SharedService } from "src/app/shared/shared.service";
 import { VehicleLocationDTO } from "src/app/vehicle/vehicle.service";
 import { PassengerSocketService } from "../passenger-socket.service";
 import { RecalculateRouteDTO } from "./passenger-order-ride/passenger-order-ride.component";
+import { UserIdEmail } from "src/app/user/user.service";
+import { AuthService } from "src/app/auth/auth.service";
+import { Subject } from "rxjs";
+
+const iconRetinaUrl = 'assets/marker-icon-2x.png';
+const iconUrl = 'assets/marker-icon.png';
+const shadowUrl = 'assets/marker-shadow.png';
+
+const iconDefault = L.icon({
+    iconRetinaUrl,
+    iconUrl,
+    shadowUrl,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+  });
 
 @Component({
     selector: 'app-passenger-home',
@@ -30,6 +48,10 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
     protected depPos!: L.LatLng;
     protected destPos!: L.LatLng;
     private carLayer!: L.LayerGroup;
+    private locationMarkerLayer!: L.LayerGroup;
+
+    private depName: string = "";
+    private destName: string = "";
 
     private iconCarAvailable!: L.Icon;
     private iconCarBusy!: L.Icon;
@@ -37,6 +59,10 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
     private iconLuxBusy!: L.Icon;
     private iconVanAvailable!: L.Icon;
     private iconVanBusy!: L.Icon;
+    private departureSelection: boolean = true;
+
+    private madeRouteFromMapSubject: Subject<void> = new Subject<void>();
+    public madeRouteFromMap = this.madeRouteFromMapSubject.asObservable();
 
     /************************************ Form fields ********************************************/
 
@@ -46,6 +72,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
     /************************************ Ride fields ********************************************/
 
     protected ride: Ride | null = null;
+    protected rideOtherPassengers: Array<UserIdEmail> = [];
 
     private rideSub: Stomp.Subscription | null = null;
     private vehiclesSub: Stomp.Subscription | null = null;
@@ -55,7 +82,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
     constructor(private mapService: MapEstimationService,
                 private rideService: RideService,
                 private sharedService: SharedService,
-                private navbarService: NavbarService,
+                private authService: AuthService,
                 private messageService: MessageService,
                 private dialog: MatDialog,
                 private reviewService: ReviewService,
@@ -124,15 +151,68 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
      */
     private initMap(id: string): void {
         this.map = L.map(this.mapElement.nativeElement, {center: [45.2396, 19.8227], zoom: 13 });
+        //return; // TODO AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18, minZoom: 3,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         });
         tiles.addTo(this.map);
+
+        this.locationMarkerLayer = L.layerGroup();
+        this.map.addLayer(this.locationMarkerLayer);
+
+        this.map.on("click", (e) => {
+            if (this.canOrderRide() == true) {  
+                if (this.departureSelection) {
+                    this.depPos = e.latlng;
+
+                    let marker = L.marker([e.latlng.lat, e.latlng.lng], {icon: iconDefault});
+                    marker.addTo(this.locationMarkerLayer);
+
+                    this.mapService.reverseSearch(e.latlng.lat, e.latlng.lng).subscribe({
+                        next: result => {
+                            this.depName = result.display_name;
+                        }
+                    });
+                } else {
+                    this.destPos = e.latlng;
+
+                    let marker = L.marker([e.latlng.lat, e.latlng.lng], {icon: iconDefault});
+                    marker.addTo(this.locationMarkerLayer);
+
+                    this.mapService.reverseSearch(e.latlng.lat, e.latlng.lng).subscribe({
+                        next: result => {
+                            this.destName = result.display_name;
+                        }
+                    });   
+                }
+
+                this.departureSelection = !this.departureSelection;
+                this.rerouteFromClick();
+            }
+        });
+
     }
-    
+
+    private clearLocationMarkers() {
+        if (this.locationMarkerLayer) {
+            this.locationMarkerLayer.clearLayers();
+        }
+    }
+
+    private rerouteFromClick() {
+        if (this.map && this.depPos && this.destPos) {
+        } else {
+            return;
+        }
+
+        this.clearLocationMarkers();
+        this.onFoundRoute();
+        this.madeRouteFromMapSubject.next();
+    }
+
     /**
-     * 
+     *
      * @param data Data containing the text value
      */
     recalculateRoute(data: RecalculateRouteDTO) {
@@ -187,13 +267,13 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
         this.route.hide();
 
         let self = this;
-    
+
         this.route.on('routesfound', function (e) {
             let routes = e.routes;
             let summary = routes[0].summary;
 
             self.routeDistance = summary.totalDistance;
-            self.finishLoadingRoute();    
+            self.finishLoadingRoute();
         });
     }
 
@@ -250,10 +330,10 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
             [this.iconCarAvailable, this.iconLuxAvailable, this.iconVanAvailable],
             [this.iconCarBusy, this.iconLuxBusy, this.iconVanBusy],
         ]
-        
+
         for (let carLocation of locations) {
             // - 1 because IDs go from 1.
-            const ico = icon_map[carLocation.available ? 0 : 1][carLocation.vehicleTypeId - 1]; 
+            const ico = icon_map[carLocation.available ? 0 : 1][carLocation.vehicleTypeId - 1];
 
             markers.push(L.marker(
                 [carLocation.location.latitude, carLocation.location.longitude],
@@ -264,7 +344,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
         if (this.map.hasLayer(this.carLayer)) {
             this.map.removeLayer(this.carLayer);
         }
-        
+
         this.carLayer = new L.LayerGroup(markers);
         this.map.addLayer(this.carLayer);
     }
@@ -312,6 +392,10 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
             this.ride = null;
             this.clearRoute();
         }
+
+        if (this.ride != null) {
+            this.rideOtherPassengers = this.ride.passengers.filter(u => u.email != this.authService.getUserEmail());
+        }
     }
 
     private recalculateRouteFromRideIfNoneFound() {
@@ -340,7 +424,7 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
             const reviewDriver = reviews.driver;
             if (reviewDriver.rating != 0) {
                 this.reviewService.leaveReviewDriver(ride.id, reviewDriver).subscribe({
-                    
+
                 });
             }
         });

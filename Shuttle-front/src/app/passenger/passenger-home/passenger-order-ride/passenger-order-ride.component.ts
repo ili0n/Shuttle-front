@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PassengerService } from 'src/app/passenger/passenger.service';
 import { RideRequest } from 'src/app/ride/ride.service';
+import { MapEstimationService } from 'src/app/services/map/map-estimation.service';
 import { SharedService } from 'src/app/shared/shared.service';
 import { UserIdEmail } from 'src/app/user/user.service';
 import { VehicleService, VehicleType } from 'src/app/vehicle/vehicle.service';
@@ -27,6 +29,7 @@ export class PassengerOrderRideComponent implements OnInit {
     @Input() destPos!: L.LatLng;
     @Output() private recalculateRouteEvent = new EventEmitter<RecalculateRouteDTO>();
     @Output() private orderRideEvent = new EventEmitter<RideRequest>();
+    @Input() madeRouteFromMap: Observable<void> = new Observable<void>();
 
     protected departurePrev = "";
     protected destinationPrev = "";
@@ -41,7 +44,8 @@ export class PassengerOrderRideComponent implements OnInit {
                 private authService: AuthService,
                 private sharedService: SharedService,
                 private passengerService: PassengerService,
-                private route: ActivatedRoute) {
+                private route: ActivatedRoute,
+                private mapService: MapEstimationService) {
         this.initMainForm();
         this.initAllowedTime();
     }
@@ -61,6 +65,23 @@ export class PassengerOrderRideComponent implements OnInit {
                 console.error(error);
             }
         });
+
+        this.madeRouteFromMap.subscribe({next: (_) => {
+            this.mainForm.get('route_form.departure')?.setValue("");
+            this.mainForm.get('route_form.destination')?.setValue("");
+            this.mainForm.markAllAsTouched();
+
+            console.log(this.depPos, this.destPos);
+
+            this.mapService.reverseSearch(this.depPos.lat, this.depPos.lng).subscribe({next: (result) => {
+                this.mainForm.get('route_form.departure')?.setValue(result.display_name);
+
+                this.mapService.reverseSearch(this.destPos.lat, this.destPos.lng).subscribe({next: (result) => {
+                    this.mainForm.get('route_form.destination')?.setValue(result.display_name);
+                    this.recalculateRoute();
+                }});
+            }});
+        }});
     }
 
     /**
@@ -116,7 +137,7 @@ export class PassengerOrderRideComponent implements OnInit {
      * @returns A validator function that determines whether the selected time for a ride in the
      * future is valid.
      */
-    private static goodTimeValidator(): ValidatorFn {
+    public static goodTimeValidator(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
             const inFuture: boolean = control.get('is_later')?.value;
             if (!inFuture) {
@@ -168,7 +189,7 @@ export class PassengerOrderRideComponent implements OnInit {
         }
 
         const departure = this.mainForm.get('route_form.departure')!.value;
-        const destination = this.mainForm.get('route_form.destination')!.value
+        const destination = this.mainForm.get('route_form.destination')!.value;
 
         if (departure == this.departurePrev && destination == this.destinationPrev) {
             // No need to recalculate the route if both endpoints are the same.
@@ -250,7 +271,7 @@ export class PassengerOrderRideComponent implements OnInit {
 
         if (vehicleType) {
             const vehicleTypeCost: number = this.vehicleTypes.filter(t => t.name == vehicleType)[0].pricePerKM;
-            const price = (kmInt * (120 + vehicleTypeCost));
+            const price = kmInt * 120 + vehicleTypeCost;
             return price.toString() + " RSD";
         } else {
             return "? RSD";

@@ -1,2 +1,53 @@
-<app-estimation-map [currentRoute]="currentRoute" (routeInfoEmitter)="subscribeToListenRouteLength($event)"></app-estimation-map>
-<app-estimation-form (submitEmitter)="subscribeToListenSubmit($event)" [routeInfo]="routeInfo"></app-estimation-form>
+<div class="map-container">
+    <div class="map-frame">
+        <div id="estimation-map"></div>
+    </div>
+</div>
+<div id="form-container">
+    <h1>Estimate ride cost and time</h1>
+    <form [formGroup]="routeForm" (ngSubmit)="onSubmit()">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Departure: </mat-label>
+            <input type="text" formControlName="departure" name="departure" matInput>
+        </mat-form-field>
+        
+        <mat-form-field appearance="fill">
+            <mat-label>Destination</mat-label>
+            <input type="text" formControlName="destination" name="destination" matInput>
+        </mat-form-field>
+
+        <div class="flexCenter" id="checkboxesContainer">
+            <div class="flexCenter" id="babyContainer">
+                <mat-checkbox color="green" formControlName="babyTransport" [formControl]="routeForm.controls['babyTransport']" id="babyTransportCheckbox">
+                </mat-checkbox>
+                <img class="icon" src="assets/baby.png" />
+            </div>        
+                
+            <div class="flexCenter">
+                <mat-checkbox color="green" formControlName="petTransport" [formControl]="routeForm.controls['petTransport']" id="petTransportCheckbox">
+                </mat-checkbox>
+                <img class="icon" src="assets/pet.png" />
+            </div>  
+        </div>
+
+
+        <h4>Select vehicle type</h4>
+        <mat-form-field appearance="fill">
+            <mat-label>Vehicle type</mat-label>
+            <mat-select formControlName="selectVehicleType" required>
+                <mat-option>Vehicle type</mat-option>
+                <mat-option *ngFor="let vehicleType of vehicleTypes" [value]="vehicleType">
+                {{vehicleType}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit"> Estimate </button>
+    </form>
+    <div *ngIf="estimation && routeInfo">
+        <p id="estimation">The ride will cost you {{estimation.estimatedCost.toFixed(2)}}RSD, and it will last {{routeInfo.time}} minutes</p>
+    </div>
+</div>
+<!-- <a href="https://www.flaticon.com/free-icons/baby" title="baby icons">Baby icons created by Freepik - Flaticon</a> -->
+<!-- <a href="https://www.flaticon.com/free-icons/pet" title="pet icons">Pet icons created by Freepik - Flaticon</a> -->

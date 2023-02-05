@@ -22,18 +22,24 @@ export interface Location {
     longitude: number
 }
 
+export interface DriverUpdate{
+    name: string;
+    surname: string;
+    profilePicture: string;
+    telephoneNumber: string;
+    address: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class DriverService {
+
     readonly url: string = environment.serverOrigin + 'api/driver';
     constructor(private httpClient: HttpClient,) { }
 
-    public add(driver: Driver): Observable<any> {
-        const options: any = {
-            responseType: 'json'
-        };
-        return this.httpClient.post(this.url, driver, options);
+    public add(driver: Driver): Observable<Driver> {
+        return this.httpClient.post<Driver>(this.url, driver, { responseType: 'json' });
     }
 
     public get(id: number): Observable<User> {
@@ -71,6 +77,13 @@ export class DriverService {
             }
         }
         return this.httpClient.get<RideListDTO>(`${this.url}/${driverId}/ride?${queryParams}`, {
+            observe: "body",
+            responseType: "json"
+        });
+    }
+
+    public createChangeRequest(dataForSubmit: DriverUpdate, driverId: number):  Observable<DriverUpdate>{
+        return this.httpClient.post<DriverUpdate>(`${this.url}/${driverId}/request`, dataForSubmit, {
             observe: "body",
             responseType: "json"
         });

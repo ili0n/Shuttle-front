@@ -4,10 +4,10 @@
     <form [formGroup]="rejectFormGroup">
         <mat-form-field>
             <mat-label>Reason</mat-label>
-            <input matInput formControlName="rejectionReason" />
+            <input id="modal-reject-reason" matInput formControlName="rejectionReason" />
         </mat-form-field>
         <br/>
-        <button mat-button mat-raised-button color="primary" (click)="onOk()" [disabled]="!rejectFormGroup.valid">OK</button>
-        <button mat-button mat-raised-button color="secondary" (click)="onCancel()">CANCEL</button>
+        <button id="modal-reject-ok" mat-button mat-raised-button color="primary" (click)="onOk()" [disabled]="!rejectFormGroup.valid">OK</button>
+        <button id="modal-reject-cancel" mat-button mat-raised-button color="secondary" (click)="onCancel()">CANCEL</button>
     </form>
 </div>

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 export enum MessageType {
-    RIDE, PANIC, SUPPORT
+     SUPPORT,RIDE, PANIC,
 }
 
 export interface Message {
@@ -13,14 +13,14 @@ export interface Message {
     timeOfSending: string
     senderId: number,
     receiverId: number, // if -1, send to admins
-    rideId: number,   
+    rideId: number,
     message: string,
     type: MessageType,
 }
 
 interface MessageSendPayload {
     receiverId: number, // if -1, send to admins
-    rideId: number,   
+    rideId: number,
     message: string,
     type: MessageType,
 }
@@ -57,4 +57,17 @@ export class MessageService {
         });
     }
 
+    public getMessages(userId:number): Observable<ListMessage>{
+        return this.httpClient.get<ListMessage>(`${this.url}/${userId}/message`,{
+            observe: "body",
+            responseType: "json",
+        });
+    }
+
+
+}
+
+export interface ListMessage{
+    results: Array<Message>;
+    totalCount:number;
 }

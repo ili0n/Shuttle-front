@@ -1,0 +1,17 @@
+<app-admin-history-user-table
+    class="flex-1"
+    (selectedUserEvent)="onChangeSelectedUser($event)">
+</app-admin-history-user-table>
+<div *ngIf="selectedUser === undefined">
+    <app-admin-overall-graph></app-admin-overall-graph>
+</div>
+<div *ngIf="selectedUser !== undefined">
+    <app-user-graph
+        [getGraphDataFunc]="getDataFunc"
+        [costSumLabel]="costSumLabel"
+        [numberOfRidesLabel]="numberOfRidesLabel"
+        [lengthLabel]="lengthLabel"
+        [userId]="selectedUser.id">
+
+    </app-user-graph>
+</div>

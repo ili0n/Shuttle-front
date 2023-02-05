@@ -17,16 +17,17 @@ import { NavbarService } from '../navbar.service';
 export class DriverNavbarComponent implements OnInit {
     formGroupIsActive: FormGroup;
     private ride: Ride | null = null; // Last saved ride.
+    private lastActiveState: boolean = true;
 
     protected shouldShowRideBadge(): boolean {
         return this.ride?.status == RideStatus.Pending;
     }
 
     constructor(
-        private readonly formBuilder: FormBuilder, 
-        private authService: AuthService, 
-        private router: Router, 
-        private userService: UserService, 
+        private readonly formBuilder: FormBuilder,
+        private authService: AuthService,
+        private router: Router,
+        private userService: UserService,
         private navbarService: NavbarService,
         private driverSocketService: DriverSocketService,
         private sharedService: SharedService
@@ -50,6 +51,7 @@ export class DriverNavbarComponent implements OnInit {
             this.onFetchRide(ride);
         });
 
+        console.log("AAAAAAAAAAAAAAAA");
         this.driverSocketService.pingRide();
 
         // This is put here because setIsActive pings for a ride which uses the socket.
@@ -77,7 +79,7 @@ export class DriverNavbarComponent implements OnInit {
             this.ride = ride;
         }
 
-        if (this.ride.status == RideStatus.Started) { 
+        if (this.ride.status == RideStatus.Started) {
             this.formGroupIsActive.disable();
             this.setIsActive(true);
         } else {
@@ -86,13 +88,10 @@ export class DriverNavbarComponent implements OnInit {
     }
 
     private setIsActive(isActive: boolean): void {
-        this.formGroupIsActive.setValue({
-            isActive: isActive
-        });
-
+        const wasActive: boolean = this.formGroupIsActive.getRawValue()['isActive'];
         this.sendActiveStateToUserService(isActive);
-
-        if (isActive) {
+ 
+        if (isActive && !wasActive) {
             this.driverSocketService.pingRide();
         }
     }
@@ -107,12 +106,29 @@ export class DriverNavbarComponent implements OnInit {
         const id: number = this.authService.getUserId();
         if (!active) {
             this.userService.setInactive(id).subscribe({
-                next: (value) => /*this.getDriverActiveStateFromUserService(value)*/{},
+                next: (value) => /*this.getDriverActiveStateFromUserService(value)*/{
+                    
+                    let isActive: boolean = this.formGroupIsActive.getRawValue()['isActive'];
+                    this.lastActiveState = isActive;
+                    this.formGroupIsActive.setValue({
+                        isActive: value
+                    })
+                },
                 error: (error) => console.error("NO:" + error)
             });
         } else {
             this.userService.setActive(id).subscribe({
-                next: (value) => /*this.getDriverActiveStateFromUserService(value)*/{},
+                next: (value) => /*this.getDriverActiveStateFromUserService(value)*/{
+                    if (this.lastActiveState == false && value == true) {
+                        this.driverSocketService.pingRide();
+                    }
+
+                    let isActive: boolean = this.formGroupIsActive.getRawValue()['isActive'];
+                    this.lastActiveState = isActive;
+                    this.formGroupIsActive.setValue({
+                        isActive: value
+                    });
+                },
                 error: (error) => console.error("NO:" + error)
             });
         }
@@ -134,5 +150,9 @@ export class DriverNavbarComponent implements OnInit {
 
     history() {
         this.router.navigate(["driver/history"]);
+    }
+
+    graph() {
+        this.router.navigate(["driver/graph"]);
     }
 }

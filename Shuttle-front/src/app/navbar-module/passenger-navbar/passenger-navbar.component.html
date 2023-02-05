@@ -1,12 +1,13 @@
 <mat-toolbar class="passenger">
-    <a routerLink="">
+    <img class="logo" src="assets/logo.png" />
+    <a href="passenger/home">
         shuttle
     </a>
     <div id="buttons">
         <button mat-icon-button (click)="home()">
             <mat-icon>home</mat-icon>
         </button>
-        <button mat-icon-button>
+        <button mat-icon-button (click)="favorite()">
             <mat-icon>favorite_border</mat-icon>
         </button>
         <button mat-icon-button (click)="history()">
@@ -18,7 +19,11 @@
         <button mat-icon-button>
             <mat-icon>notifications</mat-icon>
         </button>
-        <button mat-icon-button>
+
+        <button mat-icon-button (click)="graph()">
+            <mat-icon> insert_chart</mat-icon>
+        </button>
+        <button mat-icon-button (click)="account()">
             <mat-icon>account_circle</mat-icon>
         </button>
         <button mat-flat-button class="button" id="sign-out" (click)="logout()">Sign out</button>

@@ -1,0 +1,46 @@
+<div class="page" *ngIf="changeRequests.length > 0">
+    <div class="listOfRequests cards">
+        <div class="cards">
+            <div *ngFor="let changeRequest of changeRequests; index as i">
+                <mat-card class="licenceCard" (click)="displayDriver(i)">
+                    <div class="changeRequestPersonName">{{changeRequest.name + " " + changeRequest.surname}}</div>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+    <div class="flexcontainer" *ngIf="current&&request" class="profiles">
+        <div class="flex3 old pad">
+            <h1><i>Current</i></h1>
+            <hr/>
+            <app-admin-driver-profile-change [selectedUser]="current"></app-admin-driver-profile-change>
+        </div>
+        <div class="flex3 new pad">
+            <h1><i>New</i></h1>
+            <hr/>
+            <app-admin-driver-profile-change [selectedUser]="request"></app-admin-driver-profile-change>
+        </div>
+        <div class="flex1 verdictButtons">
+            <button mat-button mat-raised-button color="warn" (click)="reject()">Reject</button>
+            <br/>
+            <button mat-button mat-raised-button color="info" (click)="approve()">Approve</button>
+        </div>
+    </div>
+    <!-- <div >
+        <div class="current">
+            <h1>Current values</h1>
+            <app-admin-driver-profile-change [selectedUser]="current"></app-admin-driver-profile-change>
+        </div>
+        <div class="request">
+            <h1>ChangeRequest values</h1>
+            <app-admin-driver-profile-change [selectedUser]="request"></app-admin-driver-profile-change>
+        </div>
+        <div class="buttons">
+            <button mat-button mat-raised-button (click)="reject()">Reject</button>
+            <button mat-button mat-raised-button (click)="approve()">Approve</button>
+        </div>
+    </div> -->
+</div>
+
+<div class="full cards" *ngIf="changeRequests.length === 0">
+    <h2 class="center">There are no driver change requests.</h2>
+</div>

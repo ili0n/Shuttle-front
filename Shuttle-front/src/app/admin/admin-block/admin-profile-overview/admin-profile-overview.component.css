@@ -1,0 +1,24 @@
+#leftSide, #rightSide{
+    float: left;
+    width:47%;
+    margin: 0;
+    padding: 20px;
+}
+
+
+#rightSide>h1{
+    padding-bottom: 20px;
+}
+
+mat-form-field{
+    display: block;
+    width: 100%;
+}
+
+button[type="submit"]{
+    float: right;
+}
+
+.warning{
+    color: #f44336;
+}
