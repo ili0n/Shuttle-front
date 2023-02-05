@@ -1,0 +1,25 @@
+<div class="page">
+    <div class="cards">
+        <div class="cards">
+            <div *ngFor="let changeRequest of changeRequests; index as i">
+                <mat-card class="licenceCard" (click)="displayDriver(i)">
+                    <h2>{{changeRequest.name + " " + changeRequest.surname}}</h2>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="current&&request" class="profiles">
+        <div class="current">
+            <h1>Current values</h1>
+            <app-admin-driver-profile-change [selectedUser]="current"></app-admin-driver-profile-change>
+        </div>
+        <div class="request">
+            <h1>ChangeRequest values</h1>
+            <app-admin-driver-profile-change [selectedUser]="request"></app-admin-driver-profile-change>
+        </div>
+        <div class="buttons">
+            <button mat-button mat-raised-button (click)="reject()">Reject</button>
+            <button mat-button mat-raised-button (click)="approve()">Approve</button>
+        </div>
+    </div>
+</div>

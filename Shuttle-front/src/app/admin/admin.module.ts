@@ -15,6 +15,8 @@ import {UserModule} from "../user/user.module";
 import { AdminBlockComponent } from './admin-block/admin-block.component';
 import { AdminProfileOverviewComponent } from './admin-block/admin-profile-overview/admin-profile-overview.component';
 import { AdminNoteComponent } from './admin-block/admin-note/admin-note.component';
+import { AdminDriverChangeApproveComponent } from './admin-driver-change-approve/admin-driver-change-approve.component';
+import { AdminDriverProfileChangeComponent } from './admin-driver-change-approve/admin-driver-profile-change/admin-driver-profile-change.component';
 
 
 @NgModule({
@@ -32,6 +34,8 @@ import { AdminNoteComponent } from './admin-block/admin-note/admin-note.componen
         AdminBlockComponent,
         AdminProfileOverviewComponent,
         AdminNoteComponent,
+        AdminDriverChangeApproveComponent,
+        AdminDriverProfileChangeComponent,
     ],
     imports: [
         CommonModule,

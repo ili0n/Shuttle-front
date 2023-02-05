@@ -1,0 +1,23 @@
+.profiles{
+    display: flex;
+    width: 70vw;
+    align-self: flex-end;
+}
+.cards{
+    width: 30vw;
+    align-self: flex-start;
+}
+.current{
+    width: 35vw;
+    align-self: flex-start;
+}
+.request{
+    width: 35vw;
+    align-self: flex-end;
+}
+.page{
+    display: flex;
+}
+.button{
+    align-self: flex-end;
+}

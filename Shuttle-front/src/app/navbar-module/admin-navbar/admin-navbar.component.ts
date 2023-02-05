@@ -34,4 +34,8 @@ export class AdminNavbarComponent {
     block(){
         this.router.navigate(["admin/block"]);
     }
+
+    driverChangeRequest() {
+        this.router.navigate(["admin/driver-change"]);
+    }
 }
