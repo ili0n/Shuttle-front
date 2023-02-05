@@ -19,6 +19,10 @@ export class AdminChatComponent implements OnInit, AfterViewInit {
     stompClient: Stomp.Client | undefined;
     isLoaded: boolean = false;
 
+    protected myId = -1;
+
+    currentChatMock: Array<Message> = new Array<Message>();
+
     noteForm = this.formBuilder.group({
         note: ["", [Validators.required]],
     }, []);
@@ -27,6 +31,7 @@ export class AdminChatComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
+//<<<<<<< Updated upstream
         let socket = new SockJS(environment.serverOrigin + "socket");
         this.stompClient = Stomp.over(socket);
 
@@ -35,6 +40,17 @@ export class AdminChatComponent implements OnInit, AfterViewInit {
             this.openSocket();
         })
 
+//=======
+        this.myId = Number(this.authService.getId());
+
+
+        this.currentChatMock = [
+            {senderId: 1, receiverId: this.myId, message: "Hello", timeOfSending: "6/15/15, 9:03 AM"} as Message,
+            {senderId: 1, receiverId: this.myId, message: "hi", timeOfSending: "6/15/15, 9:23 AM"} as Message,
+            {senderId: this.myId, receiverId: 1, message: "yooooooo", timeOfSending: "6/15/15, 9:43 AM"} as Message,
+            {senderId: 1, receiverId: this.myId, message: "uhhh", timeOfSending: "6/15/15, 9:44 AM"} as Message,
+        ]
+//>>>>>>> Stashed changes
 
         this.messageService.getMessages(this.authService.getUserId()).forEach(value => {
             // console.log(value);
@@ -131,6 +147,7 @@ export class AdminChatComponent implements OnInit, AfterViewInit {
 
     sendMessage() {
         if (this.noteForm.valid) {
+            this.currentChatMock.push({message: this.noteForm.get("note")?.value, senderId: this.myId, receiverId: 1, timeOfSending: new Date().toISOString()} as Message);
             let id = this.currentChat[0].receiverId;
             if (id === this.authService.getUserId())
                 id = this.currentChat[0].senderId;
