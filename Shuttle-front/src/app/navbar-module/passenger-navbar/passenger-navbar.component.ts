@@ -12,7 +12,7 @@ export class PassengerNavbarComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        
+
     }
 
     logout() {
@@ -33,5 +33,9 @@ export class PassengerNavbarComponent implements OnInit {
 
     graph() {
         this.router.navigate(["passenger/graph"]);
+    }
+
+    account() {
+        this.router.navigate(["passenger/account"]);
     }
 }

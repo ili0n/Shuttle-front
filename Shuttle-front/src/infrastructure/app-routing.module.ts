@@ -21,6 +21,7 @@ import {AdminHomeComponent} from "../app/admin/admin-home/admin-home.component";
 import {AdminPanicComponent} from "../app/admin/admin-panic/admin-panic.component";
 import {AdminGraphComponent} from "../app/admin/admin-report/admin-graph.component";
 import {AdminBlockComponent} from "../app/admin/admin-block/admin-block.component";
+import {PassengerProfileComponent} from "../app/passenger/passenger-profile/passenger-profile.component";
 
 const routes: Routes = [
 	{path: "login",
@@ -48,8 +49,8 @@ const routes: Routes = [
     {path: 'admin/graph', component: AdminGraphComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
     {path: 'admin/block', component: AdminBlockComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
 
-
-  {path: 'passenger/home', component: PassengerHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+    {path: 'passenger/home', component: PassengerHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+    {path: 'passenger/account', component: PassengerProfileComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
   {path: 'passenger/history', component: PassengerHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
   {path: 'passenger/favorites', component: PassengerFavoritesComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
   {path: 'passenger/graph', component: PassengerGraphComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},

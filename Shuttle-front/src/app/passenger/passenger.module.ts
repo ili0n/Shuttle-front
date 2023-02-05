@@ -18,6 +18,7 @@ import { UserModule } from '../user/user.module';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { PassengerProfileComponent } from './passenger-profile/passenger-profile.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     PassengerFavoritesScheduleDialogComponent,
     PassengerFavoriteNameDialogComponent,
     PassengerGraphComponent,
+    PassengerProfileComponent,
 
   ],
   imports: [
