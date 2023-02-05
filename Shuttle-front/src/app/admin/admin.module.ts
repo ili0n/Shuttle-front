@@ -12,6 +12,9 @@ import { AdminPanicComponent } from './admin-panic/admin-panic.component';
 import { AdminPanicDetailsComponent } from './admin-panic/admin-panic-details/admin-panic-details.component';
 import { AdminGraphComponent } from './admin-report/admin-graph.component';
 import {UserModule} from "../user/user.module";
+import { AdminBlockComponent } from './admin-block/admin-block.component';
+import { AdminProfileOverviewComponent } from './admin-block/admin-profile-overview/admin-profile-overview.component';
+import { AdminNoteComponent } from './admin-block/admin-note/admin-note.component';
 
 
 @NgModule({
@@ -26,6 +29,9 @@ import {UserModule} from "../user/user.module";
         AdminPanicComponent,
         AdminPanicDetailsComponent,
         AdminGraphComponent,
+        AdminBlockComponent,
+        AdminProfileOverviewComponent,
+        AdminNoteComponent,
     ],
     imports: [
         CommonModule,

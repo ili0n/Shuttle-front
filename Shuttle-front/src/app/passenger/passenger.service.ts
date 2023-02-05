@@ -18,7 +18,8 @@ export interface Passenger {
 }
 
 export interface UserRole extends Passenger{
-    role:string
+    role:string;
+    blocked:boolean;
 }
 
 @Injectable({

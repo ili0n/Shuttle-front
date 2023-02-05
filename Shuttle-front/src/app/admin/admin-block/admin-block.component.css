@@ -1,0 +1,12 @@
+.flex{
+    display: flex;
+}
+.table{
+    width: 30vw;
+    align-self: flex-start;
+}
+.account{
+    width: 70vw;
+    align-self: flex-end;
+    display: flex;
+}

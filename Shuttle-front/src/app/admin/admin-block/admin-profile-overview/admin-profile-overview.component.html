@@ -1,0 +1,34 @@
+<div *ngIf="selectedUser">
+    <div id="leftSide">
+        <form [formGroup]="changeForm" enctype="multipart/form-data" accept-charset="UTF-8">
+            <h1>Profile info</h1>
+            <img src="{{imageBase64}}"/>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Name:</mat-label>
+                <input matInput type="text" formControlName="name" value="{{selectedUser.name}}" required/>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Surname:</mat-label>
+                <input matInput type="text" formControlName="surname" value="{{selectedUser.surname}}" required/>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Address:</mat-label>
+                <input matInput type="text" formControlName="address" value="{{selectedUser.address}}" required/>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Phone:</mat-label>
+                <input matInput type="text" formControlName="telephoneNumber" value="{{selectedUser.telephoneNumber}}"
+                       pattern="^[\+]?[0-9]+$" required/>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Email:</mat-label>
+                <input matInput type="text" formControlName="email" value="{{selectedUser.email}}" required/>
+            </mat-form-field>
+        </form>
+    </div>
+</div>

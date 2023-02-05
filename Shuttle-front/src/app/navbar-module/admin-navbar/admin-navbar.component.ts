@@ -31,4 +31,7 @@ export class AdminNavbarComponent {
     graph() {
         this.router.navigate(["admin/graph"]);
     }
+    block(){
+        this.router.navigate(["admin/block"]);
+    }
 }
