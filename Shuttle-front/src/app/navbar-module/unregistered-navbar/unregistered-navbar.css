@@ -4,7 +4,9 @@ mat-toolbar {
     text-align: left;
 }
 
-
+.logo {
+    height: 2em;
+}
 
 a, a:visited, a:active {
     color: inherit;

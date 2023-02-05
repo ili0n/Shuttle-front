@@ -20,14 +20,14 @@ export class RegisterService {
 
   constructor(private http: HttpClient) { }
 
-  submit(formData: FormData, file: File): Observable<HttpEvent<any>>{
+  submit(formData: FormData, file: File): Observable<HttpEvent<User>>{
     const req = new HttpRequest('POST', `${environment.serverOrigin}api/passenger`, formData, {
       responseType: 'json'
     });
 
     console.log(req);
     
-    return this.http.request(req);
+    return this.http.request<User>(req);
   }
 
 
