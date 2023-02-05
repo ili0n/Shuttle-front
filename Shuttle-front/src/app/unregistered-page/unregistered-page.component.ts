@@ -103,7 +103,7 @@ export class UnregisteredPageComponent implements OnInit{
         }
   }
   isLoaded: boolean = false;
-  stompClient: any;
+  stompClient?: Stomp.Client;
   departureSelection: boolean = true;
 
 
@@ -178,7 +178,7 @@ export class UnregisteredPageComponent implements OnInit{
   }
   openSocket() {
     if(this.isLoaded){
-      this.stompClient.subscribe('/active/vehicle/location', (message: {body: string}) =>{
+      this.stompClient!.subscribe('/active/vehicle/location', (message: {body: string}) =>{
         this.handleMessage(message);        
       });
     }
@@ -215,8 +215,8 @@ export class UnregisteredPageComponent implements OnInit{
           "routeLength": routeLength,
           "time": time
         }
-        let destinationVal = this.routeForm.value.destination!;
-        let departureVal = this.routeForm.value.departure!;
+        let destinationVal: string = this.routeForm.value.destination!;
+        let departureVal: string = this.routeForm.value.departure!;
         this.mapEstimationService.search(destinationVal).subscribe(destinationLocation =>{
           this.mapEstimationService.search(departureVal).subscribe(departureLocation =>{
               let createRide = this.createRideDTO(destinationLocation[0], departureLocation[0]);
