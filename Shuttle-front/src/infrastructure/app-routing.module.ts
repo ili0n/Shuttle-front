@@ -25,7 +25,6 @@ const routes: Routes = [
         loadChildren: () =>
             import('../app/auth/auth.module').then((m) => m.AuthModule),
     },
-    {path: '', redirectTo: 'unregistered', pathMatch: 'full'},
   {path: "register", component: RegisterComponent, canActivate: [LoginGuard]},
   {path: 'forgot-password', component: ForgotPasswordComponent},
   {path: 'reset-password', redirectTo: 'login'},

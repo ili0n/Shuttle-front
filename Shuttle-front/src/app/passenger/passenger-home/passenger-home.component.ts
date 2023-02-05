@@ -16,22 +16,6 @@ import { PassengerSocketService } from "../passenger-socket.service";
 import { RecalculateRouteDTO } from "./passenger-order-ride/passenger-order-ride.component";
 import { UserIdEmail } from "src/app/user/user.service";
 import { AuthService } from "src/app/auth/auth.service";
-import { Subject } from "rxjs";
-
-const iconRetinaUrl = 'assets/marker-icon-2x.png';
-const iconUrl = 'assets/marker-icon.png';
-const shadowUrl = 'assets/marker-shadow.png';
-
-const iconDefault = L.icon({
-    iconRetinaUrl,
-    iconUrl,
-    shadowUrl,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    tooltipAnchor: [16, -28],
-    shadowSize: [41, 41]
-  });
 
 @Component({
     selector: 'app-passenger-home',
@@ -48,10 +32,6 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
     protected depPos!: L.LatLng;
     protected destPos!: L.LatLng;
     private carLayer!: L.LayerGroup;
-    private locationMarkerLayer!: L.LayerGroup;
-
-    private depName: string = "";
-    private destName: string = "";
 
     private iconCarAvailable!: L.Icon;
     private iconCarBusy!: L.Icon;
@@ -59,10 +39,6 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
     private iconLuxBusy!: L.Icon;
     private iconVanAvailable!: L.Icon;
     private iconVanBusy!: L.Icon;
-    private departureSelection: boolean = true;
-
-    private madeRouteFromMapSubject: Subject<void> = new Subject<void>();
-    public madeRouteFromMap = this.madeRouteFromMapSubject.asObservable();
 
     /************************************ Form fields ********************************************/
 
@@ -157,58 +133,6 @@ export class PassengerHomeComponent implements OnInit, AfterViewInit, OnDestroy 
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         });
         tiles.addTo(this.map);
-
-        this.locationMarkerLayer = L.layerGroup();
-        this.map.addLayer(this.locationMarkerLayer);
-
-        this.map.on("click", (e) => {
-            if (this.canOrderRide() == true) {  
-                if (this.departureSelection) {
-                    this.depPos = e.latlng;
-
-                    let marker = L.marker([e.latlng.lat, e.latlng.lng], {icon: iconDefault});
-                    marker.addTo(this.locationMarkerLayer);
-
-                    this.mapService.reverseSearch(e.latlng.lat, e.latlng.lng).subscribe({
-                        next: result => {
-                            this.depName = result.display_name;
-                        }
-                    });
-                } else {
-                    this.destPos = e.latlng;
-
-                    let marker = L.marker([e.latlng.lat, e.latlng.lng], {icon: iconDefault});
-                    marker.addTo(this.locationMarkerLayer);
-
-                    this.mapService.reverseSearch(e.latlng.lat, e.latlng.lng).subscribe({
-                        next: result => {
-                            this.destName = result.display_name;
-                        }
-                    });   
-                }
-
-                this.departureSelection = !this.departureSelection;
-                this.rerouteFromClick();
-            }
-        });
-
-    }
-
-    private clearLocationMarkers() {
-        if (this.locationMarkerLayer) {
-            this.locationMarkerLayer.clearLayers();
-        }
-    }
-
-    private rerouteFromClick() {
-        if (this.map && this.depPos && this.destPos) {
-        } else {
-            return;
-        }
-
-        this.clearLocationMarkers();
-        this.onFoundRoute();
-        this.madeRouteFromMapSubject.next();
     }
 
     /**
