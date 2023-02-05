@@ -38,11 +38,8 @@ export class DriverService {
     readonly url: string = environment.serverOrigin + 'api/driver';
     constructor(private httpClient: HttpClient,) { }
 
-    public add(driver: Driver): Observable<any> {
-        const options: any = {
-            responseType: 'json'
-        };
-        return this.httpClient.post(this.url, driver, options);
+    public add(driver: Driver): Observable<Driver> {
+        return this.httpClient.post<Driver>(this.url, driver, { responseType: 'json' });
     }
 
     public get(id: number): Observable<User> {

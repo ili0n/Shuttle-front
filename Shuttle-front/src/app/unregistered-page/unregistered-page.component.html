@@ -46,7 +46,7 @@
         <button mat-raised-button color="primary" type="submit"> Estimate </button>
     </form>
     <div *ngIf="estimation && routeInfo">
-        <p id="estimation">The ride will cost you {{estimation.estimatedCost}}RSD, and it will last {{routeInfo.time}} minutes</p>
+        <p id="estimation">The ride will cost you {{estimation.estimatedCost.toFixed(2)}}RSD, and it will last {{routeInfo.time}} minutes</p>
     </div>
 </div>
 <!-- <a href="https://www.flaticon.com/free-icons/baby" title="baby icons">Baby icons created by Freepik - Flaticon</a> -->

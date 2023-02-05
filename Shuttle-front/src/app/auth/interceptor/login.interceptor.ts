@@ -22,7 +22,7 @@ export class Interceptor implements HttpInterceptor {
         req: HttpRequest<any>,
         next: HttpHandler
     ): Observable<HttpEvent<any>> {
-        const accessToken: any = this.tokenService.getToken();
+        const accessToken: string | null = this.tokenService.getToken();
         // const decodedItem = JSON.parse(accessToken);
         if (req.headers.get('skip')) return next.handle(req);
 

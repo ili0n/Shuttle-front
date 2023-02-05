@@ -29,11 +29,12 @@ const routes: Routes = [
         loadChildren: () =>
             import('../app/auth/auth.module').then((m) => m.AuthModule),
     },
-    {path: "register", component: RegisterComponent, canActivate: [LoginGuard]},
-    {path: 'forgot-password', component: ForgotPasswordComponent},
-    {path: 'reset-password', redirectTo: 'login'},
-    {path: 'reset-password/:key', component: ResetPasswordComponent},
-    {path: 'unregistered', component: UnregisteredPageComponent},
+    {path: '', redirectTo: 'unregistered', pathMatch: 'full'},
+  {path: "register", component: RegisterComponent, canActivate: [LoginGuard]},
+  {path: 'forgot-password', component: ForgotPasswordComponent},
+  {path: 'reset-password', redirectTo: 'login'},
+  {path: 'reset-password/:key', component: ResetPasswordComponent},
+  {path: 'unregistered', component: UnregisteredPageComponent},
 
     {path: 'driver/info', component: DriverProfileComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
     {path: 'driver/home', component: DriverHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
@@ -48,10 +49,10 @@ const routes: Routes = [
     {path: 'admin/block', component: AdminBlockComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
 
 
-    {path: 'passenger/home', component: PassengerHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
-    {path: 'passenger/history', component: PassengerHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
-    {path: 'passenger/favorites', component: PassengerFavoritesComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
-    {path: 'passenger/graph', component: PassengerGraphComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  {path: 'passenger/home', component: PassengerHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  {path: 'passenger/history', component: PassengerHistoryComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  {path: 'passenger/favorites', component: PassengerFavoritesComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+  {path: 'passenger/graph', component: PassengerGraphComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
 ];
 
 @NgModule({

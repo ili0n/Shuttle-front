@@ -64,8 +64,10 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private onConnectedToSocket(): void {
+
         if (this.rideSub == null) {
             this.rideSub = this.driverSocketService.subToRide((r: Ride) => {
+                //console.log("A1");
                 this.onFetchRide(r);
             });
         }
@@ -184,6 +186,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     /******************************************** Ride********************************************/
 
     private onFetchRide(ride: Ride): void {
+        //console.log(ride);
         // If not active, ignore the ride. Once active again, the navbar will ping for a new ride.
 
         // TODO: This isn't changed anywhere but since the fetch ride endpoint always gives started
@@ -210,12 +213,13 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             // If upstream ride has a weaker status than the current ride, ignore it (for now, it'll
             // come back later).
 
-            let m: any = {};
-            m[RideStatus.Pending] = 0;
-            m[RideStatus.Accepted] = 1;
-            m[RideStatus.Started] = 2;
+            let mm = new Map<RideStatus, number>();
+            mm.set(RideStatus.Pending, 0);
+            mm.set(RideStatus.Accepted, 1);
+            mm.set(RideStatus.Started, 2);
 
-            if (this.ride != null && m[ride.status] <= m[this.ride.status]) {
+            //if (this.ride != null && m[ride.status] <= m[this.ride?.status]) {
+            if (this.ride != null && mm.get(ride.status)! <= mm.get(this.ride?.status)!) {
                 // Ignore.
             } else {
                 this.ride = ride;
@@ -246,6 +250,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.rideService.accept(this.ride.id).subscribe({
             next: (ride: Ride) => {
                 this.sharedService.showSnackBar("Ride accepted.", 3000);
+                //console.log("A2");
                 this.onFetchRide(ride);
             },
             error: (error) => this.sharedService.showSnackBar("Cannot accept ride.", 3000)
@@ -275,6 +280,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.rideService.end(this.ride.id).subscribe({
             next: (ride: Ride) => {
                 this.sharedService.showSnackBar("Ride finished.", 3000);
+                //console.log("A3");
                 this.onFetchRide(ride);
             },
             error: (error) => this.sharedService.showSnackBar("Cannot finish ride.", 3000)
@@ -289,6 +295,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.rideService.reject(this.ride.id, reason).subscribe({
             next: (ride: Ride) => {
                 this.sharedService.showSnackBar("Ride rejected.", 3000);
+                //console.log("A4");
                 this.onFetchRide(ride);
             },
             error: (error) => this.sharedService.showSnackBar("Cannot reject ride.", 3000)
@@ -303,6 +310,7 @@ export class DriverHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.rideService.panic(this.ride.id, reason).subscribe({
             next: (panicDTO: PanicDTO) => {
                 this.sharedService.showSnackBar("Ride aborted. The staff has been notified", 3000);
+                //console.log("A5");
                 this.onFetchRide(panicDTO.ride);
             },
             error: (error) => this.sharedService.showSnackBar("Cannot panic ride.", 3000)
