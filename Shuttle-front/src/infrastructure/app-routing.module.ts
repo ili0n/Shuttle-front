@@ -25,6 +25,7 @@ import {PassengerProfileComponent} from "../app/passenger/passenger-profile/pass
 import {
     AdminDriverChangeApproveComponent
 } from "../app/admin/admin-driver-change-approve/admin-driver-change-approve.component";
+import {AdminChatComponent} from "../app/admin/admin-chat/admin-chat.component";
 
 const routes: Routes = [
 	{path: "login",
@@ -52,6 +53,7 @@ const routes: Routes = [
     {path: 'admin/graph', component: AdminGraphComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
     {path: 'admin/block', component: AdminBlockComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
     {path: 'admin/driver-change', component: AdminDriverChangeApproveComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+    {path: 'admin/chat', component: AdminChatComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
 
 
     {path: 'passenger/home', component: PassengerHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},

@@ -38,4 +38,8 @@ export class AdminNavbarComponent {
     driverChangeRequest() {
         this.router.navigate(["admin/driver-change"]);
     }
+
+    chat() {
+        this.router.navigate(["admin/chat"]);
+    }
 }

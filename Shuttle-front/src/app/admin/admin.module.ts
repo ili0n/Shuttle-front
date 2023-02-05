@@ -17,6 +17,7 @@ import { AdminProfileOverviewComponent } from './admin-block/admin-profile-overv
 import { AdminNoteComponent } from './admin-block/admin-note/admin-note.component';
 import { AdminDriverChangeApproveComponent } from './admin-driver-change-approve/admin-driver-change-approve.component';
 import { AdminDriverProfileChangeComponent } from './admin-driver-change-approve/admin-driver-profile-change/admin-driver-profile-change.component';
+import { AdminChatComponent } from './admin-chat/admin-chat.component';
 
 
 @NgModule({
@@ -36,6 +37,7 @@ import { AdminDriverProfileChangeComponent } from './admin-driver-change-approve
         AdminNoteComponent,
         AdminDriverChangeApproveComponent,
         AdminDriverProfileChangeComponent,
+        AdminChatComponent,
     ],
     imports: [
         CommonModule,
