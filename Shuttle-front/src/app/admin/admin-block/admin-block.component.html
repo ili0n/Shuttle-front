@@ -10,12 +10,15 @@
         <button mat-raised-button [disabled]="(!selectedUser.blocked)" id="unblock-btn" (click)="unblockUser()"
                 color="primary">Unblock
         </button>
+
+        <div class="account">
+            <app-admin-profile-overview
+                [selectedUser]="selectedUser">
+            </app-admin-profile-overview>
+            <app-admin-note [selectedUser]="selectedUser">
+            </app-admin-note>
+        </div>
+
     </div>
-    <div class="account"></div>
-    <app-admin-profile-overview
-        [selectedUser]="selectedUser">
-    </app-admin-profile-overview>
-    <app-admin-note [selectedUser]="selectedUser">
-    </app-admin-note>
 
 </div>

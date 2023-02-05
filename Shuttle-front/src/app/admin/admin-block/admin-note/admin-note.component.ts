@@ -18,10 +18,10 @@ export class AdminNoteComponent {
 
     protected noteDataSource: MatTableDataSource<Note> = new MatTableDataSource();
     protected noteDisplayColumns = ["id", "message", "date"];
-    protected noteTotal: number = 123;
+    protected noteTotal: number = 0;
     protected page: number = 0;
-    @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+    notes: Array<Note> = new Array<Note>();
     @Input() public selectedUser: UserRole | undefined = undefined;
 
     constructor(private adminService: AdminService, private formBuilder: FormBuilder,) {
@@ -51,7 +51,7 @@ export class AdminNoteComponent {
 
     private onFetchNotes(notes: ListNote): void {
         this.noteDataSource = new MatTableDataSource(notes.results);
-        this.noteDataSource.paginator = this.paginator;
+        this.notes = this.noteDataSource.data;
     }
 
 
