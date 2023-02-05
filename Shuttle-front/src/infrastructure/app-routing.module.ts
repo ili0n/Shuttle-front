@@ -22,6 +22,9 @@ import {AdminPanicComponent} from "../app/admin/admin-panic/admin-panic.componen
 import {AdminGraphComponent} from "../app/admin/admin-report/admin-graph.component";
 import {AdminBlockComponent} from "../app/admin/admin-block/admin-block.component";
 import {PassengerProfileComponent} from "../app/passenger/passenger-profile/passenger-profile.component";
+import {
+    AdminDriverChangeApproveComponent
+} from "../app/admin/admin-driver-change-approve/admin-driver-change-approve.component";
 
 const routes: Routes = [
 	{path: "login",
@@ -48,6 +51,8 @@ const routes: Routes = [
     {path: 'admin/panic', component: AdminPanicComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
     {path: 'admin/graph', component: AdminGraphComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
     {path: 'admin/block', component: AdminBlockComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+    {path: 'admin/driver-change', component: AdminDriverChangeApproveComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
+
 
     {path: 'passenger/home', component: PassengerHomeComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},
     {path: 'passenger/account', component: PassengerProfileComponent, canActivate: [UserGuard], loadChildren: () => import('../app/auth/auth.module').then((m) => m.AuthModule)},

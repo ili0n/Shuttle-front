@@ -5,6 +5,7 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {PanicDTO, Ride} from "../ride/ride.service";
 import {ListUserDTO} from "../user/user.service";
+import {DriverUpdate} from "../driver/driver.service";
 
 @Injectable({
     providedIn: 'root'
@@ -48,6 +49,26 @@ export class AdminService {
             responseType: "json",
         });
     }
+    public getChangeRequests():Observable<Array<ChangeRequest>>{
+        return this.httpClient.get<Array<ChangeRequest>>(environment.serverOrigin + "api/driver/request",{
+            observe: "body",
+            responseType: "json",
+        })
+    }
+
+    public rejectChanges(requestId: number):Observable<null>{
+        return this.httpClient.put<null>(environment.serverOrigin + "api/driver/request/" + requestId + "/reject", null, {
+            observe: "body",
+            responseType: "json",
+        });
+    }
+    public approveChanges(requestId: number):Observable<null>{
+        return this.httpClient.put<null>(environment.serverOrigin + "api/driver/request/" + requestId + "/approve", null, {
+            observe: "body",
+            responseType: "json",
+        });
+    }
+
 }
 
 
@@ -75,4 +96,10 @@ export interface Note {
 export interface ListNote {
     totalCount: number;
     results: Array<Note>;
+}
+
+export interface ChangeRequest extends DriverUpdate{
+    id: number;
+    user: DriverUpdate;
+
 }
