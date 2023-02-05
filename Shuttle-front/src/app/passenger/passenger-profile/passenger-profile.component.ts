@@ -86,9 +86,13 @@ export class PassengerProfileComponent {
         }
     }
 
-    selectFile(event : any): void{
+    selectFile(event : Event): void{
+        let eventSelect : HTMLInputElement = event.target as HTMLInputElement;
+        if (!eventSelect.files || !eventSelect.files.length) {
+          return;
+        }
         const reader = new FileReader();
-        this.selectedFile = event.target.files[0];
+        this.selectedFile = eventSelect.files[0];
 
         if(this.selectedFile !== undefined){
             reader.onloadend = (e) => {
