@@ -13,6 +13,18 @@ export interface User{
     "address": string
 }
 
+export interface PassengerDTO{
+  id: number,
+	name: string,
+	surname: string,
+	profilePicture: string,
+	telephoneNumber: string,
+	email: string,
+	address: string,
+	password: string,
+	jwt: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,7 +32,7 @@ export class RegisterService {
 
   constructor(private http: HttpClient) { }
 
-  submit(formData: FormData, file: File): Observable<HttpEvent<any>>{
+  submit(formData: FormData, file: File): Observable<HttpEvent<PassengerDTO>>{
     const req = new HttpRequest('POST', `${environment.serverOrigin}api/passenger`, formData, {
       responseType: 'json'
     });

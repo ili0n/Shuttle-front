@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { User } from 'src/app/auth/register/register.service';
 import { DriverService } from 'src/app/driver/driver.service';
 import { Ride } from 'src/app/ride/ride.service';
-import { User } from 'src/app/services/register/register.service';
 
 @Component({
   selector: 'app-passenger-history-ride-details',
@@ -46,34 +46,34 @@ export class PassengerHistoryRideDetailsComponent  implements OnChanges {
         if (this.ride == null) {
             return false;
         }
-        return this.ride.babyTransport;       
+        return this.ride.babyTransport;
     }
 
     protected getRidePet(): boolean {
         if (this.ride == null) {
             return false;
         }
-        return this.ride.petTransport;       
+        return this.ride.petTransport;
     }
-    
+
     protected getRideDeparture(): string {
         if (this.ride == null) {
             return "";
         }
-        return this.ride.locations[0].departure.address;    
+        return this.ride.locations[0].departure.address;
     }
 
     protected getRideDestination(): string {
         if (this.ride == null) {
             return "";
         }
-        return this.ride.locations.at(-1)!.destination.address;    
+        return this.ride.locations.at(-1)!.destination.address;
     }
 
     protected getRideStatus(): string {
         if (this.ride == null) {
             return "";
         }
-        return this.ride.status;    
+        return this.ride.status;
     }
 }

@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/cor
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { User } from 'src/app/services/register/register.service';
+import { User } from 'src/app/auth/register/register.service';
 import { ListUserDTO, UserService } from 'src/app/user/user.service';
 
 @Component({

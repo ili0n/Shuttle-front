@@ -1,9 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, Validators } from "@angular/forms";
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
-import { RegisterService } from 'src/app/services/register/register.service';
+
 import { SharedService } from 'src/app/shared/shared.service';
 import {CustomValidators} from "./confirm.validator"
+import { RegisterService } from './register.service';
 
 
 
@@ -25,7 +26,7 @@ export class RegisterComponent implements OnInit {
   telephoneNumber = new FormControl("", [Validators.required, Validators.pattern("^[\+]?[0-9]+$")]);
   name = new FormControl("", [Validators.required]);
   surname = new FormControl("", [Validators.required]);
-  profilePicture = new FormControl(null);
+  profilePicture = new FormControl("");
 
   registerForm = this.formBuilder.group({
     email: this.email,
@@ -41,14 +42,14 @@ export class RegisterComponent implements OnInit {
   )
 
   selectedFile?: File;
-  selectedFileName?: string; 
+  selectedFileName?: string;
   private selectedFileBase64: string = "";
 
   constructor(
     private formBuilder: FormBuilder,
     private registerService: RegisterService,
     private sharedService: SharedService
-  ) { 
+  ) {
     this.registerForm.setValidators(CustomValidators.MatchValidator('password', 'confirmPassword'))
   }
 
