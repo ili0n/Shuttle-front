@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, Validators } from "@angular/forms";
 import { MatSnackBarRef } from '@angular/material/snack-bar';
+import { SharedService } from 'src/app/shared/shared.service';
 import { RegisterService } from '../../services/register/register.service';
 import {CustomValidators} from "./confirm.validator"
 
