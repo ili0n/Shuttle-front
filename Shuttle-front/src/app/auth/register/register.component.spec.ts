@@ -4,12 +4,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { PassengerDTO, RegisterService } from 'src/app/services/register/register.service';
 import { MaterialModule } from 'src/infrastructure/material.module';
 import { Observable, of } from 'rxjs';
 
 import { RegisterComponent } from './register.component';
 import { HttpEvent } from '@angular/common/http';
+import { RegisterService, PassengerDTO } from './register.service';
 
 describe('RegisterComponent', () => {
     let component: RegisterComponent;
@@ -41,7 +41,7 @@ describe('RegisterComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
-    
+
     function setFormData(
         email: string,
         password: string,

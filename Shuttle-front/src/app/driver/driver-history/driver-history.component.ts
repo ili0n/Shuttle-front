@@ -1,8 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import * as L from 'leaflet';
+import { User } from 'src/app/auth/register/register.service';
 import { ReviewPairDTO } from 'src/app/review/review.service';
 import { Ride } from 'src/app/ride/ride.service';
-import { User } from 'src/app/services/register/register.service';
 
 export interface PassengerWithRideReview {
     passenger: User,
@@ -35,7 +35,7 @@ export class DriverHistoryComponent {
     protected onChangeSelectedRide(ride: Ride) {
         this.onRideSelected(ride);
     }
-    
+
     protected onRideSelected(row: Ride): void {
         if (this.selectedRide != row) {
             this.selectedRide = row;

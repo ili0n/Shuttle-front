@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { User } from '../auth/register/register.service';
 import { RideListDTO } from '../ride/ride.service';
-import { User } from '../services/register/register.service';
 import { Vehicle } from '../vehicle/vehicle.service';
 
 export interface Driver {
@@ -59,7 +59,7 @@ export class DriverService {
     }
 
     /**
-     * 
+     *
      * @param driverId ID of the driver.
      * @returns An observable sending the vehicle of the driver.
      */

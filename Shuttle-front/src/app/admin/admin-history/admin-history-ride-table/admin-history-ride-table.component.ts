@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewC
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { User } from 'src/app/auth/register/register.service';
 import { Ride, RideListDTO } from 'src/app/ride/ride.service';
-import { User } from 'src/app/services/register/register.service';
 import { UserService } from 'src/app/user/user.service';
 
 @Component({
@@ -43,7 +43,7 @@ export class AdminHistoryRideTableComponent implements OnChanges {
     protected isRideSelected(ride: Ride): boolean {
         return this.selectedRide == ride;
     }
-    
+
     protected hasRides(): boolean {
         return true;
     }
