@@ -43,9 +43,7 @@ export class AuthService {
     }
 
     refreshToken(token: string) {
-        return this.http.post(environment.serverOrigin + 'api/user/refreshtoken', {
-            refreshToken: token
-        }, {
+        return this.http.post(environment.serverOrigin + 'api/user/refreshtoken', {refreshToken: token}, {
             headers: this.headers,
         });
     }
