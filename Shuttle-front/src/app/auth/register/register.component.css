@@ -18,30 +18,15 @@ mat-form-field{
     margin: auto;
     background-color: #ECECEC;
 
-
-}
-.container{
-    padding: 40px;
-    background: linear-gradient(311deg, rgba(14,67,115,1) 0%, rgba(0,254,255,1) 100%);
 }
 
 form{
-    padding: 40px;
+    padding: 15px;
     text-align: center;
 }
 
 button{
     background-color: #279386 !important;
-    border-radius: 20%;
+    border-radius: 30%;
     color: white !important;
-}
-
-.rounded-top{
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-}
-
-.rounded-bottom{
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
 }
