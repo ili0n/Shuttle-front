@@ -1,0 +1,15 @@
+<div class="flex">
+    <div class="map-container">
+        <div class="map-frame">
+            <div id="admin-home-map"></div>
+        </div>
+    </div>
+
+    <div class="cards">
+        <div *ngFor="let plate of plates">
+            <mat-card class="licenceCard">
+                <h2>{{plate}}</h2>
+            </mat-card>
+        </div>
+    </div>
+</div>

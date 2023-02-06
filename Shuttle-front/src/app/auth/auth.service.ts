@@ -18,6 +18,16 @@ export interface PasswordDTO {
 	oldPassword: string
 }
 
+export interface RoleDTO {
+    id: number,
+    name: string
+}
+
+export interface AuthDTO {
+    username: string,
+    password: string
+}
+
 
 
 @Injectable({
@@ -29,14 +39,14 @@ export class AuthService {
         skip: 'true',
     });
 
-    user$ = new BehaviorSubject(null);
+    user$ = new BehaviorSubject<string | null>(null);
     userState$ = this.user$.asObservable();
 
     constructor(private http: HttpClient, private userService: UserService, private sharedService: SharedService,private tokenStorage: TokenStorageService) {
         this.user$.next(this.getRole());
     }
 
-    login(auth: any): Observable<Token> {
+    login(auth: AuthDTO): Observable<Token> {
         return this.http.post<Token>(environment.serverOrigin + 'api/user/login', auth, {
             headers: this.headers,
         });
@@ -63,11 +73,11 @@ export class AuthService {
         })
     }
 
-    getRole(): any {
+    getRole(): string | null {
         if (this.isLoggedIn()) {
-            const accessToken: any = this.tokenStorage.getToken();
+            const accessToken: string = this.tokenStorage.getToken()!;
             const helper = new JwtHelperService();
-            return helper.decodeToken(accessToken).role[0].name;
+            return helper.decodeToken(accessToken!).role[0].name;
         }
         return null;
     }
@@ -89,9 +99,9 @@ export class AuthService {
 
     getRoles(): string[] {
         if (this.isLoggedIn()) {
-            const accessToken: any = this.tokenStorage.getToken();
+            const accessToken: string | null = this.tokenStorage.getToken();
             const helper = new JwtHelperService();
-            const roles: any[] = helper.decodeToken(accessToken).role;
+            const roles: RoleDTO[] = helper.decodeToken(accessToken!).role;
             return roles.map(r => r.name);
         }
         return [];
@@ -108,9 +118,9 @@ export class AuthService {
 
     getId(): string {
         if (this.isLoggedIn()) {
-            const accessToken: any = this.tokenStorage.getToken();
+            const accessToken: string | null = this.tokenStorage.getToken();
             const helper = new JwtHelperService();
-            return helper.decodeToken(accessToken).id;
+            return helper.decodeToken(accessToken!).id;
         }
         return "";
     }

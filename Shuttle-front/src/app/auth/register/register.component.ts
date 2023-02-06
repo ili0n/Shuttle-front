@@ -1,8 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, Validators } from "@angular/forms";
-import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
+import { MatSnackBarRef } from '@angular/material/snack-bar';
 import { RegisterService } from '../../services/register/register.service';
-import { SnackbarComponent } from '../../util/snackbar/snackbar/snackbar.component';
 import {CustomValidators} from "./confirm.validator"
 
 
@@ -18,29 +17,37 @@ export class SimpleSnackBarComponent {
 })
 
 export class RegisterComponent implements OnInit {
+  email = new FormControl("", [Validators.required, Validators.email]);
+  password = new FormControl("", [Validators.required, Validators.pattern("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")]);
+  confirmPassword = new FormControl("", [Validators.required]);
+  address = new FormControl("", [Validators.required]);
+  telephoneNumber = new FormControl("", [Validators.required, Validators.pattern("^[\+]?[0-9]+$")]);
+  name = new FormControl("", [Validators.required]);
+  surname = new FormControl("", [Validators.required]);
+  profilePicture = new FormControl(null);
 
   registerForm = this.formBuilder.group({
-    email: ["", [Validators.required, Validators.email]],
-    password: ["", [Validators.required, Validators.pattern("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")]],
-    confirmPassword: ["", [Validators.required]],
-    address: ["", [Validators.required]],
-    telephoneNumber: ["", [Validators.required, Validators.pattern("^[\+]?[0-9]+$")]],
-    name: ["", [Validators.required]],
-    surname: ["", [Validators.required]],
-    profilePicture: new FormControl(null, [Validators.required]),
+    email: this.email,
+    password: this.password,
+    confirmPassword: this.confirmPassword,
+    address: this.address,
+    telephoneNumber: this.telephoneNumber,
+    name: this.name,
+    surname: this.surname,
+    profilePicture: this.profilePicture
   },
     []
   )
 
   selectedFile?: File;
-  selectedFileName?: string; 
+  selectedFileName?: string;
   private selectedFileBase64: string = "";
 
   constructor(
     private formBuilder: FormBuilder,
     private registerService: RegisterService,
-    private _snackBar: MatSnackBar
-  ) { 
+    private sharedService: SharedService
+  ) {
     this.registerForm.setValidators(CustomValidators.MatchValidator('password', 'confirmPassword'))
   }
 
@@ -48,14 +55,17 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): void{
+    if( this.isPasswordsMismatch()){
+      this.sharedService.showSnackBar("Passwords don't match", 3000);
+    }
     if (this.registerForm.valid) {
 
       const dataForSubmit = {...this.registerForm.value};
       dataForSubmit.profilePicture = this.selectedFileBase64;
 
       this.registerService.submit(dataForSubmit, this.selectedFile!).subscribe({
-        complete: () => this.openSnackBar(),
-        error: (e) => console.error(e),
+        complete: () =>this.sharedService.showSnackBar("Success", 3000),
+        error: (e) => {this.sharedService.showSnackBar(e.error.message, 3000);console.log(e)}
     })
 			console.log("valid");
 		}
@@ -64,9 +74,13 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  selectFile(event : any): void{
+  selectFile(event : Event): void{
+    let eventSelect : HTMLInputElement = event.target as HTMLInputElement;
+    if (!eventSelect.files || !eventSelect.files.length) {
+      return;
+    }
     const reader = new FileReader();
-    this.selectedFile = event.target.files[0];
+    this.selectedFile = eventSelect.files[0];
 
     if(this.selectedFile !== undefined){
       reader.onloadend = (e) => {
@@ -81,13 +95,68 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  openSnackBar() {
-    this._snackBar.openFromComponent(SnackbarComponent, {
-      duration: 5 * 1000,
-      panelClass: "success-dialog"
-    });
+// errors
+  isPasswordsMismatch(){
+    return this.registerForm.hasError("mismatch");
+  }
+
+  getEmailError(){
+    if (this.email.hasError('required')) {
+      return 'You must enter a value';
+    }
+    if (this.email.hasError('email')) {
+      return 'You must enter a correct email address';
+    }
+    return "Invalid";
+  }
+
+  getPasswordError(){
+    if (this.password.hasError('required')) {
+      return 'You must enter a value';
+    }
+    if (this.password.hasError('pattern')) {
+      return 'Your password is not strong enough';
+    }
+    return "Invalid";
+  }
+
+  getConfirmPasswordError(){
+    if (this.registerForm.hasError("mismatch")) {
+      return 'Passwords must match';
+    }
+    return "Invalid";
+  }
+
+  getNameError(){
+    if (this.name.hasError("required")) {
+      return 'You must enter a value';
+    }
+    return "Invalid";
+  }
+
+  getSurnameError(){
+    if (this.surname.hasError("required")) {
+      return 'You must enter a value';
+    }
+    return "Invalid";
+  }
+
+  getAddressError(){
+    if (this.address.hasError("required")) {
+      return 'You must enter a value';
+    }
+    return "Invalid";
   }
 
 
+  getPhoneError(){
+    if (this.telephoneNumber.hasError("required")) {
+      return 'You must enter a value';
+    }
+    if (this.telephoneNumber.hasError('pattern')) {
+      return 'Your must enter valid telephone number';
+    }
+    return "Invalid";
+  }
 
 }

@@ -4,6 +4,7 @@ import { Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { User } from 'src/app/services/register/register.service';
 import { ListUserDTO, UserService } from 'src/app/user/user.service';
+import {UserRole} from "../../../passenger/passenger.service";
 
 @Component({
   selector: 'app-admin-history-user-table',
@@ -11,15 +12,15 @@ import { ListUserDTO, UserService } from 'src/app/user/user.service';
   styleUrls: ['./admin-history-user-table.component.css']
 })
 export class AdminHistoryUserTableComponent implements OnInit {
-    protected userDataSource: MatTableDataSource<User> = new MatTableDataSource();
+    protected userDataSource: MatTableDataSource<UserRole> = new MatTableDataSource();
     protected userDisplayedColumns = ["id", "name", "role"];
     protected usersTotal: number = 123;
-    @Output() protected selectedUserEvent: EventEmitter<User> = new EventEmitter();
-    private selectedUser: User | null = null;
+    @Output() protected selectedUserEvent: EventEmitter<UserRole> = new EventEmitter();
+    private selectedUser: UserRole | null = null;
     protected page: number = 0;
     @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-    protected onUserSelected(user: User): void {
+    protected onUserSelected(user: UserRole): void {
         this.selectedUserEvent.emit(user);
         this.selectedUser = user;
     }
@@ -37,6 +38,7 @@ export class AdminHistoryUserTableComponent implements OnInit {
             next: res => {
                 this.onFetchUsers(res);
                 this.usersTotal = res.totalCount;
+                console.log(res);
             },
             error: err => console.error(err),
         })

@@ -27,12 +27,14 @@ export class DriverSocketService extends SocketService {
         const driverId = this.authService.getUserId();
 
         return this.subscribeToWebSocketTopic(`ride/driver/${driverId}`, message => {
+            //console.log("FETCH");
             const ride: Ride = JSON.parse(message.body);
             callback(ride);
         });
     }
 
     public pingRide(): void {
+        console.log("PING");
         const driverId = this.authService.getUserId();
         this.sendMessageToSocket("", `ride/driver/${driverId}`);    
     }

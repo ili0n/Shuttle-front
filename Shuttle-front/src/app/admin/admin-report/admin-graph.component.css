@@ -1,0 +1,12 @@
+.row-selected * {
+    color: white;
+    background: black;
+}
+app-admin-history-user-table {
+    width: 30vw;
+    height: 100vh;
+}
+app-user-graph {
+    width: 70vw;
+    height: 100vw;
+}

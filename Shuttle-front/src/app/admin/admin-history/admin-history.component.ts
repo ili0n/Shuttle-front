@@ -11,7 +11,7 @@ import { User } from 'src/app/services/register/register.service';
 export class AdminHistoryComponent {
     private map!: L.Map;
     private route: L.Routing.Control | null = null;
-    protected selectedUser: User | null = null; 
+    protected selectedUser: User | null = null;
     protected selectedRide: Ride | null = null;
 
     @ViewChild('leafletMap')
@@ -28,13 +28,17 @@ export class AdminHistoryComponent {
     }
 
     protected onChangeSelectedUser(user: User) {
+        if (this.selectedUser != user) {
+            this.selectedRide = null;
+            this.clearRoute();
+        }
         this.selectedUser = user;
     }
 
     protected onChangeSelectedRide(ride: Ride) {
         this.onRideSelected(ride);
     }
-    
+
     protected onRideSelected(row: Ride): void {
         if (this.selectedRide != row) {
             this.selectedRide = row;

@@ -1,0 +1,24 @@
+<div class="flex">
+    <div class="table">
+        <app-admin-history-user-table
+            class="flex-1"
+            (selectedUserEvent)="onChangeSelectedUser($event)">
+        </app-admin-history-user-table>
+    </div>
+    <div *ngIf="selectedUser">
+        <button mat-raised-button [disabled]="selectedUser.blocked" (click)="blockUser()" color="primary">Block</button>
+        <button mat-raised-button [disabled]="(!selectedUser.blocked)" id="unblock-btn" (click)="unblockUser()"
+                color="primary">Unblock
+        </button>
+
+        <div class="account">
+            <app-admin-profile-overview
+                [selectedUser]="selectedUser">
+            </app-admin-profile-overview>
+            <app-admin-note [selectedUser]="selectedUser">
+            </app-admin-note>
+        </div>
+
+    </div>
+
+</div>

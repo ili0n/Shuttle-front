@@ -1,0 +1,77 @@
+.profiles{
+    display: flex;
+    width: 70vw;
+    align-self: flex-end;
+}
+.cards{
+    width: 30vw;
+    align-self: flex-start;
+}
+.current{
+    width: 35vw;
+    align-self: flex-start;
+}
+.request{
+    width: 35vw;
+    align-self: flex-end;
+}
+.page{
+    display: flex;
+}
+.button{
+    align-self: flex-end;
+}
+.full {
+    width: 100%;
+    height: 93%;
+    background: lightgray;
+}
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+.changeRequestPersonName {
+    font-size: 2em;
+    text-align: center;
+}
+.licenceCard {
+    padding: 2em;
+}
+.listOfRequests {
+    margin: 10px;
+}
+
+
+
+.flexcontainer {
+    display: flex;
+    width: auto;
+}
+
+.flex3 {
+    flex: 3;
+}
+
+.flex1 {
+    flex: 1;
+}
+
+.old {
+    background: lemonchiffon;
+}
+
+.new {
+    background: honeydew;
+}
+
+.pad {
+    padding: 2em;
+}
+
+.verdictButtons button {
+    margin-bottom: 1em;
+    font-size: 1.3em;
+    padding: 1.3em;
+}

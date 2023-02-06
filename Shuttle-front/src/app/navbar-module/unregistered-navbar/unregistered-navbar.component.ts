@@ -23,6 +23,6 @@ export class UnregisteredNavbarComponent implements OnInit {
         this.router.navigate(["/register"]);
     }
     homeRoute() {
-        this.router.navigate([""]);
+        this.router.navigate(["/unregistered"]);
     }
 }
