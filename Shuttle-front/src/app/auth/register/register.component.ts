@@ -25,7 +25,7 @@ export class RegisterComponent implements OnInit {
   telephoneNumber = new FormControl("", [Validators.required, Validators.pattern("^[\+]?[0-9]+$")]);
   name = new FormControl("", [Validators.required]);
   surname = new FormControl("", [Validators.required]);
-  profilePicture = new FormControl(null);
+  profilePicture = new FormControl("");
 
   registerForm = this.formBuilder.group({
     email: this.email,
