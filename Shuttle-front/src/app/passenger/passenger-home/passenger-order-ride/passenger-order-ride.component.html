@@ -90,13 +90,13 @@
 
         <!-- Order later. -->
 
-        <mat-checkbox formControlName="is_later" class="value">Schedule later</mat-checkbox>
+        <mat-checkbox id="passenger-order-schedule-later" formControlName="is_later" class="value">Schedule later</mat-checkbox>
         <ng-container *ngIf="isOrderingLater()">
         <div formGroupName="later">
             <mat-form-field appearance="fill" class="shortInput">
                 <mat-label>Hour</mat-label>
-                <mat-select formControlName="at_hour">
-                    <mat-option *ngFor="let hour of allowedHours" value="{{hour}}">{{hour}}</mat-option>
+                <mat-select id="passenger-order-select-hour" formControlName="at_hour">
+                    <mat-option *ngFor="let hour of allowedHours" id="passenger-order-select-hour-{{hour}}" value="{{hour}}">{{hour}}</mat-option>
                 </mat-select>
             </mat-form-field>
 
@@ -104,8 +104,8 @@
 
             <mat-form-field appearance="fill" class="shortInput">
                 <mat-label>Minute</mat-label>
-                <mat-select formControlName="at_minute">
-                    <mat-option *ngFor="let hour of allowedMinutes" value="{{hour}}">{{hour}}</mat-option>
+                <mat-select id="passenger-order-select-minute" formControlName="at_minute">
+                    <mat-option *ngFor="let minute of allowedMinutes" id="passenger-order-select-minute-{{minute}}" value="{{minute}}">{{minute}}</mat-option>
                 </mat-select>
             </mat-form-field>
             <br/>
