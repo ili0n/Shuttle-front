@@ -6,8 +6,13 @@ export class CustomValidators {
       const sourceCtrl = control.get(source);
       const targetCtrl = control.get(target);
 
-    //   TODO: something's wrong
-      return sourceCtrl && targetCtrl && sourceCtrl.value !== targetCtrl.value
+      if(sourceCtrl === null || sourceCtrl === undefined)
+      return { mismatch: true };
+
+      if(targetCtrl === null || targetCtrl === undefined)
+      return { mismatch: true };
+
+      return sourceCtrl.value !== targetCtrl.value
         ? { mismatch: true }
         : null;
     };
