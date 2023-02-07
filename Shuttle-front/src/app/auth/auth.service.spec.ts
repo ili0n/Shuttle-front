@@ -89,6 +89,8 @@ describe('AuthService', () => {
     });
 
     it('should confirm that I am logged out', () => {
+        tokenStorageSpy.getToken.and.returnValue(null);
+        expect(service.isLoggedIn()).toBeFalsy();
     });
 
     it('should return the appropriate role', () => {
@@ -118,7 +120,7 @@ describe('AuthService', () => {
         const jwt = "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJTaHV0dGxlLWJhY2siLCJzdWIiOiJqb2huQGdtYWlsLmNvbSIsImF1ZCI6IndlYiIsImlhdCI6MTY3NTgwNzc5OSwiZXhwIjoxNjc1ODE4NTk5LCJpZCI6Miwicm9sZSI6W3sibmFtZSI6InBhc3NlbmdlciJ9XX0.cc1LW3jldkyWGw8SMEXTjU0UHipb8slHL7nmi7y-Eew_dSa4oBeJVeG5y8dH_Ymgqsytr-X5t2woCT5SOB_tAA";
         tokenStorageSpy.getToken.and.returnValue(jwt);
         const roles = ["passenger"];
-        expect(service.getRoles).toEqual(roles);
+        expect(service.getRoles()).toEqual(roles);
     });
 
     it('should return an empty string if i ask for the role if logged out (i.e. token == null)', () => {
@@ -128,7 +130,7 @@ describe('AuthService', () => {
 
     it('should return -1 if i ask for the id if logged out (i.e. token == null)', () => {
         tokenStorageSpy.getToken.and.returnValue(null);
-        expect(+service.getId()).toEqual(-1);
+        expect(service.getId()).toEqual("");
     });
 
     it('should return an empty string if i ask for the email if logged out (i.e. token == null)', () => {
@@ -138,7 +140,7 @@ describe('AuthService', () => {
 
     it('should return [] for roles if logged out (i.e. token == null)', () => {
         tokenStorageSpy.getToken.and.returnValue(null);
-        expect(service.getRoles).toEqual([]);
+        expect(service.getRoles()).toEqual([]);
     });
 
     // I'm not sure if there's any point in testing funcitons that just send an http call and get an observable.
