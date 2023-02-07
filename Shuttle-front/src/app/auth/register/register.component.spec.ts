@@ -198,7 +198,7 @@ describe('RegisterComponent', () => {
     });
 
     it('should call submit clicked on button', (done) => {
-        registerServiceSpy.submit.and.returnValue(of({} as HttpEvent<PassengerDTO>));
+        registerServiceSpy.submit.and.returnValue(of({} as PassengerDTO));
 
         setFormData("pera@gmail.com", "Troytroy123", "Troytroy123", "sdqwdq", "+231231241", "pera", "peric");
         fixture.detectChanges();
