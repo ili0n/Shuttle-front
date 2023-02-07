@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { Token } from '@angular/compiler';
-import { TestBed, tick } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SharedService } from '../shared/shared.service';
@@ -37,9 +37,6 @@ describe('AuthService', () => {
         });
         service = TestBed.inject(AuthService);
         httpController = TestBed.inject(HttpTestingController);
-
-
-
     });
 
     it('should be created', () => {
@@ -76,7 +73,7 @@ describe('AuthService', () => {
         } as Token));
     });
 
-    it('should clear storage on logout', (done) => {
+    it('should clear storage on logout', () => {
         // userServiceSpy.setInactive.and.returnValue(of(false));
         // service.logout();
         // tick();
