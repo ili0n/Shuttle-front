@@ -33,7 +33,7 @@ describe('RegisterService', () => {
             password: "bob12433",
             confirmPassword: "bob12433",
         };
-        const expectedResult: any = {
+        const expectedResult: PassengerDTO = {
             id: 1,
             email: 'bob@gmail.com',
             name: 'Bob',
@@ -41,7 +41,8 @@ describe('RegisterService', () => {
             profilePicture: 'fhejh3ri32==',
             telephoneNumber: "48903284",
             address: "street abc",
-        }
+        } as PassengerDTO;
+
         service.submit(submitData, {} as File).subscribe((res) => {
             expect(res).toEqual(expectedResult);
         });
